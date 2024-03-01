@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "memory_resource": "cpp",
+        "tuple": "cpp",
+        "*.ipp": "cpp",
+        "system_error": "cpp",
+        "exception": "cpp",
+        "stdexcept": "cpp"
+    }
+}
