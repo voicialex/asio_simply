@@ -6,7 +6,7 @@
 #if defined(ASIO_HAS_PTHREADS)
 # include "asio/detail/thread/impl/posix_thread.hpp"
 #elif defined(ASIO_HAS_STD_THREAD)
-# include "asio/detail/std_thread.hpp"
+# include "asio/detail/base/stdcpp/std_thread.hpp"
 #else
 # error Only Windows, POSIX and std::thread are supported!
 #endif

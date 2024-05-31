@@ -8,7 +8,7 @@
 #elif defined(ASIO_HAS_PTHREADS)
 # include "asio/detail/base/posix/posix_event.hpp"
 #elif defined(ASIO_HAS_STD_MUTEX_AND_CONDVAR)
-# include "asio/detail/std_event.hpp"
+# include "asio/detail/base/stdcpp/std_event.hpp"
 #else
 # error Only Windows, POSIX and std::condition_variable are supported!
 #endif

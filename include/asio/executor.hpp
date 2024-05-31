@@ -238,21 +238,12 @@ private:
   class function;
   template <typename, typename> class impl;
 
-#if !defined(ASIO_NO_TYPEID)
   typedef const std::type_info& type_id_result_type;
-#else // !defined(ASIO_NO_TYPEID)
-  typedef const void* type_id_result_type;
-#endif // !defined(ASIO_NO_TYPEID)
 
   template <typename T>
   static type_id_result_type type_id()
   {
-#if !defined(ASIO_NO_TYPEID)
     return typeid(T);
-#else // !defined(ASIO_NO_TYPEID)
-    static int unique_id;
-    return &unique_id;
-#endif // !defined(ASIO_NO_TYPEID)
   }
 
   // Base class for all polymorphic executor implementations.

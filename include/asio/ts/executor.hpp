@@ -11,10 +11,6 @@
 #ifndef ASIO_TS_EXECUTOR_HPP
 #define ASIO_TS_EXECUTOR_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
-
 #include "asio/handler_type.hpp"
 #include "asio/executor/async_result.hpp"
 #include "asio/detail/memory/associated_allocator.hpp"
