@@ -49,8 +49,6 @@ io_context::get_executor() ASIO_NOEXCEPT
   return executor_type(*this);
 }
 
-#if defined(ASIO_HAS_CHRONO)
-
 template <typename Rep, typename Period>
 std::size_t io_context::run_for(
     const chrono::duration<Rep, Period>& rel_time)
@@ -101,8 +99,6 @@ std::size_t io_context::run_one_until(
 
   return 0;
 }
-
-#endif // defined(ASIO_HAS_CHRONO)
 
 #if !defined(ASIO_NO_DEPRECATED)
 
@@ -178,11 +174,7 @@ io_context::post(ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
 }
 
 template <typename Handler>
-#if defined(GENERATING_DOCUMENTATION)
-unspecified
-#else
 inline detail::wrapped_handler<io_context&, Handler>
-#endif
 io_context::wrap(Handler handler)
 {
   return detail::wrapped_handler<io_context&, Handler>(*this, handler);

@@ -18,7 +18,6 @@ inline Service& use_service(execution_context& e)
   return e.service_registry_->template use_service<Service>();
 }
 
-#if !defined(GENERATING_DOCUMENTATION)
 # if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename Service, typename... Args>
@@ -61,7 +60,6 @@ Service& make_service(execution_context& e)
 #undef ASIO_PRIVATE_MAKE_SERVICE_DEF
 
 # endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename Service>
 inline void add_service(execution_context& e, Service* svc)

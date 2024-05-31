@@ -6,6 +6,8 @@ find_package(Threads REQUIRED)
 
 add_definitions(-DASIO_STANDALONE)
 add_definitions(-DASIO_HAS_PTHREADS)
+add_definitions(-DASIO_NO_DEPRECATED)
+# ASIO_HAS_CHRONO  启用std::chrono支
 
 include_directories(./include)
 

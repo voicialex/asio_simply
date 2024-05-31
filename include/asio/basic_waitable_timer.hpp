@@ -9,9 +9,7 @@
 #include "asio/error.hpp"
 #include "asio/wait_traits.hpp"
 
-#if defined(ASIO_HAS_MOVE)
 # include <utility>
-#endif // defined(ASIO_HAS_MOVE)
 
 #if defined(ASIO_ENABLE_OLD_SERVICES)
 # include "asio/waitable_timer_service.hpp"
@@ -203,7 +201,6 @@ public:
     asio::detail::throw_error(ec, "expires_after");
   }
 
-#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move-construct a basic_waitable_timer from another.
   /**
    * This constructor moves a timer from one object to another.
@@ -235,7 +232,6 @@ public:
     basic_io_object<ASIO_SVC_T>::operator=(std::move(other));
     return *this;
   }
-#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destroys the timer.
   /**

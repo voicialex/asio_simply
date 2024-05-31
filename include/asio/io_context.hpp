@@ -11,9 +11,7 @@
 #include "asio/detail/error/error_code.hpp"
 #include "asio/executor/execution_context.hpp"
 
-#if defined(ASIO_HAS_CHRONO)
 # include "asio/detail/base/stdcpp/chrono.hpp"
-#endif // defined(ASIO_HAS_CHRONO)
 
 # include "asio/detail/base/signal_init.hpp"
 
@@ -285,7 +283,6 @@ public:
   ASIO_DECL count_type run(asio::error_code& ec);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-#if defined(ASIO_HAS_CHRONO) || defined(GENERATING_DOCUMENTATION)
   /// Run the io_context object's event processing loop for a specified
   /// duration.
   /**
@@ -312,7 +309,6 @@ public:
    */
   template <typename Clock, typename Duration>
   std::size_t run_until(const chrono::time_point<Clock, Duration>& abs_time);
-#endif // defined(ASIO_HAS_CHRONO) || defined(GENERATING_DOCUMENTATION)
 
   /// Run the io_context object's event processing loop to execute at most one
   /// handler.
@@ -356,7 +352,6 @@ public:
   ASIO_DECL count_type run_one(asio::error_code& ec);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-#if defined(ASIO_HAS_CHRONO) || defined(GENERATING_DOCUMENTATION)
   /// Run the io_context object's event processing loop for a specified duration
   /// to execute at most one handler.
   /**
@@ -385,7 +380,6 @@ public:
   template <typename Clock, typename Duration>
   std::size_t run_one_until(
       const chrono::time_point<Clock, Duration>& abs_time);
-#endif // defined(ASIO_HAS_CHRONO) || defined(GENERATING_DOCUMENTATION)
 
   /// Run the io_context object's event processing loop to execute ready
   /// handlers.
@@ -560,11 +554,7 @@ public:
    * @code io_context.dispatch(boost::bind(f, a1, ... an)); @endcode
    */
   template <typename Handler>
-#if defined(GENERATING_DOCUMENTATION)
-  unspecified
-#else
   detail::wrapped_handler<io_context&, Handler>
-#endif
   wrap(Handler handler);
 #endif // !defined(ASIO_NO_DEPRECATED)
 

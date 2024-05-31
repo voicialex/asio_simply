@@ -13,19 +13,11 @@
 #include <cstdio>
 #include "asio/detail/handler_tracking.hpp"
 
-#if defined(ASIO_HAS_BOOST_DATE_TIME)
-# include "asio/time_traits.hpp"
-#elif defined(ASIO_HAS_CHRONO)
 # include "asio/detail/base/stdcpp/chrono.hpp"
 # include "asio/detail/chrono_time_traits.hpp"
 # include "asio/wait_traits.hpp"
-#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
-#if defined(ASIO_WINDOWS_RUNTIME)
-# include "asio/detail/socket_types.hpp"
-#elif !defined(ASIO_WINDOWS)
 # include <unistd.h>
-#endif // !defined(ASIO_WINDOWS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -39,16 +31,11 @@ struct handler_tracking_timestamp
 
   handler_tracking_timestamp()
   {
-#if defined(ASIO_HAS_BOOST_DATE_TIME)
-    boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
-    boost::posix_time::time_duration now =
-      boost::posix_time::microsec_clock::universal_time() - epoch;
-#elif defined(ASIO_HAS_CHRONO)
     typedef chrono_time_traits<chrono::system_clock,
         asio::wait_traits<chrono::system_clock> > traits_helper;
     traits_helper::posix_time_duration now(
         chrono::system_clock::now().time_since_epoch());
-#endif
+
     seconds = static_cast<uint64_t>(now.total_seconds());
     microseconds = static_cast<uint64_t>(now.total_microseconds() % 1000000);
   }
@@ -321,17 +308,7 @@ void handler_tracking::write_line(const char* format, ...)
 
   va_end(args);
 
-#if defined(ASIO_WINDOWS_RUNTIME)
-  wchar_t wline[256] = L"";
-  mbstowcs_s(0, wline, sizeof(wline) / sizeof(wchar_t), line, length);
-  ::OutputDebugStringW(wline);
-#elif defined(ASIO_WINDOWS)
-  HANDLE stderr_handle = ::GetStdHandle(STD_ERROR_HANDLE);
-  DWORD bytes_written = 0;
-  ::WriteFile(stderr_handle, line, length, &bytes_written, 0);
-#else // defined(ASIO_WINDOWS)
   ::write(STDERR_FILENO, line, length);
-#endif // defined(ASIO_WINDOWS)
 }
 
 } // namespace detail

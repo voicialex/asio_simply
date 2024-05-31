@@ -35,7 +35,6 @@ public:
   {
   }
 
-#if defined(ASIO_HAS_MOVE)
   work_dispatcher(const work_dispatcher& other)
     : work_(other.work_),
       handler_(other.handler_)
@@ -48,7 +47,6 @@ public:
       handler_(ASIO_MOVE_CAST(Handler)(other.handler_))
   {
   }
-#endif // defined(ASIO_HAS_MOVE)
 
   void operator()()
   {

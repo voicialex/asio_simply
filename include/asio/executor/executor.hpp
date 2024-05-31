@@ -28,10 +28,6 @@
 
 namespace asio {
 
-#if !defined(GENERATING_DOCUMENTATION)
-
-#if defined(ASIO_HAS_MOVE)
-
 // Lightweight, move-only function object wrapper.
 class executor::function
 {
@@ -72,55 +68,6 @@ public:
 private:
   detail::executor_function_base* func_;
 };
-
-#else // defined(ASIO_HAS_MOVE)
-
-// Not so lightweight, copyable function object wrapper.
-class executor::function
-{
-public:
-  template <typename F, typename Alloc>
-  explicit function(const F& f, const Alloc&)
-    : impl_(new impl<F>(f))
-  {
-  }
-
-  void operator()()
-  {
-    impl_->invoke_(impl_.get());
-  }
-
-private:
-  // Base class for polymorphic function implementations.
-  struct impl_base
-  {
-    void (*invoke_)(impl_base*);
-  };
-
-  // Polymorphic function implementation.
-  template <typename F>
-  struct impl : impl_base
-  {
-    impl(const F& f)
-      : function_(f)
-    {
-      invoke_ = &function::invoke<F>;
-    }
-
-    F function_;
-  };
-
-  // Helper to invoke a function.
-  template <typename F>
-  static void invoke(impl_base* i)
-  {
-    static_cast<impl<F>*>(i)->function_();
-  }
-
-  detail::shared_ptr<impl_base> impl_;
-};
-
-#endif // defined(ASIO_HAS_MOVE)
 
 // Default polymorphic allocator implementation.
 template <typename Executor, typename Allocator>
@@ -377,8 +324,6 @@ const Executor* executor::target() const ASIO_NOEXCEPT
   return impl_ && impl_->target_type() == type_id<Executor>()
     ? static_cast<Executor*>(impl_->target()) : 0;
 }
-
-#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 

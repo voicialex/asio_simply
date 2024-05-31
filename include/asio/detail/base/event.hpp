@@ -6,7 +6,7 @@
 #if !defined(ASIO_HAS_THREADS)
 # include "asio/detail/base/null_event.hpp"
 #elif defined(ASIO_HAS_PTHREADS)
-# include "asio/detail/base/impl/posix_event.hpp"
+# include "asio/detail/base/posix/posix_event.hpp"
 #elif defined(ASIO_HAS_STD_MUTEX_AND_CONDVAR)
 # include "asio/detail/std_event.hpp"
 #else

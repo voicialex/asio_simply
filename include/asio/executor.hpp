@@ -47,14 +47,12 @@ public:
   {
   }
 
-#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move constructor.
   executor(executor&& other) ASIO_NOEXCEPT
     : impl_(other.impl_)
   {
     other.impl_ = 0;
   }
-#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Construct a polymorphic wrapper for the specified executor.
   template <typename Executor>
@@ -79,7 +77,6 @@ public:
     return *this;
   }
 
-#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   // Move assignment operator.
   executor& operator=(executor&& other) ASIO_NOEXCEPT
   {
@@ -88,7 +85,6 @@ public:
     other.impl_ = 0;
     return *this;
   }
-#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Assignment operator for nullptr_t.
   executor& operator=(nullptr_t) ASIO_NOEXCEPT

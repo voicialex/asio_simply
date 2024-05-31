@@ -213,13 +213,11 @@ struct executor_binder_result_of0<T,
 /// type @c T.
 template <typename T, typename Executor>
 class executor_binder
-#if !defined(GENERATING_DOCUMENTATION)
   : public detail::executor_binder_result_type<T>,
     public detail::executor_binder_argument_type<T>,
     public detail::executor_binder_argument_types<T>,
     private detail::executor_binder_base<
       T, Executor, uses_executor<T, Executor>::value>
-#endif // !defined(GENERATING_DOCUMENTATION)
 {
 public:
   /// The type of the target object.
@@ -227,68 +225,6 @@ public:
 
   /// The type of the associated executor.
   typedef Executor executor_type;
-
-#if defined(GENERATING_DOCUMENTATION)
-  /// The return type if a function.
-  /**
-   * The type of @c result_type is based on the type @c T of the wrapper's
-   * target object:
-   *
-   * @li if @c T is a pointer to function type, @c result_type is a synonym for
-   * the return type of @c T;
-   *
-   * @li if @c T is a class type with a member type @c result_type, then @c
-   * result_type is a synonym for @c T::result_type;
-   *
-   * @li otherwise @c result_type is not defined.
-   */
-  typedef see_below result_type;
-
-  /// The type of the function's argument.
-  /**
-   * The type of @c argument_type is based on the type @c T of the wrapper's
-   * target object:
-   *
-   * @li if @c T is a pointer to a function type accepting a single argument,
-   * @c argument_type is a synonym for the return type of @c T;
-   *
-   * @li if @c T is a class type with a member type @c argument_type, then @c
-   * argument_type is a synonym for @c T::argument_type;
-   *
-   * @li otherwise @c argument_type is not defined.
-   */
-  typedef see_below argument_type;
-
-  /// The type of the function's first argument.
-  /**
-   * The type of @c first_argument_type is based on the type @c T of the
-   * wrapper's target object:
-   *
-   * @li if @c T is a pointer to a function type accepting two arguments, @c
-   * first_argument_type is a synonym for the return type of @c T;
-   *
-   * @li if @c T is a class type with a member type @c first_argument_type,
-   * then @c first_argument_type is a synonym for @c T::first_argument_type;
-   *
-   * @li otherwise @c first_argument_type is not defined.
-   */
-  typedef see_below first_argument_type;
-
-  /// The type of the function's second argument.
-  /**
-   * The type of @c second_argument_type is based on the type @c T of the
-   * wrapper's target object:
-   *
-   * @li if @c T is a pointer to a function type accepting two arguments, @c
-   * second_argument_type is a synonym for the return type of @c T;
-   *
-   * @li if @c T is a class type with a member type @c first_argument_type,
-   * then @c second_argument_type is a synonym for @c T::second_argument_type;
-   *
-   * @li otherwise @c second_argument_type is not defined.
-   */
-  typedef see_below second_argument_type;
-#endif // defined(GENERATING_DOCUMENTATION)
 
   /// Construct an executor wrapper for the specified object.
   /**
@@ -340,8 +276,6 @@ public:
   {
   }
 
-#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
-
   /// Move constructor.
   executor_binder(executor_binder&& other)
     : base_type(ASIO_MOVE_CAST(executor_type)(other.get_executor()),
@@ -372,8 +306,6 @@ public:
     : base_type(e, ASIO_MOVE_CAST(U)(other.get()))
   {
   }
-
-#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destructor.
   ~executor_binder()

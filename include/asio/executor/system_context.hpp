@@ -34,9 +34,6 @@ public:
   /// Join all threads in the system thread pool.
   ASIO_DECL void join();
 
-#if defined(GENERATING_DOCUMENTATION)
-private:
-#endif // defined(GENERATING_DOCUMENTATION)
   // Constructor creates all threads in the system thread pool.
   ASIO_DECL system_context();
 

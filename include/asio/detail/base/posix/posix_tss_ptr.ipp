@@ -1,11 +1,11 @@
-#ifndef ASIO_DETAIL_IMPL_POSIX_MUTEX_IPP
-#define ASIO_DETAIL_IMPL_POSIX_MUTEX_IPP
+#ifndef ASIO_DETAIL_IMPL_POSIX_TSS_PTR_IPP
+#define ASIO_DETAIL_IMPL_POSIX_TSS_PTR_IPP
 
 #include "asio/detail/config.hpp"
 
 #if defined(ASIO_HAS_PTHREADS)
 
-#include "asio/detail/base/impl/posix_mutex.hpp"
+#include "asio/detail/base/posix/posix_tss_ptr.hpp"
 #include "asio/detail/error/throw_error.hpp"
 #include "asio/error.hpp"
 
@@ -14,12 +14,12 @@
 namespace asio {
 namespace detail {
 
-posix_mutex::posix_mutex()
+void posix_tss_ptr_create(pthread_key_t& key)
 {
-  int error = ::pthread_mutex_init(&mutex_, 0);
+  int error = ::pthread_key_create(&key, 0);
   asio::error_code ec(error,
       asio::error::get_system_category());
-  asio::detail::throw_error(ec, "mutex");
+  asio::detail::throw_error(ec, "tss");
 }
 
 } // namespace detail
@@ -29,4 +29,4 @@ posix_mutex::posix_mutex()
 
 #endif // defined(ASIO_HAS_PTHREADS)
 
-#endif // ASIO_DETAIL_IMPL_POSIX_MUTEX_IPP
+#endif // ASIO_DETAIL_IMPL_POSIX_TSS_PTR_IPP

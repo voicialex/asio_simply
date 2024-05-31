@@ -79,11 +79,7 @@ struct associated_allocator
 {
   /// If @c T has a nested type @c allocator_type, <tt>T::allocator_type</tt>.
   /// Otherwise @c Allocator.
-#if defined(GENERATING_DOCUMENTATION)
-  typedef see_below type;
-#else // defined(GENERATING_DOCUMENTATION)
   typedef typename detail::associated_allocator_impl<T, Allocator>::type type;
-#endif // defined(GENERATING_DOCUMENTATION)
 
   /// If @c T has a nested type @c allocator_type, returns
   /// <tt>t.get_allocator()</tt>. Otherwise returns @c a.

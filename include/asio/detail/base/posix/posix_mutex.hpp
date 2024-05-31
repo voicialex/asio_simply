@@ -54,7 +54,7 @@ private:
 #include "asio/detail/pop_options.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/detail/base/impl/posix_mutex.ipp"
+# include "asio/detail/base/posix/posix_mutex.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // defined(ASIO_HAS_PTHREADS)

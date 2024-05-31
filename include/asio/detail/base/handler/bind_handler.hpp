@@ -31,7 +31,6 @@ public:
   {
   }
 
-#if defined(ASIO_HAS_MOVE)
   binder1(const binder1& other)
     : handler_(other.handler_),
       arg1_(other.arg1_)
@@ -43,7 +42,6 @@ public:
       arg1_(ASIO_MOVE_CAST(Arg1)(other.arg1_))
   {
   }
-#endif // defined(ASIO_HAS_MOVE)
 
   void operator()()
   {
@@ -128,7 +126,6 @@ public:
   {
   }
 
-#if defined(ASIO_HAS_MOVE)
   binder2(const binder2& other)
     : handler_(other.handler_),
       arg1_(other.arg1_),
@@ -142,7 +139,6 @@ public:
       arg2_(ASIO_MOVE_CAST(Arg2)(other.arg2_))
   {
   }
-#endif // defined(ASIO_HAS_MOVE)
 
   void operator()()
   {
@@ -208,8 +204,6 @@ inline binder2<typename decay<Handler>::type, Arg1, Arg2> bind_handler(
   return binder2<typename decay<Handler>::type, Arg1, Arg2>(0,
       ASIO_MOVE_CAST(Handler)(handler), arg1, arg2);
 }
-
-#if defined(ASIO_HAS_MOVE)
 
 template <typename Handler, typename Arg1>
 class move_binder1
@@ -333,7 +327,6 @@ inline void asio_handler_invoke(ASIO_MOVE_ARG(Function) function,
       ASIO_MOVE_CAST(Function)(function), this_handler->handler_);
 }
 
-#endif // defined(ASIO_HAS_MOVE)
 
 } // namespace detail
 
@@ -385,8 +378,6 @@ struct associated_executor<detail::binder2<Handler, Arg1, Arg2>, Executor>
   }
 };
 
-#if defined(ASIO_HAS_MOVE)
-
 template <typename Handler, typename Arg1, typename Allocator>
 struct associated_allocator<detail::move_binder1<Handler, Arg1>, Allocator>
 {
@@ -436,7 +427,6 @@ struct associated_executor<detail::move_binder2<Handler, Arg1, Arg2>, Executor>
   }
 };
 
-#endif // defined(ASIO_HAS_MOVE)
 
 } // namespace asio
 

@@ -53,7 +53,6 @@ public:
       executor_.on_work_started();
   }
 
-#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move constructor.
   executor_work_guard(executor_work_guard&& other)
     : executor_(ASIO_MOVE_CAST(Executor)(other.executor_)),
@@ -61,7 +60,6 @@ public:
   {
     other.owns_ = false;
   }
-#endif //  defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destructor.
   /**

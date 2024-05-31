@@ -5,7 +5,7 @@
 
 #if defined(ASIO_HAS_PTHREADS)
 
-#include "asio/detail/base/impl/posix_event.hpp"
+#include "asio/detail/base/posix/posix_event.hpp"
 #include "asio/detail/error/throw_error.hpp"
 #include "asio/error.hpp"
 

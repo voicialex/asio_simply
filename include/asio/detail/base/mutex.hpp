@@ -4,7 +4,7 @@
 #include "asio/detail/config.hpp"
 
 
-# include "asio/detail/base/impl/posix_mutex.hpp"
+# include "asio/detail/base/posix/posix_mutex.hpp"
 
 namespace asio {
 namespace detail {

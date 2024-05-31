@@ -9,11 +9,7 @@
 #include "asio/detail/service_registry.hpp"
 #include "asio/detail/error/throw_error.hpp"
 
-#if defined(ASIO_HAS_IOCP)
-# include "asio/detail/win_iocp_io_context.hpp"
-#else
 # include "asio/detail/scheduler/scheduler.hpp"
-#endif
 
 #include "asio/detail/push_options.hpp"
 

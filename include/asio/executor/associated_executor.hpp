@@ -80,11 +80,7 @@ struct associated_executor
 {
   /// If @c T has a nested type @c executor_type, <tt>T::executor_type</tt>.
   /// Otherwise @c Executor.
-#if defined(GENERATING_DOCUMENTATION)
-  typedef see_below type;
-#else // defined(GENERATING_DOCUMENTATION)
   typedef typename detail::associated_executor_impl<T, Executor>::type type;
-#endif // defined(GENERATING_DOCUMENTATION)
 
   /// If @c T has a nested type @c executor_type, returns
   /// <tt>t.get_executor()</tt>. Otherwise returns @c ex.

@@ -3,7 +3,7 @@
 
 #include "asio/detail/config.hpp"
 
-# include "asio/detail/base/impl/posix_global.hpp"
+# include "asio/detail/base/posix/posix_global.hpp"
 
 namespace asio {
 namespace detail {
