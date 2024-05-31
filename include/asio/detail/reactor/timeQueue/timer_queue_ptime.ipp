@@ -1,0 +1,10 @@
+#ifndef ASIO_DETAIL_IMPL_TIMER_QUEUE_PTIME_IPP
+#define ASIO_DETAIL_IMPL_TIMER_QUEUE_PTIME_IPP
+
+#include "asio/detail/config.hpp"
+
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
+
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
+
+#endif // ASIO_DETAIL_IMPL_TIMER_QUEUE_PTIME_IPP

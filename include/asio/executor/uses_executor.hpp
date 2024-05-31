@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/base/impl_std/type_traits.hpp"
+#include "asio/detail/base/stdcpp/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -45,11 +45,7 @@ struct executor_arg_t
  * See asio::executor_arg_t and asio::uses_executor
  * for more information.
  */
-#if defined(ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
 constexpr executor_arg_t executor_arg;
-#elif defined(ASIO_MSVC)
-__declspec(selectany) executor_arg_t executor_arg;
-#endif
 
 /// The uses_executor trait detects whether a type T has an associated executor
 /// that is convertible from type Executor.

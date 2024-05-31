@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <memory>
-#include "asio/detail/base/impl_std/type_traits.hpp"
+#include "asio/detail/base/stdcpp/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 

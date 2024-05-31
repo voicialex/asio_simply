@@ -6,7 +6,7 @@
 #if defined(ASIO_HAS_PTHREADS)
 
 #include <pthread.h>
-#include "asio/detail/base/impl_std/assert.hpp"
+#include "asio/detail/base/stdcpp/assert.hpp"
 #include "asio/detail/noncopyable.hpp"
 
 #include "asio/detail/push_options.hpp"

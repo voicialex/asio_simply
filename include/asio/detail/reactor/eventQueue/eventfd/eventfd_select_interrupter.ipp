@@ -13,7 +13,7 @@
 #else // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
 # include <sys/eventfd.h>
 #endif // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
-#include "asio/detail/base/impl_std/cstdint.hpp"
+#include "asio/detail/base/stdcpp/cstdint.hpp"
 #include "asio/detail/reactor/eventQueue/eventfd/eventfd_select_interrupter.hpp"
 #include "asio/detail/error/throw_error.hpp"
 #include "asio/error.hpp"

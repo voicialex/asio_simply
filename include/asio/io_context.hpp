@@ -5,17 +5,17 @@
 #include <cstddef>
 #include <stdexcept>
 #include <typeinfo>
-#include "asio/async_result.hpp"
+#include "asio/executor/async_result.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/wrapped_handler.hpp"
-#include "asio/error_code.hpp"
-#include "asio/execution_context.hpp"
+#include "asio/detail/base/wrapped_handler.hpp"
+#include "asio/detail/error/error_code.hpp"
+#include "asio/executor/execution_context.hpp"
 
 #if defined(ASIO_HAS_CHRONO)
-# include "asio/detail/chrono.hpp"
+# include "asio/detail/base/stdcpp/chrono.hpp"
 #endif // defined(ASIO_HAS_CHRONO)
 
-# include "asio/detail/signal_init.hpp"
+# include "asio/detail/base/signal_init.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -577,9 +577,7 @@ private:
   template <typename Service>
   friend Service& use_service(io_context& ioc);
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
-  detail::winsock_init<> init_;
-#elif defined(__sun) || defined(__QNX__) || defined(__hpux) || defined(_AIX) \
+#if defined(__sun) || defined(__QNX__) || defined(__hpux) || defined(_AIX) \
   || defined(__osf__)
   detail::signal_init<> init_;
 #endif

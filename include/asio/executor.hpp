@@ -3,7 +3,7 @@
 
 #include "asio/detail/config.hpp"
 #include <typeinfo>
-#include "asio/detail/base/impl_std/cstddef.hpp"
+#include "asio/detail/base/stdcpp/cstddef.hpp"
 #include "asio/detail/memory/memory.hpp"
 #include "asio/detail/error/throw_exception.hpp"
 #include "asio/executor/execution_context.hpp"

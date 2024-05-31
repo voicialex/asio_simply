@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/base/impl_std/atomic_count.hpp"
+#include "asio/detail/base/stdcpp/atomic_count.hpp"
 #include "asio/executor/executor_function.hpp"
 #include "asio/detail/base/global.hpp"
 #include "asio/detail/memory/memory.hpp"

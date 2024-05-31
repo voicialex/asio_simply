@@ -2,7 +2,7 @@
 #define ASIO_ASYNC_RESULT_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/base/impl_std/type_traits.hpp"
+#include "asio/detail/base/stdcpp/type_traits.hpp"
 #include "asio/handler_type.hpp"
 
 #include "asio/detail/push_options.hpp"

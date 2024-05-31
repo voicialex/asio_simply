@@ -5,9 +5,9 @@
 
 #if defined(ASIO_HAS_EPOLL)
 
-#include "asio/detail/base/impl_std/atomic_count.hpp"
+#include "asio/detail/base/stdcpp/atomic_count.hpp"
 #include "asio/detail/base/conditionally_enabled_mutex.hpp"
-// #include "asio/detail/limits.hpp"
+// #include "asio/detail/base/stdcpp/stdcpp/limits.hpp"
 #include <limits>
 #include "asio/detail/memory/object_pool.hpp"
 #include "asio/detail/container/op_queue.hpp"

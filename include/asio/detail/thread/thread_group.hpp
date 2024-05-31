@@ -2,7 +2,7 @@
 #define ASIO_DETAIL_THREAD_GROUP_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/memory/scoped_ptr.hpp"
+#include "asio/detail/base/scoped_ptr.hpp"
 #include "asio/detail/thread/thread.hpp"
 
 namespace asio {

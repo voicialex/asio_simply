@@ -2,7 +2,7 @@
 #define ASIO_DETAIL_IS_EXECUTOR_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/base/impl_std/type_traits.hpp"
+#include "asio/detail/base/stdcpp/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 

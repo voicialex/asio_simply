@@ -5,7 +5,7 @@
 #include <typeinfo>
 #include "asio/detail/base/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/base/impl_std/type_traits.hpp"
+#include "asio/detail/base/stdcpp/type_traits.hpp"
 #include "asio/executor/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"

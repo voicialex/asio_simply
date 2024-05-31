@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/base/impl_std/type_traits.hpp"
+#include "asio/detail/base/stdcpp/type_traits.hpp"
 // #include "asio/detail/variadic_templates.hpp"
 #include "asio/executor/associated_executor.hpp"
 #include "asio/detail/memory/associated_allocator.hpp"
