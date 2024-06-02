@@ -7,8 +7,8 @@
 #if defined(ASIO_HAS_PTHREADS)
 
 #include "asio/detail/thread/impl/posix_thread.hpp"
-#include "asio/detail/error/throw_error.hpp"
-#include "asio/error.hpp"
+#include "asio/error/throw_error.hpp"
+#include "asio/error/error.hpp"
 
 #include "asio/detail/push_options.hpp"
 

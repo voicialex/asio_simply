@@ -13,7 +13,7 @@
 #include "asio/detail/container/op_queue.hpp"
 #include "asio/detail/reactor/reactor_op.hpp"
 #include "asio/detail/reactor/eventQueue/eventfd/select_interrupter.hpp"
-#include "asio/detail/socket_types.hpp"
+#include "asio/network/socket_types.hpp"
 #include "asio/detail/reactor/timeQueue/timer_queue_base.hpp"
 #include "asio/detail/reactor/timeQueue/timer_queue_set.hpp"
 #include "asio/detail/scheduler/op/wait_op.hpp"

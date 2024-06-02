@@ -3,8 +3,8 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/memory/memory.hpp"
-#include "asio/detail/thread_context.hpp"
-#include "asio/detail/memory/thread_info_base.hpp"
+#include "asio/detail/thread/thread_context.hpp"
+#include "asio/detail/thread/thread_info_base.hpp"
 
 #include "asio/detail/push_options.hpp"
 

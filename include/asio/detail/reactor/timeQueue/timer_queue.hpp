@@ -5,12 +5,12 @@
 #include <cstddef>
 #include <vector>
 #include "asio/detail/base/stdcpp/cstdint.hpp"
-#include "asio/detail/base/date_time_fwd.hpp"
+#include "asio/detail/base/boost/date_time_fwd.hpp"
 #include "asio/detail/base/stdcpp/limits.hpp"
 #include "asio/detail/container/op_queue.hpp"
 #include "asio/detail/reactor/timeQueue/timer_queue_base.hpp"
 #include "asio/detail/scheduler/op/wait_op.hpp"
-#include "asio/error.hpp"
+#include "asio/error/error.hpp"
 
 #include "asio/detail/push_options.hpp"
 

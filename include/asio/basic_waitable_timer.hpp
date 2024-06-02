@@ -5,8 +5,8 @@
 #include <cstddef>
 #include "asio/basic_io_object.hpp"
 #include "asio/detail/base/handler/handler_type_requirements.hpp"
-#include "asio/detail/error/throw_error.hpp"
-#include "asio/error.hpp"
+#include "asio/error/throw_error.hpp"
+#include "asio/error/error.hpp"
 #include "asio/wait_traits.hpp"
 
 # include <utility>
@@ -15,7 +15,7 @@
 # include "asio/waitable_timer_service.hpp"
 #else // defined(ASIO_ENABLE_OLD_SERVICES)
 # include "asio/detail/base/chrono_time_traits.hpp"
-# include "asio/detail/deadline_timer_service.hpp"
+# include "asio/core/detail/deadline_timer_service.hpp"
 # define ASIO_SVC_T \
     detail::deadline_timer_service< \
       detail::chrono_time_traits<Clock, WaitTraits> >

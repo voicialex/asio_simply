@@ -8,8 +8,8 @@
 #include <cstddef>
 #include <sys/epoll.h>
 #include "asio/detail/reactor/epoll_reactor.hpp"
-#include "asio/detail/error/throw_error.hpp"
-#include "asio/error.hpp"
+#include "asio/error/throw_error.hpp"
+#include "asio/error/error.hpp"
 
 #if defined(ASIO_HAS_TIMERFD)
 # include <sys/timerfd.h>

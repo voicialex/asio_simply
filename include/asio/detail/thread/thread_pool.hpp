@@ -1,104 +1,218 @@
-#ifndef ASIO_IMPL_THREAD_POOL_HPP
-#define ASIO_IMPL_THREAD_POOL_HPP
+#ifndef ASIO_THREAD_POOL_HPP
+#define ASIO_THREAD_POOL_HPP
 
-#include "asio/detail/scheduler/op/executor_op.hpp"
-#include "asio/detail/thread/fenced_block.hpp"
-#include "asio/detail/memory/recycling_allocator.hpp"
-#include "asio/detail/base/stdcpp/type_traits.hpp"
+#include "asio/detail/config.hpp"
+#include "asio/detail/noncopyable.hpp"
+#include "asio/detail/scheduler/scheduler.hpp"
+#include "asio/detail/thread/thread_group.hpp"
 #include "asio/executor/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
-inline thread_pool::executor_type
-thread_pool::get_executor() ASIO_NOEXCEPT
+/// A simple fixed-size thread pool.
+/**
+ * The thread pool class is an execution context where functions are permitted
+ * to run on one of a fixed number of threads.
+ *
+ * @par Submitting tasks to the pool
+ *
+ * To submit functions to the thread_pool, use the @ref asio::dispatch,
+ * @ref asio::post or @ref asio::defer free functions.
+ *
+ * For example:
+ *
+ * @code void my_task()
+ * {
+ *   ...
+ * }
+ *
+ * ...
+ *
+ * // Launch the pool with four threads.
+ * asio::thread_pool pool(4);
+ *
+ * // Submit a function to the pool.
+ * asio::post(pool, my_task);
+ *
+ * // Submit a lambda object to the pool.
+ * asio::post(pool,
+ *     []()
+ *     {
+ *       ...
+ *     });
+ *
+ * // Wait for all tasks in the pool to complete.
+ * pool.join(); @endcode
+ */
+class thread_pool
+  : public execution_context
 {
-  return executor_type(*this);
-}
+public:
+  class executor_type;
 
-inline thread_pool&
-thread_pool::executor_type::context() const ASIO_NOEXCEPT
+  /// Constructs a pool with an automatically determined number of threads.
+  ASIO_DECL thread_pool();
+
+  /// Constructs a pool with a specified number of threads.
+  ASIO_DECL thread_pool(std::size_t num_threads);
+
+  /// Destructor.
+  /**
+   * Automatically stops and joins the pool, if not explicitly done beforehand.
+   */
+  ASIO_DECL ~thread_pool();
+
+  /// Obtains the executor associated with the pool.
+  executor_type get_executor() ASIO_NOEXCEPT;
+
+  /// Stops the threads.
+  /**
+   * This function stops the threads as soon as possible. As a result of calling
+   * @c stop(), pending function objects may be never be invoked.
+   */
+  ASIO_DECL void stop();
+
+  /// Joins the threads.
+  /**
+   * This function blocks until the threads in the pool have completed. If @c
+   * stop() is not called prior to @c join(), the @c join() call will wait
+   * until the pool has no more outstanding work.
+   */
+  ASIO_DECL void join();
+
+private:
+  friend class executor_type;
+  struct thread_function;
+
+  // The underlying scheduler.
+  detail::scheduler& scheduler_;
+
+  // The threads in the pool.
+  detail::thread_group threads_;
+};
+
+/// Executor used to submit functions to a thread pool.
+class thread_pool::executor_type
 {
-  return pool_;
-}
+public:
+  /// Obtain the underlying execution context.
+  thread_pool& context() const ASIO_NOEXCEPT;
 
-inline void
-thread_pool::executor_type::on_work_started() const ASIO_NOEXCEPT
-{
-  pool_.scheduler_.work_started();
-}
+  /// Inform the thread pool that it has some outstanding work to do.
+  /**
+   * This function is used to inform the thread pool that some work has begun.
+   * This ensures that the thread pool's join() function will not return while
+   * the work is underway.
+   */
+  void on_work_started() const ASIO_NOEXCEPT;
 
-inline void thread_pool::executor_type::on_work_finished()
-const ASIO_NOEXCEPT
-{
-  pool_.scheduler_.work_finished();
-}
+  /// Inform the thread pool that some work is no longer outstanding.
+  /**
+   * This function is used to inform the thread pool that some work has
+   * finished. Once the count of unfinished work reaches zero, the thread
+   * pool's join() function is permitted to exit.
+   */
+  void on_work_finished() const ASIO_NOEXCEPT;
 
-template <typename Function, typename Allocator>
-void thread_pool::executor_type::dispatch(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
-{
-  typedef typename decay<Function>::type function_type;
+  /// Request the thread pool to invoke the given function object.
+  /**
+   * This function is used to ask the thread pool to execute the given function
+   * object. If the current thread belongs to the pool, @c dispatch() executes
+   * the function before returning. Otherwise, the function will be scheduled
+   * to run on the thread pool.
+   *
+   * @param f The function object to be called. The executor will make
+   * a copy of the handler object as required. The function signature of the
+   * function object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
+   */
+  template <typename Function, typename Allocator>
+  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
 
-  // Invoke immediately if we are already inside the thread pool.
-  if (pool_.scheduler_.can_dispatch())
+  /// Request the thread pool to invoke the given function object.
+  /**
+   * This function is used to ask the thread pool to execute the given function
+   * object. The function object will never be executed inside @c post().
+   * Instead, it will be scheduled to run on the thread pool.
+   *
+   * @param f The function object to be called. The executor will make
+   * a copy of the handler object as required. The function signature of the
+   * function object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
+   */
+  template <typename Function, typename Allocator>
+  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+
+  /// Request the thread pool to invoke the given function object.
+  /**
+   * This function is used to ask the thread pool to execute the given function
+   * object. The function object will never be executed inside @c defer().
+   * Instead, it will be scheduled to run on the thread pool.
+   *
+   * If the current thread belongs to the thread pool, @c defer() will delay
+   * scheduling the function object until the current thread returns control to
+   * the pool.
+   *
+   * @param f The function object to be called. The executor will make
+   * a copy of the handler object as required. The function signature of the
+   * function object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
+   */
+  template <typename Function, typename Allocator>
+  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+
+  /// Determine whether the thread pool is running in the current thread.
+  /**
+   * @return @c true if the current thread belongs to the pool. Otherwise
+   * returns @c false.
+   */
+  bool running_in_this_thread() const ASIO_NOEXCEPT;
+
+  /// Compare two executors for equality.
+  /**
+   * Two executors are equal if they refer to the same underlying thread pool.
+   */
+  friend bool operator==(const executor_type& a,
+      const executor_type& b) ASIO_NOEXCEPT
   {
-    // Make a local, non-const copy of the function.
-    function_type tmp(ASIO_MOVE_CAST(Function)(f));
-
-    detail::fenced_block b(detail::fenced_block::full);
-    asio_handler_invoke_helpers::invoke(tmp, tmp);
-    return;
+    return &a.pool_ == &b.pool_;
   }
 
-  // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<function_type, Allocator> op;
-  typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
-  p.p = new (p.v) op(ASIO_MOVE_CAST(Function)(f), a);
+  /// Compare two executors for inequality.
+  /**
+   * Two executors are equal if they refer to the same underlying thread pool.
+   */
+  friend bool operator!=(const executor_type& a,
+      const executor_type& b) ASIO_NOEXCEPT
+  {
+    return &a.pool_ != &b.pool_;
+  }
 
-  pool_.scheduler_.post_immediate_completion(p.p, false);
-  p.v = p.p = 0;
-}
+private:
+  friend class thread_pool;
 
-template <typename Function, typename Allocator>
-void thread_pool::executor_type::post(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
-{
-  typedef typename decay<Function>::type function_type;
+  // Constructor.
+  explicit executor_type(thread_pool& p) : pool_(p) {}
 
-  // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<function_type, Allocator> op;
-  typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
-  p.p = new (p.v) op(ASIO_MOVE_CAST(Function)(f), a);
-
-  pool_.scheduler_.post_immediate_completion(p.p, false);
-  p.v = p.p = 0;
-}
-
-template <typename Function, typename Allocator>
-void thread_pool::executor_type::defer(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
-{
-  typedef typename decay<Function>::type function_type;
-
-  // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<function_type, Allocator> op;
-  typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
-  p.p = new (p.v) op(ASIO_MOVE_CAST(Function)(f), a);
-
-  pool_.scheduler_.post_immediate_completion(p.p, true);
-  p.v = p.p = 0;
-}
-
-inline bool
-thread_pool::executor_type::running_in_this_thread() const ASIO_NOEXCEPT
-{
-  return pool_.scheduler_.can_dispatch();
-}
+  // The underlying thread pool.
+  thread_pool& pool_;
+};
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_IMPL_THREAD_POOL_HPP
+#include "asio/detail/thread/impl/thread_pool.hpp"
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/thread/impl/thread_pool.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
+
+#endif // ASIO_THREAD_POOL_HPP

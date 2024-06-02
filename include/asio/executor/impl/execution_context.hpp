@@ -1,9 +1,9 @@
 #ifndef ASIO_IMPL_EXECUTION_CONTEXT_HPP
 #define ASIO_IMPL_EXECUTION_CONTEXT_HPP
 
-// #include "asio/detail/handler_type_requirements.hpp"
+// #include "asio/detail/base/handler/handler_type_requirements.hpp"
 #include "asio/detail/base/scoped_ptr.hpp"
-#include "asio/detail/service_registry.hpp"
+#include "asio/core/service_registry.hpp"
 
 #include "asio/detail/push_options.hpp"
 

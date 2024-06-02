@@ -1,6 +1,6 @@
 #include <asio/dispatch.hpp>
 #include <asio/execution_context.hpp>
-#include <asio/thread_pool.hpp>
+#include <asio/detail/thread/thread_pool.hpp>
 #include <condition_variable>
 #include <memory>
 #include <mutex>

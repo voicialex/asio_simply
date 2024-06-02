@@ -6,8 +6,8 @@
 #if defined(ASIO_HAS_PTHREADS)
 
 #include "asio/detail/base/posix/posix_mutex.hpp"
-#include "asio/detail/error/throw_error.hpp"
-#include "asio/error.hpp"
+#include "asio/error/throw_error.hpp"
+#include "asio/error/error.hpp"
 
 #include "asio/detail/push_options.hpp"
 

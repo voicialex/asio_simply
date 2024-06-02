@@ -1,5 +1,5 @@
 #include <asio/post.hpp>
-#include <asio/thread_pool.hpp>
+#include <asio/detail/thread/thread_pool.hpp>
 #include <asio/use_future.hpp>
 #include <iostream>
 

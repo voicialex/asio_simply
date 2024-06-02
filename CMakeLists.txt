@@ -8,6 +8,8 @@ add_definitions(-DASIO_STANDALONE)
 add_definitions(-DASIO_HAS_PTHREADS)
 add_definitions(-DASIO_NO_DEPRECATED)
 # ASIO_HAS_CHRONO  启用std::chrono支
+# ASIO_HAS_VARIADIC_TEMPLATES 宏是用来指示编译器是否支持可变模板参数的宏定义
+# ASIO_HAS_CXX11_ALLOCATORS
 
 include_directories(./include)
 

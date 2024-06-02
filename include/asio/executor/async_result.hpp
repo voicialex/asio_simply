@@ -3,7 +3,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"
-#include "asio/handler_type.hpp"
+#include "asio/executor/handler_type.hpp"
 
 #include "asio/detail/push_options.hpp"
 

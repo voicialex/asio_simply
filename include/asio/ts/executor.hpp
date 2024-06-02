@@ -11,7 +11,7 @@
 #ifndef ASIO_TS_EXECUTOR_HPP
 #define ASIO_TS_EXECUTOR_HPP
 
-#include "asio/handler_type.hpp"
+#include "asio/executor/handler_type.hpp"
 #include "asio/executor/async_result.hpp"
 #include "asio/detail/memory/associated_allocator.hpp"
 #include "asio/executor/execution_context.hpp"
@@ -20,7 +20,7 @@
 #include "asio/executor/bind_executor.hpp"
 #include "asio/executor/executor_work_guard.hpp"
 #include "asio/executor/system_executor.hpp"
-#include "asio/executor.hpp"
+#include "asio/executor/executor.hpp"
 #include "asio/executor/submit/dispatch.hpp"
 #include "asio/executor/submit/post.hpp"
 #include "asio/executor/submit/defer.hpp"

@@ -3,7 +3,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/executor/execution_context.hpp"
-#include "asio/detail/service_registry.hpp"
+#include "asio/core/service_registry.hpp"
 
 #include "asio/detail/push_options.hpp"
 

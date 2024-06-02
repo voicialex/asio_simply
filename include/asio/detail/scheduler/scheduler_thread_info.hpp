@@ -2,7 +2,7 @@
 #define ASIO_DETAIL_SCHEDULER_THREAD_INFO_HPP
 
 #include "asio/detail/container/op_queue.hpp"
-#include "asio/detail/memory/thread_info_base.hpp"
+#include "asio/detail/thread/thread_info_base.hpp"
 
 #include "asio/detail/push_options.hpp"
 

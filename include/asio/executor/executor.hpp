@@ -1,318 +1,307 @@
-#ifndef ASIO_IMPL_EXECUTOR_HPP
-#define ASIO_IMPL_EXECUTOR_HPP
+#ifndef ASIO_EXECUTOR_HPP
+#define ASIO_EXECUTOR_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/base/stdcpp/atomic_count.hpp"
-#include "asio/executor/executor_function.hpp"
-#include "asio/detail/base/global.hpp"
+#include <typeinfo>
+#include "asio/detail/base/stdcpp/cstddef.hpp"
 #include "asio/detail/memory/memory.hpp"
-#include "asio/detail/memory/recycling_allocator.hpp"
-#include "asio/executor.hpp"
-#include "asio/executor/system_executor.hpp"
+#include "asio/error/throw_exception.hpp"
+#include "asio/executor/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
-// Lightweight, move-only function object wrapper.
-class executor::function
+/// Exception thrown when trying to access an empty polymorphic executor.
+class bad_executor
+  : public std::exception
 {
 public:
-  template <typename F, typename Alloc>
-  explicit function(F f, const Alloc& a)
-  {
-    // Allocate and construct an operation to wrap the function.
-    typedef detail::executor_function<F, Alloc> func_type;
-    typename func_type::ptr p = {
-      detail::addressof(a), func_type::ptr::allocate(a), 0 };
-    func_ = new (p.v) func_type(ASIO_MOVE_CAST(F)(f), a);
-    p.v = 0;
-  }
+  /// Constructor.
+  ASIO_DECL bad_executor() ASIO_NOEXCEPT;
 
-  function(function&& other) ASIO_NOEXCEPT
-    : func_(other.func_)
-  {
-    other.func_ = 0;
-  }
-
-  ~function()
-  {
-    if (func_)
-      func_->destroy();
-  }
-
-  void operator()()
-  {
-    if (func_)
-    {
-      detail::executor_function_base* func = func_;
-      func_ = 0;
-      func->complete();
-    }
-  }
-
-private:
-  detail::executor_function_base* func_;
+  /// Obtain message associated with exception.
+  ASIO_DECL virtual const char* what() const
+    ASIO_NOEXCEPT_OR_NOTHROW;
 };
 
-// Default polymorphic allocator implementation.
-template <typename Executor, typename Allocator>
-class executor::impl
-  : public executor::impl_base
+/// Polymorphic wrapper for executors.
+class executor
 {
 public:
-  typedef ASIO_REBIND_ALLOC(Allocator, impl) allocator_type;
-
-  static impl_base* create(const Executor& e, Allocator a = Allocator())
-  {
-    raw_mem mem(a);
-    impl* p = new (mem.ptr_) impl(e, a);
-    mem.ptr_ = 0;
-    return p;
-  }
-
-  impl(const Executor& e, const Allocator& a) ASIO_NOEXCEPT
-    : impl_base(false),
-      ref_count_(1),
-      executor_(e),
-      allocator_(a)
+  /// Default constructor.
+  executor() ASIO_NOEXCEPT
+    : impl_(0)
   {
   }
 
-  impl_base* clone() const ASIO_NOEXCEPT
+  /// Construct from nullptr.
+  executor(nullptr_t) ASIO_NOEXCEPT
+    : impl_(0)
   {
-    ++ref_count_;
-    return const_cast<impl_base*>(static_cast<const impl_base*>(this));
   }
 
-  void destroy() ASIO_NOEXCEPT
+  /// Copy constructor.
+  executor(const executor& other) ASIO_NOEXCEPT
+    : impl_(other.clone())
   {
-    if (--ref_count_ == 0)
-    {
-      allocator_type alloc(allocator_);
-      impl* p = this;
-      p->~impl();
-      alloc.deallocate(p, 1);
-    }
   }
 
-  void on_work_started() ASIO_NOEXCEPT
+  /// Move constructor.
+  executor(executor&& other) ASIO_NOEXCEPT
+    : impl_(other.impl_)
   {
-    executor_.on_work_started();
+    other.impl_ = 0;
   }
 
-  void on_work_finished() ASIO_NOEXCEPT
+  /// Construct a polymorphic wrapper for the specified executor.
+  template <typename Executor>
+  executor(Executor e);
+
+  /// Allocator-aware constructor to create a polymorphic wrapper for the
+  /// specified executor.
+  template <typename Executor, typename Allocator>
+  executor(allocator_arg_t, const Allocator& a, Executor e);
+
+  /// Destructor.
+  ~executor()
   {
-    executor_.on_work_finished();
+    destroy();
   }
 
-  execution_context& context() ASIO_NOEXCEPT
+  /// Assignment operator.
+  executor& operator=(const executor& other) ASIO_NOEXCEPT
   {
-    return executor_.context();
+    destroy();
+    impl_ = other.clone();
+    return *this;
   }
 
-  void dispatch(ASIO_MOVE_ARG(function) f)
+  // Move assignment operator.
+  executor& operator=(executor&& other) ASIO_NOEXCEPT
   {
-    executor_.dispatch(ASIO_MOVE_CAST(function)(f), allocator_);
+    destroy();
+    impl_ = other.impl_;
+    other.impl_ = 0;
+    return *this;
   }
 
-  void post(ASIO_MOVE_ARG(function) f)
+  /// Assignment operator for nullptr_t.
+  executor& operator=(nullptr_t) ASIO_NOEXCEPT
   {
-    executor_.post(ASIO_MOVE_CAST(function)(f), allocator_);
+    destroy();
+    impl_ = 0;
+    return *this;
   }
 
-  void defer(ASIO_MOVE_ARG(function) f)
+  /// Assignment operator to create a polymorphic wrapper for the specified
+  /// executor.
+  template <typename Executor>
+  executor& operator=(ASIO_MOVE_ARG(Executor) e) ASIO_NOEXCEPT
   {
-    executor_.defer(ASIO_MOVE_CAST(function)(f), allocator_);
+    executor tmp(ASIO_MOVE_CAST(Executor)(e));
+    destroy();
+    impl_ = tmp.impl_;
+    tmp.impl_ = 0;
+    return *this;
   }
 
-  type_id_result_type target_type() const ASIO_NOEXCEPT
+  /// Obtain the underlying execution context.
+  execution_context& context() const ASIO_NOEXCEPT
   {
-    return type_id<Executor>();
+    return get_impl()->context();
   }
 
-  void* target() ASIO_NOEXCEPT
+  /// Inform the executor that it has some outstanding work to do.
+  void on_work_started() const ASIO_NOEXCEPT
   {
-    return &executor_;
+    get_impl()->on_work_started();
   }
 
-  const void* target() const ASIO_NOEXCEPT
+  /// Inform the executor that some work is no longer outstanding.
+  void on_work_finished() const ASIO_NOEXCEPT
   {
-    return &executor_;
+    get_impl()->on_work_finished();
   }
 
-  bool equals(const impl_base* e) const ASIO_NOEXCEPT
+  /// Request the executor to invoke the given function object.
+  /**
+   * This function is used to ask the executor to execute the given function
+   * object. The function object is executed according to the rules of the
+   * target executor object.
+   *
+   * @param f The function object to be called. The executor will make a copy
+   * of the handler object as required. The function signature of the function
+   * object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
+   */
+  template <typename Function, typename Allocator>
+  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+
+  /// Request the executor to invoke the given function object.
+  /**
+   * This function is used to ask the executor to execute the given function
+   * object. The function object is executed according to the rules of the
+   * target executor object.
+   *
+   * @param f The function object to be called. The executor will make
+   * a copy of the handler object as required. The function signature of the
+   * function object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
+   */
+  template <typename Function, typename Allocator>
+  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+
+  /// Request the executor to invoke the given function object.
+  /**
+   * This function is used to ask the executor to execute the given function
+   * object. The function object is executed according to the rules of the
+   * target executor object.
+   *
+   * @param f The function object to be called. The executor will make
+   * a copy of the handler object as required. The function signature of the
+   * function object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
+   */
+  template <typename Function, typename Allocator>
+  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+
+  struct unspecified_bool_type_t {};
+  typedef void (*unspecified_bool_type)(unspecified_bool_type_t);
+  static void unspecified_bool_true(unspecified_bool_type_t) {}
+
+  /// Operator to test if the executor contains a valid target.
+  operator unspecified_bool_type() const ASIO_NOEXCEPT
   {
-    if (this == e)
+    return impl_ ? &executor::unspecified_bool_true : 0;
+  }
+
+  /// Obtain type information for the target executor object.
+  /**
+   * @returns If @c *this has a target type of type @c T, <tt>typeid(T)</tt>;
+   * otherwise, <tt>typeid(void)</tt>.
+   */
+  const std::type_info& target_type() const ASIO_NOEXCEPT
+  {
+    return impl_ ? impl_->target_type() : typeid(void);
+  }
+
+  /// Obtain a pointer to the target executor object.
+  /**
+   * @returns If <tt>target_type() == typeid(T)</tt>, a pointer to the stored
+   * executor target; otherwise, a null pointer.
+   */
+  template <typename Executor>
+  Executor* target() ASIO_NOEXCEPT;
+
+  /// Obtain a pointer to the target executor object.
+  /**
+   * @returns If <tt>target_type() == typeid(T)</tt>, a pointer to the stored
+   * executor target; otherwise, a null pointer.
+   */
+  template <typename Executor>
+  const Executor* target() const ASIO_NOEXCEPT;
+
+  /// Compare two executors for equality.
+  friend bool operator==(const executor& a,
+      const executor& b) ASIO_NOEXCEPT
+  {
+    if (a.impl_ == b.impl_)
       return true;
-    if (target_type() != e->target_type())
+    if (!a.impl_ || !b.impl_)
       return false;
-    return executor_ == *static_cast<const Executor*>(e->target());
+    return a.impl_->equals(b.impl_);
+  }
+
+  /// Compare two executors for inequality.
+  friend bool operator!=(const executor& a,
+      const executor& b) ASIO_NOEXCEPT
+  {
+    return !(a == b);
   }
 
 private:
-  mutable detail::atomic_count ref_count_;
-  Executor executor_;
-  Allocator allocator_;
+#if !defined(GENERATING_DOCUMENTATION)
+  class function;
+  template <typename, typename> class impl;
 
-  struct raw_mem
+  typedef const std::type_info& type_id_result_type;
+
+  template <typename T>
+  static type_id_result_type type_id()
   {
-    allocator_type allocator_;
-    impl* ptr_;
+    return typeid(T);
+  }
 
-    explicit raw_mem(const Allocator& a)
-      : allocator_(a),
-        ptr_(allocator_.allocate(1))
-    {
-    }
+  // Base class for all polymorphic executor implementations.
+  class impl_base
+  {
+  public:
+    virtual impl_base* clone() const ASIO_NOEXCEPT = 0;
+    virtual void destroy() ASIO_NOEXCEPT = 0;
+    virtual execution_context& context() ASIO_NOEXCEPT = 0;
+    virtual void on_work_started() ASIO_NOEXCEPT = 0;
+    virtual void on_work_finished() ASIO_NOEXCEPT = 0;
+    virtual void dispatch(ASIO_MOVE_ARG(function)) = 0;
+    virtual void post(ASIO_MOVE_ARG(function)) = 0;
+    virtual void defer(ASIO_MOVE_ARG(function)) = 0;
+    virtual type_id_result_type target_type() const ASIO_NOEXCEPT = 0;
+    virtual void* target() ASIO_NOEXCEPT = 0;
+    virtual const void* target() const ASIO_NOEXCEPT = 0;
+    virtual bool equals(const impl_base* e) const ASIO_NOEXCEPT = 0;
 
-    ~raw_mem()
-    {
-      if (ptr_)
-        allocator_.deallocate(ptr_, 1);
-    }
+  protected:
+    impl_base(bool fast_dispatch) : fast_dispatch_(fast_dispatch) {}
+    virtual ~impl_base() {}
 
   private:
-    // Disallow copying and assignment.
-    raw_mem(const raw_mem&);
-    raw_mem operator=(const raw_mem&);
+    friend class executor;
+    const bool fast_dispatch_;
   };
-};
 
-// Polymorphic allocator specialisation for system_executor.
-template <typename Allocator>
-class executor::impl<system_executor, Allocator>
-  : public executor::impl_base
-{
-public:
-  static impl_base* create(const system_executor&,
-      const Allocator& = Allocator())
+  // Helper function to check and return the implementation pointer.
+  impl_base* get_impl() const
   {
-    return &detail::global<impl<system_executor, std::allocator<void> > >();
+    if (!impl_)
+    {
+      bad_executor ex;
+      asio::detail::throw_exception(ex);
+    }
+    return impl_;
   }
 
-  impl()
-    : impl_base(true)
-  {
-  }
-
+  // Helper function to clone another implementation.
   impl_base* clone() const ASIO_NOEXCEPT
   {
-    return const_cast<impl_base*>(static_cast<const impl_base*>(this));
+    return impl_ ? impl_->clone() : 0;
   }
 
+  // Helper function to destroy an implementation.
   void destroy() ASIO_NOEXCEPT
   {
+    if (impl_)
+      impl_->destroy();
   }
 
-  void on_work_started() ASIO_NOEXCEPT
-  {
-    executor_.on_work_started();
-  }
-
-  void on_work_finished() ASIO_NOEXCEPT
-  {
-    executor_.on_work_finished();
-  }
-
-  execution_context& context() ASIO_NOEXCEPT
-  {
-    return executor_.context();
-  }
-
-  void dispatch(ASIO_MOVE_ARG(function) f)
-  {
-    executor_.dispatch(ASIO_MOVE_CAST(function)(f), allocator_);
-  }
-
-  void post(ASIO_MOVE_ARG(function) f)
-  {
-    executor_.post(ASIO_MOVE_CAST(function)(f), allocator_);
-  }
-
-  void defer(ASIO_MOVE_ARG(function) f)
-  {
-    executor_.defer(ASIO_MOVE_CAST(function)(f), allocator_);
-  }
-
-  type_id_result_type target_type() const ASIO_NOEXCEPT
-  {
-    return type_id<system_executor>();
-  }
-
-  void* target() ASIO_NOEXCEPT
-  {
-    return &executor_;
-  }
-
-  const void* target() const ASIO_NOEXCEPT
-  {
-    return &executor_;
-  }
-
-  bool equals(const impl_base* e) const ASIO_NOEXCEPT
-  {
-    return this == e;
-  }
-
-private:
-  system_executor executor_;
-  Allocator allocator_;
+  impl_base* impl_;
+#endif // !defined(GENERATING_DOCUMENTATION)
 };
-
-template <typename Executor>
-executor::executor(Executor e)
-  : impl_(impl<Executor, std::allocator<void> >::create(e))
-{
-}
-
-template <typename Executor, typename Allocator>
-executor::executor(allocator_arg_t, const Allocator& a, Executor e)
-  : impl_(impl<Executor, Allocator>::create(e, a))
-{
-}
-
-template <typename Function, typename Allocator>
-void executor::dispatch(ASIO_MOVE_ARG(Function) f,
-    const Allocator& a) const
-{
-  impl_base* i = get_impl();
-  if (i->fast_dispatch_)
-    system_executor().dispatch(ASIO_MOVE_CAST(Function)(f), a);
-  else
-    i->dispatch(function(ASIO_MOVE_CAST(Function)(f), a));
-}
-
-template <typename Function, typename Allocator>
-void executor::post(ASIO_MOVE_ARG(Function) f,
-    const Allocator& a) const
-{
-  get_impl()->post(function(ASIO_MOVE_CAST(Function)(f), a));
-}
-
-template <typename Function, typename Allocator>
-void executor::defer(ASIO_MOVE_ARG(Function) f,
-    const Allocator& a) const
-{
-  get_impl()->defer(function(ASIO_MOVE_CAST(Function)(f), a));
-}
-
-template <typename Executor>
-Executor* executor::target() ASIO_NOEXCEPT
-{
-  return impl_ && impl_->target_type() == type_id<Executor>()
-    ? static_cast<Executor*>(impl_->target()) : 0;
-}
-
-template <typename Executor>
-const Executor* executor::target() const ASIO_NOEXCEPT
-{
-  return impl_ && impl_->target_type() == type_id<Executor>()
-    ? static_cast<Executor*>(impl_->target()) : 0;
-}
 
 } // namespace asio
 
+ASIO_USES_ALLOCATOR(asio::executor)
+
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_IMPL_EXECUTOR_HPP
+#include "asio/executor/impl/executor.hpp"
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/executor/impl/executor.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
+
+#endif // ASIO_EXECUTOR_HPP

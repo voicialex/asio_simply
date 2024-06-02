@@ -2,7 +2,7 @@
 #define ASIO_BASIC_IO_OBJECT_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/io_context.hpp"
+#include "asio/core/io_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 

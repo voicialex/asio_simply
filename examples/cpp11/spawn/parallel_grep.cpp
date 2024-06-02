@@ -12,7 +12,7 @@
 #include <asio/post.hpp>
 #include <asio/spawn.hpp>
 #include <asio/strand.hpp>
-#include <asio/thread_pool.hpp>
+#include <asio/detail/thread/thread_pool.hpp>
 #include <fstream>
 #include <iostream>
 #include <string>

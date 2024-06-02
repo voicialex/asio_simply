@@ -1,8 +1,8 @@
 #ifndef ASIO_DETAIL_SCHEDULER_OPERATION_HPP
 #define ASIO_DETAIL_SCHEDULER_OPERATION_HPP
 
-#include "asio/detail/error/error_code.hpp"
-#include "asio/detail/handler_tracking.hpp"
+#include "asio/error/error_code.hpp"
+#include "asio/detail/tracking/handler_tracking.hpp"
 #include "asio/detail/container/op_queue.hpp"
 
 #include "asio/detail/push_options.hpp"
