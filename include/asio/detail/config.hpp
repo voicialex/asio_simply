@@ -1390,6 +1390,7 @@
 # define ASIO_SVC_ACCESS protected
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
+#define ASIO_NO_DEPRECATED
 // Helper macros to manage transition away from error_code return values.
 #if defined(ASIO_NO_DEPRECATED)
 # define ASIO_SYNC_OP_VOID void

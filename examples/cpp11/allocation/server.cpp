@@ -222,6 +222,7 @@ private:
         {
           if (!ec)
           {
+            std::cout << "new session \n";
             std::make_shared<session>(std::move(socket))->start();
           }
 
@@ -242,6 +243,7 @@ int main(int argc, char* argv[])
       return 1;
     }
 
+    std::cout << "running\n";
     asio::io_context io_context;
     server s(io_context, std::atoi(argv[1]));
     io_context.run();

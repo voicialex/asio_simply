@@ -29,18 +29,8 @@
 # include <utility>
 #endif // defined(ASIO_HAS_MOVE)
 
-#if !defined(ASIO_ENABLE_OLD_SERVICES)
-# if defined(ASIO_WINDOWS_RUNTIME)
-#  include "asio/detail/winrt_ssocket_service.hpp"
-#  define ASIO_SVC_T detail::winrt_ssocket_service<Protocol>
-# elif defined(ASIO_HAS_IOCP)
-#  include "asio/detail/win_iocp_socket_service.hpp"
-#  define ASIO_SVC_T detail::win_iocp_socket_service<Protocol>
-# else
 #  include "asio/network/reactive_socket_service.hpp"
 #  define ASIO_SVC_T detail::reactive_socket_service<Protocol>
-# endif
-#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #include "asio/detail/push_options.hpp"
 
@@ -880,10 +870,6 @@ public:
       }
     }
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_connect(this->get_implementation(),
-        peer_endpoint, ASIO_MOVE_CAST(ConnectHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<ConnectHandler,
       void (asio::error_code)> init(handler);
 
@@ -891,7 +877,6 @@ public:
         this->get_implementation(), peer_endpoint, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Set an option on the socket.
@@ -1716,10 +1701,6 @@ public:
     // not meet the documented type requirements for a WaitHandler.
     ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_wait(this->get_implementation(),
-        w, ASIO_MOVE_CAST(WaitHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<WaitHandler,
       void (asio::error_code)> init(handler);
 
@@ -1727,7 +1708,6 @@ public:
         w, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
 protected:
@@ -1750,8 +1730,6 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#if !defined(ASIO_ENABLE_OLD_SERVICES)
 # undef ASIO_SVC_T
-#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_BASIC_SOCKET_HPP

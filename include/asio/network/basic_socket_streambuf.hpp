@@ -28,22 +28,7 @@
 #include "asio/error/throw_error.hpp"
 #include "asio/core/io_context.hpp"
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-# include "asio/stream_socket_service.hpp"
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
-
-#if defined(ASIO_HAS_BOOST_DATE_TIME) \
-  && defined(ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
-# if defined(ASIO_ENABLE_OLD_SERVICES)
-#  include "asio/deadline_timer_service.hpp"
-# else // defined(ASIO_ENABLE_OLD_SERVICES)
-#  include "asio/core/detail/deadline_timer_service.hpp"
-# endif // defined(ASIO_ENABLE_OLD_SERVICES)
-#else // defined(ASIO_HAS_BOOST_DATE_TIME)
-      // && defined(ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
 # include "asio/steady_timer.hpp"
-#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
-       // && defined(ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
 
 #if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 

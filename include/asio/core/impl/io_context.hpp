@@ -100,88 +100,6 @@ std::size_t io_context::run_one_until(
   return 0;
 }
 
-#if !defined(ASIO_NO_DEPRECATED)
-
-inline void io_context::reset()
-{
-  restart();
-}
-
-template <typename LegacyCompletionHandler>
-ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
-io_context::dispatch(ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
-{
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a LegacyCompletionHandler.
-  ASIO_LEGACY_COMPLETION_HANDLER_CHECK(
-      LegacyCompletionHandler, handler) type_check;
-
-  async_completion<LegacyCompletionHandler, void ()> init(handler);
-
-  if (impl_.can_dispatch())
-  {
-    detail::fenced_block b(detail::fenced_block::full);
-    asio_handler_invoke_helpers::invoke(
-        init.completion_handler, init.completion_handler);
-  }
-  else
-  {
-    // Allocate and construct an operation to wrap the handler.
-    typedef detail::completion_handler<
-      typename handler_type<LegacyCompletionHandler, void ()>::type> op;
-    typename op::ptr p = { detail::addressof(init.completion_handler),
-      op::ptr::allocate(init.completion_handler), 0 };
-    p.p = new (p.v) op(init.completion_handler);
-
-    ASIO_HANDLER_CREATION((*this, *p.p,
-          "io_context", this, 0, "dispatch"));
-
-    impl_.do_dispatch(p.p);
-    p.v = p.p = 0;
-  }
-
-  return init.result.get();
-}
-
-template <typename LegacyCompletionHandler>
-ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
-io_context::post(ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
-{
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a LegacyCompletionHandler.
-  ASIO_LEGACY_COMPLETION_HANDLER_CHECK(
-      LegacyCompletionHandler, handler) type_check;
-
-  async_completion<LegacyCompletionHandler, void ()> init(handler);
-
-  bool is_continuation =
-    asio_handler_cont_helpers::is_continuation(init.completion_handler);
-
-  // Allocate and construct an operation to wrap the handler.
-  typedef detail::completion_handler<
-    typename handler_type<LegacyCompletionHandler, void ()>::type> op;
-  typename op::ptr p = { detail::addressof(init.completion_handler),
-      op::ptr::allocate(init.completion_handler), 0 };
-  p.p = new (p.v) op(init.completion_handler);
-
-  ASIO_HANDLER_CREATION((*this, *p.p,
-        "io_context", this, 0, "post"));
-
-  impl_.post_immediate_completion(p.p, is_continuation);
-  p.v = p.p = 0;
-
-  return init.result.get();
-}
-
-template <typename Handler>
-inline detail::wrapped_handler<io_context&, Handler>
-io_context::wrap(Handler handler)
-{
-  return detail::wrapped_handler<io_context&, Handler>(*this, handler);
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
 inline io_context&
 io_context::executor_type::context() const ASIO_NOEXCEPT
 {
@@ -271,46 +189,10 @@ io_context::executor_type::running_in_this_thread() const ASIO_NOEXCEPT
   return io_context_.impl_.can_dispatch();
 }
 
-#if !defined(ASIO_NO_DEPRECATED)
-inline io_context::work::work(asio::io_context& io_context)
-  : io_context_impl_(io_context.impl_)
-{
-  io_context_impl_.work_started();
-}
-
-inline io_context::work::work(const work& other)
-  : io_context_impl_(other.io_context_impl_)
-{
-  io_context_impl_.work_started();
-}
-
-inline io_context::work::~work()
-{
-  io_context_impl_.work_finished();
-}
-
-inline asio::io_context& io_context::work::get_io_context()
-{
-  return static_cast<asio::io_context&>(io_context_impl_.context());
-}
-
-inline asio::io_context& io_context::work::get_io_service()
-{
-  return static_cast<asio::io_context&>(io_context_impl_.context());
-}
-#endif // !defined(ASIO_NO_DEPRECATED)
-
 inline asio::io_context& io_context::service::get_io_context()
 {
   return static_cast<asio::io_context&>(context());
 }
-
-#if !defined(ASIO_NO_DEPRECATED)
-inline asio::io_context& io_context::service::get_io_service()
-{
-  return static_cast<asio::io_context&>(context());
-}
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 } // namespace asio
 

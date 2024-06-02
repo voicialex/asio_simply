@@ -23,10 +23,6 @@
 #include <ostream>
 #include "asio/network/basic_socket_streambuf.hpp"
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-# include "asio/stream_socket_service.hpp"
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
-
 #if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 # include "asio/detail/variadic_templates.hpp"

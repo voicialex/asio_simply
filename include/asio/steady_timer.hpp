@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_CHRONO) || defined(GENERATING_DOCUMENTATION)
+#if defined(ASIO_HAS_CHRONO)
 
 #include "asio/basic_waitable_timer.hpp"
 #include "asio/detail/base/stdcpp/chrono.hpp"

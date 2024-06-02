@@ -28,20 +28,8 @@
 # include <utility>
 #endif // defined(ASIO_HAS_MOVE)
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-# include "asio/socket_acceptor_service.hpp"
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
-# if defined(ASIO_WINDOWS_RUNTIME)
-#  include "asio/detail/null_socket_service.hpp"
-#  define ASIO_SVC_T detail::null_socket_service<Protocol>
-# elif defined(ASIO_HAS_IOCP)
-#  include "asio/detail/win_iocp_socket_service.hpp"
-#  define ASIO_SVC_T detail::win_iocp_socket_service<Protocol>
-# else
 #  include "asio/network/reactive_socket_service.hpp"
 #  define ASIO_SVC_T detail::reactive_socket_service<Protocol>
-# endif
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #include "asio/detail/push_options.hpp"
 
@@ -1112,10 +1100,6 @@ public:
     // not meet the documented type requirements for a WaitHandler.
     ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_wait(this->get_implementation(),
-        w, ASIO_MOVE_CAST(WaitHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<WaitHandler,
       void (asio::error_code)> init(handler);
 
@@ -1123,7 +1107,6 @@ public:
         w, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
 #if !defined(ASIO_NO_EXTENSIONS)
@@ -1145,15 +1128,9 @@ public:
    * acceptor.accept(socket);
    * @endcode
    */
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-  template <typename Protocol1, typename SocketService>
-  void accept(basic_socket<Protocol1, SocketService>& peer,
-      typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
   template <typename Protocol1>
   void accept(basic_socket<Protocol1>& peer,
       typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   {
     asio::error_code ec;
     this->get_service().accept(this->get_implementation(),
@@ -1184,18 +1161,10 @@ public:
    * }
    * @endcode
    */
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-  template <typename Protocol1, typename SocketService>
-  ASIO_SYNC_OP_VOID accept(
-      basic_socket<Protocol1, SocketService>& peer,
-      asio::error_code& ec,
-      typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
   template <typename Protocol1>
   ASIO_SYNC_OP_VOID accept(
       basic_socket<Protocol1>& peer, asio::error_code& ec,
       typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   {
     this->get_service().accept(this->get_implementation(),
         peer, static_cast<endpoint_type*>(0), ec);
@@ -1240,31 +1209,17 @@ public:
    * acceptor.async_accept(socket, accept_handler);
    * @endcode
    */
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-  template <typename Protocol1, typename SocketService, typename AcceptHandler>
-  ASIO_INITFN_RESULT_TYPE(AcceptHandler,
-      void (asio::error_code))
-  async_accept(basic_socket<Protocol1, SocketService>& peer,
-      ASIO_MOVE_ARG(AcceptHandler) handler,
-      typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
   template <typename Protocol1, typename AcceptHandler>
   ASIO_INITFN_RESULT_TYPE(AcceptHandler,
       void (asio::error_code))
   async_accept(basic_socket<Protocol1>& peer,
       ASIO_MOVE_ARG(AcceptHandler) handler,
       typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a AcceptHandler.
     ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_accept(this->get_implementation(),
-        peer, static_cast<endpoint_type*>(0),
-        ASIO_MOVE_CAST(AcceptHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<AcceptHandler,
       void (asio::error_code)> init(handler);
 
@@ -1272,7 +1227,6 @@ public:
         peer, static_cast<endpoint_type*>(0), init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Accept a new connection and obtain the endpoint of the peer
@@ -1298,13 +1252,7 @@ public:
    * acceptor.accept(socket, endpoint);
    * @endcode
    */
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-  template <typename SocketService>
-  void accept(basic_socket<protocol_type, SocketService>& peer,
-      endpoint_type& peer_endpoint)
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
   void accept(basic_socket<protocol_type>& peer, endpoint_type& peer_endpoint)
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   {
     asio::error_code ec;
     this->get_service().accept(this->get_implementation(),
@@ -1340,15 +1288,8 @@ public:
    * }
    * @endcode
    */
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-  template <typename SocketService>
-  ASIO_SYNC_OP_VOID accept(
-      basic_socket<protocol_type, SocketService>& peer,
-      endpoint_type& peer_endpoint, asio::error_code& ec)
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
   ASIO_SYNC_OP_VOID accept(basic_socket<protocol_type>& peer,
       endpoint_type& peer_endpoint, asio::error_code& ec)
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   {
     this->get_service().accept(
         this->get_implementation(), peer, &peer_endpoint, ec);
@@ -1381,28 +1322,16 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * asio::io_context::post().
    */
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-  template <typename SocketService, typename AcceptHandler>
-  ASIO_INITFN_RESULT_TYPE(AcceptHandler,
-      void (asio::error_code))
-  async_accept(basic_socket<protocol_type, SocketService>& peer,
-      endpoint_type& peer_endpoint, ASIO_MOVE_ARG(AcceptHandler) handler)
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
   template <typename AcceptHandler>
   ASIO_INITFN_RESULT_TYPE(AcceptHandler,
       void (asio::error_code))
   async_accept(basic_socket<protocol_type>& peer,
       endpoint_type& peer_endpoint, ASIO_MOVE_ARG(AcceptHandler) handler)
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a AcceptHandler.
     ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_accept(this->get_implementation(), peer,
-        &peer_endpoint, ASIO_MOVE_CAST(AcceptHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<AcceptHandler,
       void (asio::error_code)> init(handler);
 
@@ -1410,7 +1339,6 @@ public:
         peer, &peer_endpoint, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 #endif // !defined(ASIO_NO_EXTENSIONS)
 
@@ -1523,12 +1451,6 @@ public:
     ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
         handler, typename Protocol::socket) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_accept(
-        this->get_implementation(), static_cast<asio::io_context*>(0),
-        static_cast<endpoint_type*>(0),
-        ASIO_MOVE_CAST(MoveAcceptHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<MoveAcceptHandler,
       void (asio::error_code,
         typename Protocol::socket)> init(handler);
@@ -1538,7 +1460,6 @@ public:
         static_cast<endpoint_type*>(0), init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Accept a new connection.
@@ -1661,11 +1582,6 @@ public:
     ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
         handler, typename Protocol::socket) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_accept(this->get_implementation(),
-        &io_context, static_cast<endpoint_type*>(0),
-        ASIO_MOVE_CAST(MoveAcceptHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<MoveAcceptHandler,
       void (asio::error_code,
         typename Protocol::socket)> init(handler);
@@ -1674,7 +1590,6 @@ public:
         &io_context, static_cast<endpoint_type*>(0), init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Accept a new connection.
@@ -1802,11 +1717,6 @@ public:
     ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
         handler, typename Protocol::socket) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_accept(this->get_implementation(),
-        static_cast<asio::io_context*>(0), &peer_endpoint,
-        ASIO_MOVE_CAST(MoveAcceptHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<MoveAcceptHandler,
       void (asio::error_code,
         typename Protocol::socket)> init(handler);
@@ -1816,7 +1726,6 @@ public:
         init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Accept a new connection.
@@ -1957,11 +1866,6 @@ public:
     ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
         handler, typename Protocol::socket) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_accept(
-        this->get_implementation(), &io_context, &peer_endpoint,
-        ASIO_MOVE_CAST(MoveAcceptHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<MoveAcceptHandler,
       void (asio::error_code,
         typename Protocol::socket)> init(handler);
@@ -1970,7 +1874,6 @@ public:
         &io_context, &peer_endpoint, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 };
@@ -1979,8 +1882,6 @@ public:
 
 #include "asio/detail/pop_options.hpp"
 
-#if !defined(ASIO_ENABLE_OLD_SERVICES)
 # undef ASIO_SVC_T
-#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_BASIC_SOCKET_ACCEPTOR_HPP

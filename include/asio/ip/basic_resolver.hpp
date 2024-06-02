@@ -33,19 +33,9 @@
 # include <utility>
 #endif // defined(ASIO_HAS_MOVE)
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-# include "asio/ip/resolver_service.hpp"
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
-# if defined(ASIO_WINDOWS_RUNTIME)
-#  include "asio/detail/winrt_resolver_service.hpp"
-#  define ASIO_SVC_T \
-    asio::detail::winrt_resolver_service<InternetProtocol>
-# else
 #  include "asio/network/resolver_service.hpp"
 #  define ASIO_SVC_T \
     asio::detail::resolver_service<InternetProtocol>
-# endif
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #include "asio/detail/push_options.hpp"
 
@@ -636,10 +626,6 @@ public:
     ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_resolve(this->get_implementation(), q,
-        ASIO_MOVE_CAST(ResolveHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     asio::async_completion<ResolveHandler,
       void (asio::error_code, results_type)> init(handler);
 
@@ -647,7 +633,6 @@ public:
         this->get_implementation(), q, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
@@ -766,10 +751,6 @@ public:
     basic_resolver_query<protocol_type> q(static_cast<std::string>(host),
         static_cast<std::string>(service), resolve_flags);
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_resolve(this->get_implementation(), q,
-        ASIO_MOVE_CAST(ResolveHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     asio::async_completion<ResolveHandler,
       void (asio::error_code, results_type)> init(handler);
 
@@ -777,7 +758,6 @@ public:
         this->get_implementation(), q, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Asynchronously perform forward resolution of a query to a list of entries.
@@ -902,10 +882,6 @@ public:
         protocol, static_cast<std::string>(host),
         static_cast<std::string>(service), resolve_flags);
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_resolve(this->get_implementation(), q,
-        ASIO_MOVE_CAST(ResolveHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     asio::async_completion<ResolveHandler,
       void (asio::error_code, results_type)> init(handler);
 
@@ -913,7 +889,6 @@ public:
         this->get_implementation(), q, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Perform reverse resolution of an endpoint to a list of entries.
@@ -993,10 +968,6 @@ public:
     ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_resolve(this->get_implementation(), e,
-        ASIO_MOVE_CAST(ResolveHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     asio::async_completion<ResolveHandler,
       void (asio::error_code, results_type)> init(handler);
 
@@ -1004,7 +975,6 @@ public:
         this->get_implementation(), e, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 };
 
@@ -1013,8 +983,6 @@ public:
 
 #include "asio/detail/pop_options.hpp"
 
-#if !defined(ASIO_ENABLE_OLD_SERVICES)
 # undef ASIO_SVC_T
-#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_IP_BASIC_RESOLVER_HPP

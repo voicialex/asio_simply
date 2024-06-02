@@ -47,36 +47,6 @@ public:
   /// The underlying implementation type of I/O object.
   typedef typename service_type::implementation_type implementation_type;
 
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use get_executor().) Get the io_context associated with the
-  /// object.
-  /**
-   * This function may be used to obtain the io_context object that the I/O
-   * object uses to dispatch handlers for asynchronous operations.
-   *
-   * @return A reference to the io_context object that the I/O object will use
-   * to dispatch handlers. Ownership is not transferred to the caller.
-   */
-  asio::io_context& get_io_context()
-  {
-    return service_.get_io_context();
-  }
-
-  /// (Deprecated: Use get_executor().) Get the io_context associated with the
-  /// object.
-  /**
-   * This function may be used to obtain the io_context object that the I/O
-   * object uses to dispatch handlers for asynchronous operations.
-   *
-   * @return A reference to the io_context object that the I/O object will use
-   * to dispatch handlers. Ownership is not transferred to the caller.
-   */
-  asio::io_context& get_io_service()
-  {
-    return service_.get_io_context();
-  }
-#endif // !defined(ASIO_NO_DEPRECATED)
-
   /// The type of the executor associated with the object.
   typedef asio::io_context::executor_type executor_type;
 
@@ -150,18 +120,6 @@ class basic_io_object<IoObjectService, true>
 public:
   typedef IoObjectService service_type;
   typedef typename service_type::implementation_type implementation_type;
-
-#if !defined(ASIO_NO_DEPRECATED)
-  asio::io_context& get_io_context()
-  {
-    return service_->get_io_context();
-  }
-
-  asio::io_context& get_io_service()
-  {
-    return service_->get_io_context();
-  }
-#endif // !defined(ASIO_NO_DEPRECATED)
 
   typedef asio::io_context::executor_type executor_type;
 
