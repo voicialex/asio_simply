@@ -97,9 +97,9 @@ public:
   /// Assignment operator to create a polymorphic wrapper for the specified
   /// executor.
   template <typename Executor>
-  executor& operator=(ASIO_MOVE_ARG(Executor) e) ASIO_NOEXCEPT
+  executor& operator=(Executor&& e) ASIO_NOEXCEPT
   {
-    executor tmp(ASIO_MOVE_CAST(Executor)(e));
+    executor tmp(static_cast<Executor&&>(e));
     destroy();
     impl_ = tmp.impl_;
     tmp.impl_ = 0;
@@ -138,7 +138,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+  void dispatch(Function&& f, const Allocator& a) const;
 
   /// Request the executor to invoke the given function object.
   /**
@@ -154,7 +154,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+  void post(Function&& f, const Allocator& a) const;
 
   /// Request the executor to invoke the given function object.
   /**
@@ -170,7 +170,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+  void defer(Function&& f, const Allocator& a) const;
 
   struct unspecified_bool_type_t {};
   typedef void (*unspecified_bool_type)(unspecified_bool_type_t);
@@ -248,9 +248,9 @@ private:
     virtual execution_context& context() ASIO_NOEXCEPT = 0;
     virtual void on_work_started() ASIO_NOEXCEPT = 0;
     virtual void on_work_finished() ASIO_NOEXCEPT = 0;
-    virtual void dispatch(ASIO_MOVE_ARG(function)) = 0;
-    virtual void post(ASIO_MOVE_ARG(function)) = 0;
-    virtual void defer(ASIO_MOVE_ARG(function)) = 0;
+    virtual void dispatch(function&&) = 0;
+    virtual void post(function&&) = 0;
+    virtual void defer(function&&) = 0;
     virtual type_id_result_type target_type() const ASIO_NOEXCEPT = 0;
     virtual void* target() ASIO_NOEXCEPT = 0;
     virtual const void* target() const ASIO_NOEXCEPT = 0;

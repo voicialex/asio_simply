@@ -19,10 +19,10 @@ inline Service& use_service(execution_context& e)
 }
 
 template <typename Service, typename... Args>
-Service& make_service(execution_context& e, ASIO_MOVE_ARG(Args)... args)
+Service& make_service(execution_context& e, Args&&... args)
 {
   detail::scoped_ptr<Service> svc(
-      new Service(e, ASIO_MOVE_CAST(Args)(args)...));
+      new Service(e, static_cast<Args&&>(args)...));
   e.service_registry_->template add_service<Service>(svc.get());
   Service& result = *svc;
   svc.release();

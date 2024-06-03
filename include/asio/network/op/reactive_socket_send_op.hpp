@@ -85,7 +85,7 @@ public:
       socket_base::message_flags flags, Handler& handler)
     : reactive_socket_send_op_base<ConstBufferSequence>(socket,
         state, buffers, flags, &reactive_socket_send_op::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(static_cast<Handler&&>(handler))
   {
     handler_work<Handler>::start(handler_);
   }

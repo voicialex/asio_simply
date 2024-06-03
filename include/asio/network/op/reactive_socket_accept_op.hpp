@@ -97,7 +97,7 @@ public:
       typename Protocol::endpoint* peer_endpoint, Handler& handler)
     : reactive_socket_accept_op_base<Socket, Protocol>(socket, state, peer,
         protocol, peer_endpoint, &reactive_socket_accept_op::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(static_cast<Handler&&>(handler))
   {
     handler_work<Handler>::start(handler_);
   }
@@ -159,7 +159,7 @@ public:
       reactive_socket_accept_op_base<typename Protocol::socket, Protocol>(
         socket, state, *this, protocol, peer_endpoint,
         &reactive_socket_move_accept_op::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(static_cast<Handler&&>(handler))
   {
     handler_work<Handler>::start(handler_);
   }
@@ -188,8 +188,8 @@ public:
     // deallocated the memory here.
     detail::move_binder2<Handler,
       asio::error_code, typename Protocol::socket>
-        handler(0, ASIO_MOVE_CAST(Handler)(o->handler_), o->ec_,
-          ASIO_MOVE_CAST(typename Protocol::socket)(*o));
+        handler(0, static_cast<Handler&&>(o->handler_), o->ec_,
+          static_cast<typename Protocol::socket&&>(*o));
     p.h = asio::detail::addressof(handler.handler_);
     p.reset();
 

@@ -209,7 +209,7 @@ public:
 
   template <typename Service, typename... Args>
   friend Service& make_service(execution_context& e,
-      ASIO_MOVE_ARG(Args)... args);
+      Args&&... args);
 
   /// (Deprecated: Use make_service().) Add a service object to the
   /// execution_context.

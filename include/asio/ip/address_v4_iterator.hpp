@@ -68,7 +68,7 @@ public:
 #if defined(ASIO_HAS_MOVE)
   /// Move constructor.
   basic_address_iterator(basic_address_iterator&& other) ASIO_NOEXCEPT
-    : address_(ASIO_MOVE_CAST(address_v4)(other.address_))
+    : address_(static_cast<address_v4&&>(other.address_))
   {
   }
 #endif // defined(ASIO_HAS_MOVE)
@@ -86,7 +86,7 @@ public:
   basic_address_iterator& operator=(
       basic_address_iterator&& other) ASIO_NOEXCEPT
   {
-    address_ = ASIO_MOVE_CAST(address_v4)(other.address_);
+    address_ = static_cast<address_v4&&>(other.address_);
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE)

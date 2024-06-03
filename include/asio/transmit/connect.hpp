@@ -675,7 +675,7 @@ ASIO_INITFN_RESULT_TYPE(RangeConnectHandler,
     void (asio::error_code, typename Protocol::endpoint))
 async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     const EndpointSequence& endpoints,
-    ASIO_MOVE_ARG(RangeConnectHandler) handler,
+    RangeConnectHandler&& handler,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
 
@@ -720,7 +720,7 @@ template <typename Protocol ASIO_SVC_TPARAM,
 ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
-    Iterator begin, ASIO_MOVE_ARG(IteratorConnectHandler) handler,
+    Iterator begin, IteratorConnectHandler&& handler,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
@@ -779,7 +779,7 @@ ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, Iterator end,
-    ASIO_MOVE_ARG(IteratorConnectHandler) handler);
+    IteratorConnectHandler&& handler);
 
 /// Asynchronously establishes a socket connection by trying each endpoint in a
 /// sequence.
@@ -882,7 +882,7 @@ ASIO_INITFN_RESULT_TYPE(RangeConnectHandler,
     void (asio::error_code, typename Protocol::endpoint))
 async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
-    ASIO_MOVE_ARG(RangeConnectHandler) handler,
+    RangeConnectHandler&& handler,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
 
@@ -939,7 +939,7 @@ ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s, Iterator begin,
     ConnectCondition connect_condition,
-    ASIO_MOVE_ARG(IteratorConnectHandler) handler,
+    IteratorConnectHandler&& handler,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
@@ -1047,7 +1047,7 @@ ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, Iterator end, ConnectCondition connect_condition,
-    ASIO_MOVE_ARG(IteratorConnectHandler) handler);
+    IteratorConnectHandler&& handler);
 
 /*@}*/
 

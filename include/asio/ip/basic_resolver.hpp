@@ -619,7 +619,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(const query& q,
-      ASIO_MOVE_ARG(ResolveHandler) handler)
+      ResolveHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ResolveHandler.
@@ -683,10 +683,10 @@ public:
       void (asio::error_code, results_type))
   async_resolve(ASIO_STRING_VIEW_PARAM host,
       ASIO_STRING_VIEW_PARAM service,
-      ASIO_MOVE_ARG(ResolveHandler) handler)
+      ResolveHandler&& handler)
   {
     return async_resolve(host, service, resolver_base::flags(),
-        ASIO_MOVE_CAST(ResolveHandler)(handler));
+        static_cast<ResolveHandler&&>(handler));
   }
 
   /// Asynchronously perform forward resolution of a query to a list of entries.
@@ -741,7 +741,7 @@ public:
   async_resolve(ASIO_STRING_VIEW_PARAM host,
       ASIO_STRING_VIEW_PARAM service,
       resolver_base::flags resolve_flags,
-      ASIO_MOVE_ARG(ResolveHandler) handler)
+      ResolveHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ResolveHandler.
@@ -810,10 +810,10 @@ public:
       void (asio::error_code, results_type))
   async_resolve(const protocol_type& protocol,
       ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service,
-      ASIO_MOVE_ARG(ResolveHandler) handler)
+      ResolveHandler&& handler)
   {
     return async_resolve(protocol, host, service, resolver_base::flags(),
-        ASIO_MOVE_CAST(ResolveHandler)(handler));
+        static_cast<ResolveHandler&&>(handler));
   }
 
   /// Asynchronously perform forward resolution of a query to a list of entries.
@@ -871,7 +871,7 @@ public:
   async_resolve(const protocol_type& protocol,
       ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service,
       resolver_base::flags resolve_flags,
-      ASIO_MOVE_ARG(ResolveHandler) handler)
+      ResolveHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ResolveHandler.
@@ -961,7 +961,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(const endpoint_type& e,
-      ASIO_MOVE_ARG(ResolveHandler) handler)
+      ResolveHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ResolveHandler.

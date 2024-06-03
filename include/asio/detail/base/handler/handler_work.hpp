@@ -37,7 +37,7 @@ public:
   template <typename Function>
   void complete(Function& function, Handler& handler)
   {
-    executor_.dispatch(ASIO_MOVE_CAST(Function)(function),
+    executor_.dispatch(static_cast<Function&&>(function),
         associated_allocator<Handler>::get(handler));
   }
 

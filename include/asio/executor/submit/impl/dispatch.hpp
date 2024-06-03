@@ -26,7 +26,7 @@ namespace asio {
 
 template <typename CompletionToken>
 ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
-    ASIO_MOVE_ARG(CompletionToken) token)
+    CompletionToken&& token)
 {
   typedef ASIO_HANDLER_TYPE(CompletionToken, void()) handler;
 
@@ -38,14 +38,14 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
   typename associated_allocator<handler>::type alloc(
       (get_associated_allocator)(init.completion_handler));
 
-  ex.dispatch(ASIO_MOVE_CAST(handler)(init.completion_handler), alloc);
+  ex.dispatch(static_cast<handler&&>(init.completion_handler), alloc);
 
   return init.result.get();
 }
 
 template <typename Executor, typename CompletionToken>
 ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
-    const Executor& ex, ASIO_MOVE_ARG(CompletionToken) token,
+    const Executor& ex, CompletionToken&& token,
     typename enable_if<is_executor<Executor>::value>::type*)
 {
   typedef ASIO_HANDLER_TYPE(CompletionToken, void()) handler;
@@ -63,12 +63,12 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
 
 template <typename ExecutionContext, typename CompletionToken>
 inline ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
-    ExecutionContext& ctx, ASIO_MOVE_ARG(CompletionToken) token,
+    ExecutionContext& ctx, CompletionToken&& token,
     typename enable_if<is_convertible<
       ExecutionContext&, execution_context&>::value>::type*)
 {
   return (dispatch)(ctx.get_executor(),
-      ASIO_MOVE_CAST(CompletionToken)(token));
+      static_cast<CompletionToken&&>(token));
 }
 
 } // namespace asio

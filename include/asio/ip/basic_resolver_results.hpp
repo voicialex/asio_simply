@@ -97,7 +97,7 @@ public:
   /// Move constructor.
   basic_resolver_results(basic_resolver_results&& other)
     : basic_resolver_iterator<InternetProtocol>(
-        ASIO_MOVE_CAST(basic_resolver_results)(other))
+        static_cast<basic_resolver_results&&>(other))
   {
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -114,7 +114,7 @@ public:
   basic_resolver_results& operator=(basic_resolver_results&& other)
   {
     basic_resolver_iterator<InternetProtocol>::operator=(
-        ASIO_MOVE_CAST(basic_resolver_results)(other));
+        static_cast<basic_resolver_results&&>(other));
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -252,7 +252,7 @@ public:
   {
     basic_resolver_results tmp(*this);
     tmp.index_ = 0;
-    return ASIO_MOVE_CAST(basic_resolver_results)(tmp);
+    return static_cast<basic_resolver_results&&>(tmp);
   }
 
   /// Obtain an end iterator for the results range.

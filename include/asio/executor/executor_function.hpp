@@ -47,9 +47,9 @@ public:
       thread_info_base::executor_function_tag, executor_function);
 
   template <typename F>
-  executor_function(ASIO_MOVE_ARG(F) f, const Alloc& allocator)
+  executor_function(F&& f, const Alloc& allocator)
     : executor_function_base(&executor_function::do_complete),
-      function_(ASIO_MOVE_CAST(F)(f)),
+      function_(static_cast<F&&>(f)),
       allocator_(allocator)
   {
   }
@@ -67,7 +67,7 @@ public:
     // associated with the function. Consequently, a local copy of the function
     // is required to ensure that any owning sub-object remains valid until
     // after we have deallocated the memory here.
-    Function function(ASIO_MOVE_CAST(Function)(o->function_));
+    Function function(static_cast<Function&&>(o->function_));
     p.reset();
 
     // Make the upcall if required.

@@ -351,7 +351,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(WriteHandler,
       void (asio::error_code, std::size_t))
   async_send(const ConstBufferSequence& buffers,
-      ASIO_MOVE_ARG(WriteHandler) handler)
+      WriteHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
@@ -409,7 +409,7 @@ public:
       void (asio::error_code, std::size_t))
   async_send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags,
-      ASIO_MOVE_ARG(WriteHandler) handler)
+      WriteHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
@@ -571,7 +571,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))
   async_receive(const MutableBufferSequence& buffers,
-      ASIO_MOVE_ARG(ReadHandler) handler)
+      ReadHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.
@@ -630,7 +630,7 @@ public:
       void (asio::error_code, std::size_t))
   async_receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags,
-      ASIO_MOVE_ARG(ReadHandler) handler)
+      ReadHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.
@@ -744,7 +744,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(WriteHandler,
       void (asio::error_code, std::size_t))
   async_write_some(const ConstBufferSequence& buffers,
-      ASIO_MOVE_ARG(WriteHandler) handler)
+      WriteHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
@@ -862,7 +862,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers,
-      ASIO_MOVE_ARG(ReadHandler) handler)
+      ReadHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.

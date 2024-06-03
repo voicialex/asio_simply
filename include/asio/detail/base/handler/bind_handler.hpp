@@ -19,14 +19,14 @@ class binder1
 {
 public:
   template <typename T>
-  binder1(int, ASIO_MOVE_ARG(T) handler, const Arg1& arg1)
-    : handler_(ASIO_MOVE_CAST(T)(handler)),
+  binder1(int, T&& handler, const Arg1& arg1)
+    : handler_(static_cast<T&&>(handler)),
       arg1_(arg1)
   {
   }
 
   binder1(Handler& handler, const Arg1& arg1)
-    : handler_(ASIO_MOVE_CAST(Handler)(handler)),
+    : handler_(static_cast<Handler&&>(handler)),
       arg1_(arg1)
   {
   }
@@ -38,8 +38,8 @@ public:
   }
 
   binder1(binder1&& other)
-    : handler_(ASIO_MOVE_CAST(Handler)(other.handler_)),
-      arg1_(ASIO_MOVE_CAST(Arg1)(other.arg1_))
+    : handler_(static_cast<Handler&&>(other.handler_)),
+      arg1_(static_cast<Arg1&&>(other.arg1_))
   {
   }
 
@@ -100,10 +100,10 @@ inline void asio_handler_invoke(const Function& function,
 
 template <typename Handler, typename Arg1>
 inline binder1<typename decay<Handler>::type, Arg1> bind_handler(
-    ASIO_MOVE_ARG(Handler) handler, const Arg1& arg1)
+    Handler&& handler, const Arg1& arg1)
 {
   return binder1<typename decay<Handler>::type, Arg1>(0,
-      ASIO_MOVE_CAST(Handler)(handler), arg1);
+      static_cast<Handler&&>(handler), arg1);
 }
 
 template <typename Handler, typename Arg1, typename Arg2>
@@ -111,16 +111,16 @@ class binder2
 {
 public:
   template <typename T>
-  binder2(int, ASIO_MOVE_ARG(T) handler,
+  binder2(int, T&& handler,
       const Arg1& arg1, const Arg2& arg2)
-    : handler_(ASIO_MOVE_CAST(T)(handler)),
+    : handler_(static_cast<T&&>(handler)),
       arg1_(arg1),
       arg2_(arg2)
   {
   }
 
   binder2(Handler& handler, const Arg1& arg1, const Arg2& arg2)
-    : handler_(ASIO_MOVE_CAST(Handler)(handler)),
+    : handler_(static_cast<Handler&&>(handler)),
       arg1_(arg1),
       arg2_(arg2)
   {
@@ -134,9 +134,9 @@ public:
   }
 
   binder2(binder2&& other)
-    : handler_(ASIO_MOVE_CAST(Handler)(other.handler_)),
-      arg1_(ASIO_MOVE_CAST(Arg1)(other.arg1_)),
-      arg2_(ASIO_MOVE_CAST(Arg2)(other.arg2_))
+    : handler_(static_cast<Handler&&>(other.handler_)),
+      arg1_(static_cast<Arg1&&>(other.arg1_)),
+      arg2_(static_cast<Arg2&&>(other.arg2_))
   {
   }
 
@@ -199,32 +199,32 @@ inline void asio_handler_invoke(const Function& function,
 
 template <typename Handler, typename Arg1, typename Arg2>
 inline binder2<typename decay<Handler>::type, Arg1, Arg2> bind_handler(
-    ASIO_MOVE_ARG(Handler) handler, const Arg1& arg1, const Arg2& arg2)
+    Handler&& handler, const Arg1& arg1, const Arg2& arg2)
 {
   return binder2<typename decay<Handler>::type, Arg1, Arg2>(0,
-      ASIO_MOVE_CAST(Handler)(handler), arg1, arg2);
+      static_cast<Handler&&>(handler), arg1, arg2);
 }
 
 template <typename Handler, typename Arg1>
 class move_binder1
 {
 public:
-  move_binder1(int, ASIO_MOVE_ARG(Handler) handler,
-      ASIO_MOVE_ARG(Arg1) arg1)
-    : handler_(ASIO_MOVE_CAST(Handler)(handler)),
-      arg1_(ASIO_MOVE_CAST(Arg1)(arg1))
+  move_binder1(int, Handler&& handler,
+      Arg1&& arg1)
+    : handler_(static_cast<Handler&&>(handler)),
+      arg1_(static_cast<Arg1&&>(arg1))
   {
   }
 
   move_binder1(move_binder1&& other)
-    : handler_(ASIO_MOVE_CAST(Handler)(other.handler_)),
-      arg1_(ASIO_MOVE_CAST(Arg1)(other.arg1_))
+    : handler_(static_cast<Handler&&>(other.handler_)),
+      arg1_(static_cast<Arg1&&>(other.arg1_))
   {
   }
 
   void operator()()
   {
-    handler_(ASIO_MOVE_CAST(Arg1)(arg1_));
+    handler_(static_cast<Arg1&&>(arg1_));
   }
 
 //private:
@@ -257,36 +257,36 @@ inline bool asio_handler_is_continuation(
 }
 
 template <typename Function, typename Handler, typename Arg1>
-inline void asio_handler_invoke(ASIO_MOVE_ARG(Function) function,
+inline void asio_handler_invoke(Function&& function,
     move_binder1<Handler, Arg1>* this_handler)
 {
   asio_handler_invoke_helpers::invoke(
-      ASIO_MOVE_CAST(Function)(function), this_handler->handler_);
+      static_cast<Function&&>(function), this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2>
 class move_binder2
 {
 public:
-  move_binder2(int, ASIO_MOVE_ARG(Handler) handler,
-      const Arg1& arg1, ASIO_MOVE_ARG(Arg2) arg2)
-    : handler_(ASIO_MOVE_CAST(Handler)(handler)),
+  move_binder2(int, Handler&& handler,
+      const Arg1& arg1, Arg2&& arg2)
+    : handler_(static_cast<Handler&&>(handler)),
       arg1_(arg1),
-      arg2_(ASIO_MOVE_CAST(Arg2)(arg2))
+      arg2_(static_cast<Arg2&&>(arg2))
   {
   }
 
   move_binder2(move_binder2&& other)
-    : handler_(ASIO_MOVE_CAST(Handler)(other.handler_)),
-      arg1_(ASIO_MOVE_CAST(Arg1)(other.arg1_)),
-      arg2_(ASIO_MOVE_CAST(Arg2)(other.arg2_))
+    : handler_(static_cast<Handler&&>(other.handler_)),
+      arg1_(static_cast<Arg1&&>(other.arg1_)),
+      arg2_(static_cast<Arg2&&>(other.arg2_))
   {
   }
 
   void operator()()
   {
     handler_(static_cast<const Arg1&>(arg1_),
-        ASIO_MOVE_CAST(Arg2)(arg2_));
+        static_cast<Arg2&&>(arg2_));
   }
 
 //private:
@@ -320,11 +320,11 @@ inline bool asio_handler_is_continuation(
 }
 
 template <typename Function, typename Handler, typename Arg1, typename Arg2>
-inline void asio_handler_invoke(ASIO_MOVE_ARG(Function) function,
+inline void asio_handler_invoke(Function&& function,
     move_binder2<Handler, Arg1, Arg2>* this_handler)
 {
   asio_handler_invoke_helpers::invoke(
-      ASIO_MOVE_CAST(Function)(function), this_handler->handler_);
+      static_cast<Function&&>(function), this_handler->handler_);
 }
 
 

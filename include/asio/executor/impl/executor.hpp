@@ -25,7 +25,7 @@ public:
     typedef detail::executor_function<F, Alloc> func_type;
     typename func_type::ptr p = {
       detail::addressof(a), func_type::ptr::allocate(a), 0 };
-    func_ = new (p.v) func_type(ASIO_MOVE_CAST(F)(f), a);
+    func_ = new (p.v) func_type(static_cast<F&&>(f), a);
     p.v = 0;
   }
 
@@ -111,19 +111,19 @@ public:
     return executor_.context();
   }
 
-  void dispatch(ASIO_MOVE_ARG(function) f)
+  void dispatch(function&& f)
   {
-    executor_.dispatch(ASIO_MOVE_CAST(function)(f), allocator_);
+    executor_.dispatch(static_cast<function&&>(f), allocator_);
   }
 
-  void post(ASIO_MOVE_ARG(function) f)
+  void post(function&& f)
   {
-    executor_.post(ASIO_MOVE_CAST(function)(f), allocator_);
+    executor_.post(static_cast<function&&>(f), allocator_);
   }
 
-  void defer(ASIO_MOVE_ARG(function) f)
+  void defer(function&& f)
   {
-    executor_.defer(ASIO_MOVE_CAST(function)(f), allocator_);
+    executor_.defer(static_cast<function&&>(f), allocator_);
   }
 
   type_id_result_type target_type() const ASIO_NOEXCEPT
@@ -220,19 +220,19 @@ public:
     return executor_.context();
   }
 
-  void dispatch(ASIO_MOVE_ARG(function) f)
+  void dispatch(function&& f)
   {
-    executor_.dispatch(ASIO_MOVE_CAST(function)(f), allocator_);
+    executor_.dispatch(static_cast<function&&>(f), allocator_);
   }
 
-  void post(ASIO_MOVE_ARG(function) f)
+  void post(function&& f)
   {
-    executor_.post(ASIO_MOVE_CAST(function)(f), allocator_);
+    executor_.post(static_cast<function&&>(f), allocator_);
   }
 
-  void defer(ASIO_MOVE_ARG(function) f)
+  void defer(function&& f)
   {
-    executor_.defer(ASIO_MOVE_CAST(function)(f), allocator_);
+    executor_.defer(static_cast<function&&>(f), allocator_);
   }
 
   type_id_result_type target_type() const ASIO_NOEXCEPT
@@ -273,28 +273,28 @@ executor::executor(allocator_arg_t, const Allocator& a, Executor e)
 }
 
 template <typename Function, typename Allocator>
-void executor::dispatch(ASIO_MOVE_ARG(Function) f,
+void executor::dispatch(Function&& f,
     const Allocator& a) const
 {
   impl_base* i = get_impl();
   if (i->fast_dispatch_)
-    system_executor().dispatch(ASIO_MOVE_CAST(Function)(f), a);
+    system_executor().dispatch(static_cast<Function&&>(f), a);
   else
-    i->dispatch(function(ASIO_MOVE_CAST(Function)(f), a));
+    i->dispatch(function(static_cast<Function&&>(f), a));
 }
 
 template <typename Function, typename Allocator>
-void executor::post(ASIO_MOVE_ARG(Function) f,
+void executor::post(Function&& f,
     const Allocator& a) const
 {
-  get_impl()->post(function(ASIO_MOVE_CAST(Function)(f), a));
+  get_impl()->post(function(static_cast<Function&&>(f), a));
 }
 
 template <typename Function, typename Allocator>
-void executor::defer(ASIO_MOVE_ARG(Function) f,
+void executor::defer(Function&& f,
     const Allocator& a) const
 {
-  get_impl()->defer(function(ASIO_MOVE_CAST(Function)(f), a));
+  get_impl()->defer(function(static_cast<Function&&>(f), a));
 }
 
 template <typename Executor>

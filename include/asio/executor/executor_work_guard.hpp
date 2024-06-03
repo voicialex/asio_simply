@@ -41,7 +41,7 @@ public:
 
   /// Move constructor.
   executor_work_guard(executor_work_guard&& other)
-    : executor_(ASIO_MOVE_CAST(Executor)(other.executor_)),
+    : executor_(static_cast<Executor&&>(other.executor_)),
       owns_(other.owns_)
   {
     other.owns_ = false;

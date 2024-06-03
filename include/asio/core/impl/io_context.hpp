@@ -120,7 +120,7 @@ io_context::executor_type::on_work_finished() const ASIO_NOEXCEPT
 
 template <typename Function, typename Allocator>
 void io_context::executor_type::dispatch(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
+    Function&& f, const Allocator& a) const
 {
   typedef typename decay<Function>::type function_type;
 
@@ -128,7 +128,7 @@ void io_context::executor_type::dispatch(
   if (io_context_.impl_.can_dispatch())
   {
     // Make a local, non-const copy of the function.
-    function_type tmp(ASIO_MOVE_CAST(Function)(f));
+    function_type tmp(static_cast<Function&&>(f));
 
     detail::fenced_block b(detail::fenced_block::full);
     asio_handler_invoke_helpers::invoke(tmp, tmp);
@@ -138,7 +138,7 @@ void io_context::executor_type::dispatch(
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, Allocator, detail::operation> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
-  p.p = new (p.v) op(ASIO_MOVE_CAST(Function)(f), a);
+  p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
   ASIO_HANDLER_CREATION((this->context(), *p.p,
         "io_context", &this->context(), 0, "dispatch"));
@@ -149,14 +149,14 @@ void io_context::executor_type::dispatch(
 
 template <typename Function, typename Allocator>
 void io_context::executor_type::post(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
+    Function&& f, const Allocator& a) const
 {
   typedef typename decay<Function>::type function_type;
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, Allocator, detail::operation> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
-  p.p = new (p.v) op(ASIO_MOVE_CAST(Function)(f), a);
+  p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
   ASIO_HANDLER_CREATION((this->context(), *p.p,
         "io_context", &this->context(), 0, "post"));
@@ -167,14 +167,14 @@ void io_context::executor_type::post(
 
 template <typename Function, typename Allocator>
 void io_context::executor_type::defer(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
+    Function&& f, const Allocator& a) const
 {
   typedef typename decay<Function>::type function_type;
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, Allocator, detail::operation> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
-  p.p = new (p.v) op(ASIO_MOVE_CAST(Function)(f), a);
+  p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
   ASIO_HANDLER_CREATION((this->context(), *p.p,
         "io_context", &this->context(), 0, "defer"));

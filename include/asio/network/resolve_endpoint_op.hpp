@@ -47,7 +47,7 @@ public:
       cancel_token_(cancel_token),
       endpoint_(endpoint),
       io_context_impl_(ioc),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(static_cast<Handler&&>(handler))
   {
     handler_work<Handler>::start(handler_);
   }

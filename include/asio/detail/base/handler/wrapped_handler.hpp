@@ -38,7 +38,7 @@ public:
 
   wrapped_handler(Dispatcher dispatcher, Handler& handler)
     : dispatcher_(dispatcher),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(static_cast<Handler&&>(handler))
   {
   }
 
@@ -50,13 +50,13 @@ public:
 
   wrapped_handler(wrapped_handler&& other)
     : dispatcher_(other.dispatcher_),
-      handler_(ASIO_MOVE_CAST(Handler)(other.handler_))
+      handler_(static_cast<Handler&&>(other.handler_))
   {
   }
 
   void operator()()
   {
-    dispatcher_.dispatch(ASIO_MOVE_CAST(Handler)(handler_));
+    dispatcher_.dispatch(static_cast<Handler&&>(handler_));
   }
 
   void operator()() const
@@ -145,7 +145,7 @@ class rewrapped_handler
 public:
   explicit rewrapped_handler(Handler& handler, const Context& context)
     : context_(context),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(static_cast<Handler&&>(handler))
   {
   }
 
@@ -162,8 +162,8 @@ public:
   }
 
   rewrapped_handler(rewrapped_handler&& other)
-    : context_(ASIO_MOVE_CAST(Context)(other.context_)),
-      handler_(ASIO_MOVE_CAST(Handler)(other.handler_))
+    : context_(static_cast<Context&&>(other.context_)),
+      handler_(static_cast<Handler&&>(other.handler_))
   {
   }
 

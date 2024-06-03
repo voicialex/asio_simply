@@ -23,7 +23,7 @@ public:
 
   wait_handler(Handler& h)
     : wait_op(&wait_handler::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler)(h))
+      handler_(static_cast<Handler&&>(h))
   {
     handler_work<Handler>::start(handler_);
   }

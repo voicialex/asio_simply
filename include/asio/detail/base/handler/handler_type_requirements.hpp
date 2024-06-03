@@ -69,7 +69,7 @@ char (&zero_arg_copyable_handler_test(Handler, ...))[2];
 template <typename Handler, typename Arg1>
 auto one_arg_handler_test(Handler h, Arg1* a1)
   -> decltype(
-    sizeof(Handler(ASIO_MOVE_CAST(Handler)(h))),
+    sizeof(Handler(static_cast<Handler&&>(h))),
     ((h)(*a1)),
     char(0));
 
@@ -79,7 +79,7 @@ char (&one_arg_handler_test(Handler h, ...))[2];
 template <typename Handler, typename Arg1, typename Arg2>
 auto two_arg_handler_test(Handler h, Arg1* a1, Arg2* a2)
   -> decltype(
-    sizeof(Handler(ASIO_MOVE_CAST(Handler)(h))),
+    sizeof(Handler(static_cast<Handler&&>(h))),
     ((h)(*a1, *a2)),
     char(0));
 
@@ -89,8 +89,8 @@ char (&two_arg_handler_test(Handler, ...))[2];
 template <typename Handler, typename Arg1, typename Arg2>
 auto two_arg_move_handler_test(Handler h, Arg1* a1, Arg2* a2)
   -> decltype(
-    sizeof(Handler(ASIO_MOVE_CAST(Handler)(h))),
-    ((h)(*a1, ASIO_MOVE_CAST(Arg2)(*a2))),
+    sizeof(Handler(static_cast<Handler&&>(h))),
+    ((h)(*a1, static_cast<Arg2&&>(*a2))),
     char(0));
 
 template <typename Handler>

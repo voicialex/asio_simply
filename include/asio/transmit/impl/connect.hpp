@@ -309,7 +309,7 @@ namespace detail
         endpoints_(endpoints),
         index_(0),
         start_(0),
-        handler_(ASIO_MOVE_CAST(RangeConnectHandler)(handler))
+        handler_(static_cast<RangeConnectHandler&&>(handler))
     {
     }
 
@@ -330,7 +330,7 @@ namespace detail
         endpoints_(other.endpoints_),
         index_(other.index_),
         start_(other.start_),
-        handler_(ASIO_MOVE_CAST(RangeConnectHandler)(other.handler_))
+        handler_(static_cast<RangeConnectHandler&&>(other.handler_))
     {
     }
 #endif // defined(ASIO_HAS_MOVE)
@@ -354,7 +354,7 @@ namespace detail
           {
             socket_.close(ec);
             socket_.async_connect(*iter,
-                ASIO_MOVE_CAST(range_connect_op)(*this));
+                static_cast<range_connect_op&&>(*this));
             return;
           }
 
@@ -363,7 +363,7 @@ namespace detail
             ec = asio::error::not_found;
             asio::post(socket_.get_executor(),
                 detail::bind_handler(
-                  ASIO_MOVE_CAST(range_connect_op)(*this), ec));
+                  static_cast<range_connect_op&&>(*this), ec));
             return;
           }
 
@@ -468,7 +468,7 @@ namespace detail
         iter_(begin),
         end_(end),
         start_(0),
-        handler_(ASIO_MOVE_CAST(IteratorConnectHandler)(handler))
+        handler_(static_cast<IteratorConnectHandler&&>(handler))
     {
     }
 
@@ -489,7 +489,7 @@ namespace detail
         iter_(other.iter_),
         end_(other.end_),
         start_(other.start_),
-        handler_(ASIO_MOVE_CAST(IteratorConnectHandler)(other.handler_))
+        handler_(static_cast<IteratorConnectHandler&&>(other.handler_))
     {
     }
 #endif // defined(ASIO_HAS_MOVE)
@@ -507,7 +507,7 @@ namespace detail
           {
             socket_.close(ec);
             socket_.async_connect(*iter_,
-                ASIO_MOVE_CAST(iterator_connect_op)(*this));
+                static_cast<iterator_connect_op&&>(*this));
             return;
           }
 
@@ -516,7 +516,7 @@ namespace detail
             ec = asio::error::not_found;
             asio::post(socket_.get_executor(),
                 detail::bind_handler(
-                  ASIO_MOVE_CAST(iterator_connect_op)(*this), ec));
+                  static_cast<iterator_connect_op&&>(*this), ec));
             return;
           }
 
@@ -697,7 +697,7 @@ inline ASIO_INITFN_RESULT_TYPE(RangeConnectHandler,
     void (asio::error_code, typename Protocol::endpoint))
 async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     const EndpointSequence& endpoints,
-    ASIO_MOVE_ARG(RangeConnectHandler) handler,
+    RangeConnectHandler&& handler,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type*)
 {
@@ -726,7 +726,7 @@ template <typename Protocol ASIO_SVC_TPARAM,
 inline ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
-    Iterator begin, ASIO_MOVE_ARG(IteratorConnectHandler) handler,
+    Iterator begin, IteratorConnectHandler&& handler,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
 {
   // If you get an error on the following line it means that your handler does
@@ -753,7 +753,7 @@ inline ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, Iterator end,
-    ASIO_MOVE_ARG(IteratorConnectHandler) handler)
+    IteratorConnectHandler&& handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a IteratorConnectHandler.
@@ -778,7 +778,7 @@ inline ASIO_INITFN_RESULT_TYPE(RangeConnectHandler,
     void (asio::error_code, typename Protocol::endpoint))
 async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
-    ASIO_MOVE_ARG(RangeConnectHandler) handler,
+    RangeConnectHandler&& handler,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type*)
 {
@@ -807,7 +807,7 @@ inline ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, ConnectCondition connect_condition,
-    ASIO_MOVE_ARG(IteratorConnectHandler) handler,
+    IteratorConnectHandler&& handler,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
 {
   // If you get an error on the following line it means that your handler does
@@ -834,7 +834,7 @@ inline ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, Iterator end, ConnectCondition connect_condition,
-    ASIO_MOVE_ARG(IteratorConnectHandler) handler)
+    IteratorConnectHandler&& handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a IteratorConnectHandler.

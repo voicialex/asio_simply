@@ -63,8 +63,8 @@ public:
 #if defined(ASIO_HAS_MOVE)
   /// Move constructor.
   basic_address_range(basic_address_range&& other) ASIO_NOEXCEPT
-    : begin_(ASIO_MOVE_CAST(iterator)(other.begin_)),
-      end_(ASIO_MOVE_CAST(iterator)(other.end_))
+    : begin_(static_cast<iterator&&>(other.begin_)),
+      end_(static_cast<iterator&&>(other.end_))
   {
   }
 #endif // defined(ASIO_HAS_MOVE)
@@ -83,8 +83,8 @@ public:
   basic_address_range& operator=(
       basic_address_range&& other) ASIO_NOEXCEPT
   {
-    begin_ = ASIO_MOVE_CAST(iterator)(other.begin_);
-    end_ = ASIO_MOVE_CAST(iterator)(other.end_);
+    begin_ = static_cast<iterator&&>(other.begin_);
+    end_ = static_cast<iterator&&>(other.end_);
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE)

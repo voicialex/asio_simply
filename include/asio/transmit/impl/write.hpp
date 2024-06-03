@@ -108,14 +108,14 @@ inline std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
 template <typename SyncWriteStream, typename DynamicBuffer,
     typename CompletionCondition>
 std::size_t write(SyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBuffer) buffers,
+    DynamicBuffer&& buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
     typename enable_if<
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
 {
   typename decay<DynamicBuffer>::type b(
-      ASIO_MOVE_CAST(DynamicBuffer)(buffers));
+      static_cast<DynamicBuffer&&>(buffers));
 
   std::size_t bytes_transferred = write(s, b.data(), completion_condition, ec);
   b.consume(bytes_transferred);
@@ -124,14 +124,14 @@ std::size_t write(SyncWriteStream& s,
 
 template <typename SyncWriteStream, typename DynamicBuffer>
 inline std::size_t write(SyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBuffer) buffers,
+    DynamicBuffer&& buffers,
     typename enable_if<
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
 {
   asio::error_code ec;
   std::size_t bytes_transferred = write(s,
-      ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+      static_cast<DynamicBuffer&&>(buffers),
       transfer_all(), ec);
   asio::detail::throw_error(ec, "write");
   return bytes_transferred;
@@ -139,20 +139,20 @@ inline std::size_t write(SyncWriteStream& s,
 
 template <typename SyncWriteStream, typename DynamicBuffer>
 inline std::size_t write(SyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBuffer) buffers,
+    DynamicBuffer&& buffers,
     asio::error_code& ec,
     typename enable_if<
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
 {
-  return write(s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+  return write(s, static_cast<DynamicBuffer&&>(buffers),
       transfer_all(), ec);
 }
 
 template <typename SyncWriteStream, typename DynamicBuffer,
     typename CompletionCondition>
 inline std::size_t write(SyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBuffer) buffers,
+    DynamicBuffer&& buffers,
     CompletionCondition completion_condition,
     typename enable_if<
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
@@ -160,7 +160,7 @@ inline std::size_t write(SyncWriteStream& s,
 {
   asio::error_code ec;
   std::size_t bytes_transferred = write(s,
-      ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+      static_cast<DynamicBuffer&&>(buffers),
       completion_condition, ec);
   asio::detail::throw_error(ec, "write");
   return bytes_transferred;
@@ -221,7 +221,7 @@ namespace detail
         stream_(stream),
         buffers_(buffers),
         start_(0),
-        handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
+        handler_(static_cast<WriteHandler&&>(handler))
     {
     }
 
@@ -240,7 +240,7 @@ namespace detail
         stream_(other.stream_),
         buffers_(other.buffers_),
         start_(other.start_),
-        handler_(ASIO_MOVE_CAST(WriteHandler)(other.handler_))
+        handler_(static_cast<WriteHandler&&>(other.handler_))
     {
     }
 #endif // defined(ASIO_HAS_MOVE)
@@ -256,7 +256,7 @@ namespace detail
         do
         {
           stream_.async_write_some(buffers_.prepare(max_size),
-              ASIO_MOVE_CAST(write_op)(*this));
+              static_cast<write_op&&>(*this));
           return; default:
           buffers_.consume(bytes_transferred);
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
@@ -395,7 +395,7 @@ inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition,
-    ASIO_MOVE_ARG(WriteHandler) handler,
+    WriteHandler&& handler,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
     >::type*)
@@ -419,7 +419,7 @@ template <typename AsyncWriteStream, typename ConstBufferSequence,
 inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
-    ASIO_MOVE_ARG(WriteHandler) handler,
+    WriteHandler&& handler,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
     >::type*)
@@ -447,13 +447,13 @@ namespace detail
   public:
     template <typename BufferSequence>
     write_dynbuf_op(AsyncWriteStream& stream,
-        ASIO_MOVE_ARG(BufferSequence) buffers,
+        BufferSequence&& buffers,
         CompletionCondition completion_condition, WriteHandler& handler)
       : stream_(stream),
-        buffers_(ASIO_MOVE_CAST(BufferSequence)(buffers)),
+        buffers_(static_cast<BufferSequence&&>(buffers)),
         completion_condition_(
-          ASIO_MOVE_CAST(CompletionCondition)(completion_condition)),
-        handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
+          static_cast<CompletionCondition&&>(completion_condition)),
+        handler_(static_cast<WriteHandler&&>(handler))
     {
     }
 
@@ -468,11 +468,11 @@ namespace detail
 
     write_dynbuf_op(write_dynbuf_op&& other)
       : stream_(other.stream_),
-        buffers_(ASIO_MOVE_CAST(DynamicBuffer)(other.buffers_)),
+        buffers_(static_cast<DynamicBuffer&&>(other.buffers_)),
         completion_condition_(
-          ASIO_MOVE_CAST(CompletionCondition)(
+          static_cast<CompletionCondition&&>(
             other.completion_condition_)),
-        handler_(ASIO_MOVE_CAST(WriteHandler)(other.handler_))
+        handler_(static_cast<WriteHandler&&>(other.handler_))
     {
     }
 #endif // defined(ASIO_HAS_MOVE)
@@ -484,7 +484,7 @@ namespace detail
       {
         case 1:
         async_write(stream_, buffers_.data(), completion_condition_,
-            ASIO_MOVE_CAST(write_dynbuf_op)(*this));
+            static_cast<write_dynbuf_op&&>(*this));
         return; default:
         buffers_.consume(bytes_transferred);
         handler_(ec, static_cast<const std::size_t&>(bytes_transferred));
@@ -596,15 +596,15 @@ template <typename AsyncWriteStream,
 inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBuffer) buffers,
-    ASIO_MOVE_ARG(WriteHandler) handler,
+    DynamicBuffer&& buffers,
+    WriteHandler&& handler,
     typename enable_if<
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
 {
   return async_write(s,
-      ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-      transfer_all(), ASIO_MOVE_CAST(WriteHandler)(handler));
+      static_cast<DynamicBuffer&&>(buffers),
+      transfer_all(), static_cast<WriteHandler&&>(handler));
 }
 
 template <typename AsyncWriteStream, typename DynamicBuffer,
@@ -612,9 +612,9 @@ template <typename AsyncWriteStream, typename DynamicBuffer,
 inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBuffer) buffers,
+    DynamicBuffer&& buffers,
     CompletionCondition completion_condition,
-    ASIO_MOVE_ARG(WriteHandler) handler,
+    WriteHandler&& handler,
     typename enable_if<
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
@@ -630,7 +630,7 @@ async_write(AsyncWriteStream& s,
     typename decay<DynamicBuffer>::type,
       CompletionCondition, ASIO_HANDLER_TYPE(
         WriteHandler, void (asio::error_code, std::size_t))>(
-          s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+          s, static_cast<DynamicBuffer&&>(buffers),
             completion_condition, init.completion_handler)(
               asio::error_code(), 0, 1);
 
@@ -645,10 +645,10 @@ inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
     asio::basic_streambuf<Allocator>& b,
-    ASIO_MOVE_ARG(WriteHandler) handler)
+    WriteHandler&& handler)
 {
   return async_write(s, basic_streambuf_ref<Allocator>(b),
-      ASIO_MOVE_CAST(WriteHandler)(handler));
+      static_cast<WriteHandler&&>(handler));
 }
 
 template <typename AsyncWriteStream, typename Allocator,
@@ -658,10 +658,10 @@ inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
 async_write(AsyncWriteStream& s,
     asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition,
-    ASIO_MOVE_ARG(WriteHandler) handler)
+    WriteHandler&& handler)
 {
   return async_write(s, basic_streambuf_ref<Allocator>(b),
-      completion_condition, ASIO_MOVE_CAST(WriteHandler)(handler));
+      completion_condition, static_cast<WriteHandler&&>(handler));
 }
 
 #endif // !defined(ASIO_NO_IOSTREAM)

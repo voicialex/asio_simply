@@ -153,9 +153,9 @@ class executor_binder_base<T, Executor, true>
 {
 protected:
   template <typename E, typename U>
-  executor_binder_base(ASIO_MOVE_ARG(E) e, ASIO_MOVE_ARG(U) u)
-    : executor_(ASIO_MOVE_CAST(E)(e)),
-      target_(executor_arg_t(), executor_, ASIO_MOVE_CAST(U)(u))
+  executor_binder_base(E&& e, U&& u)
+    : executor_(static_cast<E&&>(e)),
+      target_(executor_arg_t(), executor_, static_cast<U&&>(u))
   {
   }
 
@@ -168,9 +168,9 @@ class executor_binder_base<T, Executor, false>
 {
 protected:
   template <typename E, typename U>
-  executor_binder_base(ASIO_MOVE_ARG(E) e, ASIO_MOVE_ARG(U) u)
-    : executor_(ASIO_MOVE_CAST(E)(e)),
-      target_(ASIO_MOVE_CAST(U)(u))
+  executor_binder_base(E&& e, U&& u)
+    : executor_(static_cast<E&&>(e)),
+      target_(static_cast<U&&>(u))
   {
   }
 
@@ -219,8 +219,8 @@ public:
    */
   template <typename U>
   executor_binder(executor_arg_t, const executor_type& e,
-      ASIO_MOVE_ARG(U) u)
-    : base_type(e, ASIO_MOVE_CAST(U)(u))
+      U&& u)
+    : base_type(e, static_cast<U&&>(u))
   {
   }
 
@@ -264,23 +264,23 @@ public:
 
   /// Move constructor.
   executor_binder(executor_binder&& other)
-    : base_type(ASIO_MOVE_CAST(executor_type)(other.get_executor()),
-        ASIO_MOVE_CAST(T)(other.get()))
+    : base_type(static_cast<executor_type&&>(other.get_executor()),
+        static_cast<T&&>(other.get()))
   {
   }
 
   /// Move construct the target object, but specify a different executor.
   executor_binder(executor_arg_t, const executor_type& e,
       executor_binder&& other)
-    : base_type(e, ASIO_MOVE_CAST(T)(other.get()))
+    : base_type(e, static_cast<T&&>(other.get()))
   {
   }
 
   /// Move construct from a different executor wrapper type.
   template <typename U, typename OtherExecutor>
   executor_binder(executor_binder<U, OtherExecutor>&& other)
-    : base_type(ASIO_MOVE_CAST(OtherExecutor)(other.get_executor()),
-        ASIO_MOVE_CAST(U)(other.get()))
+    : base_type(static_cast<OtherExecutor&&>(other.get_executor()),
+        static_cast<U&&>(other.get()))
   {
   }
 
@@ -289,7 +289,7 @@ public:
   template <typename U, typename OtherExecutor>
   executor_binder(executor_arg_t, const executor_type& e,
       executor_binder<U, OtherExecutor>&& other)
-    : base_type(e, ASIO_MOVE_CAST(U)(other.get()))
+    : base_type(e, static_cast<U&&>(other.get()))
   {
   }
 
@@ -321,17 +321,17 @@ public:
   /// Forwarding function call operator.
   template <typename... Args>
   typename result_of<T(Args...)>::type operator()(
-      ASIO_MOVE_ARG(Args)... args)
+      Args&&... args)
   {
-    return this->target_(ASIO_MOVE_CAST(Args)(args)...);
+    return this->target_(static_cast<Args&&>(args)...);
   }
 
   /// Forwarding function call operator.
   template <typename... Args>
   typename result_of<T(Args...)>::type operator()(
-      ASIO_MOVE_ARG(Args)... args) const
+      Args&&... args) const
   {
-    return this->target_(ASIO_MOVE_CAST(Args)(args)...);
+    return this->target_(static_cast<Args&&>(args)...);
   }
 
 #elif defined(ASIO_HAS_STD_TYPE_TRAITS) && !defined(_MSC_VER)
@@ -407,24 +407,24 @@ private:
 /// Associate an object of type @c T with an executor of type @c Executor.
 template <typename Executor, typename T>
 inline executor_binder<typename decay<T>::type, Executor>
-bind_executor(const Executor& ex, ASIO_MOVE_ARG(T) t,
+bind_executor(const Executor& ex, T&& t,
     typename enable_if<is_executor<Executor>::value>::type* = 0)
 {
   return executor_binder<typename decay<T>::type, Executor>(
-      executor_arg_t(), ex, ASIO_MOVE_CAST(T)(t));
+      executor_arg_t(), ex, static_cast<T&&>(t));
 }
 
 /// Associate an object of type @c T with an execution context's executor.
 template <typename ExecutionContext, typename T>
 inline executor_binder<typename decay<T>::type,
   typename ExecutionContext::executor_type>
-bind_executor(ExecutionContext& ctx, ASIO_MOVE_ARG(T) t,
+bind_executor(ExecutionContext& ctx, T&& t,
     typename enable_if<is_convertible<
       ExecutionContext&, execution_context&>::value>::type* = 0)
 {
   return executor_binder<typename decay<T>::type,
     typename ExecutionContext::executor_type>(
-      executor_arg_t(), ctx.get_executor(), ASIO_MOVE_CAST(T)(t));
+      executor_arg_t(), ctx.get_executor(), static_cast<T&&>(t));
 }
 
 #if !defined(GENERATING_DOCUMENTATION)

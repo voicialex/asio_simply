@@ -844,7 +844,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(ConnectHandler,
       void (asio::error_code))
   async_connect(const endpoint_type& peer_endpoint,
-      ASIO_MOVE_ARG(ConnectHandler) handler)
+      ConnectHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ConnectHandler.
@@ -862,8 +862,8 @@ public:
 
         asio::post(this->get_executor(),
             asio::detail::bind_handler(
-              ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(
-                ConnectHandler, void (asio::error_code)))(
+              static_cast<ASIO_HANDLER_TYPE(
+                ConnectHandler, void (asio::error_code))&&>(
                   init.completion_handler), ec));
 
         return init.result.get();
@@ -1695,7 +1695,7 @@ public:
   template <typename WaitHandler>
   ASIO_INITFN_RESULT_TYPE(WaitHandler,
       void (asio::error_code))
-  async_wait(wait_type w, ASIO_MOVE_ARG(WaitHandler) handler)
+  async_wait(wait_type w, WaitHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WaitHandler.

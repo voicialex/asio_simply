@@ -60,7 +60,7 @@ public:
 #if defined(ASIO_HAS_MOVE)
   /// Move constructor.
   network_v6(network_v6&& other) ASIO_NOEXCEPT
-    : address_(ASIO_MOVE_CAST(address_v6)(other.address_)),
+    : address_(static_cast<address_v6&&>(other.address_)),
       prefix_length_(other.prefix_length_)
   {
   }
@@ -78,7 +78,7 @@ public:
   /// Move-assign from another network.
   network_v6& operator=(network_v6&& other) ASIO_NOEXCEPT
   {
-    address_ = ASIO_MOVE_CAST(address_v6)(other.address_);
+    address_ = static_cast<address_v6&&>(other.address_);
     prefix_length_ = other.prefix_length_;
     return *this;
   }

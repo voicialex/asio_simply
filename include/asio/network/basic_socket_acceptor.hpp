@@ -1094,7 +1094,7 @@ public:
   template <typename WaitHandler>
   ASIO_INITFN_RESULT_TYPE(WaitHandler,
       void (asio::error_code))
-  async_wait(wait_type w, ASIO_MOVE_ARG(WaitHandler) handler)
+  async_wait(wait_type w, WaitHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WaitHandler.
@@ -1213,7 +1213,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(AcceptHandler,
       void (asio::error_code))
   async_accept(basic_socket<Protocol1>& peer,
-      ASIO_MOVE_ARG(AcceptHandler) handler,
+      AcceptHandler&& handler,
       typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
   {
     // If you get an error on the following line it means that your handler does
@@ -1326,7 +1326,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(AcceptHandler,
       void (asio::error_code))
   async_accept(basic_socket<protocol_type>& peer,
-      endpoint_type& peer_endpoint, ASIO_MOVE_ARG(AcceptHandler) handler)
+      endpoint_type& peer_endpoint, AcceptHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a AcceptHandler.
@@ -1444,7 +1444,7 @@ public:
   template <typename MoveAcceptHandler>
   ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket))
-  async_accept(ASIO_MOVE_ARG(MoveAcceptHandler) handler)
+  async_accept(MoveAcceptHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a MoveAcceptHandler.
@@ -1575,7 +1575,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket))
   async_accept(asio::io_context& io_context,
-      ASIO_MOVE_ARG(MoveAcceptHandler) handler)
+      MoveAcceptHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a MoveAcceptHandler.
@@ -1710,7 +1710,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket))
   async_accept(endpoint_type& peer_endpoint,
-      ASIO_MOVE_ARG(MoveAcceptHandler) handler)
+      MoveAcceptHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a MoveAcceptHandler.
@@ -1859,7 +1859,7 @@ public:
       void (asio::error_code, typename Protocol::socket))
   async_accept(asio::io_context& io_context,
       endpoint_type& peer_endpoint,
-      ASIO_MOVE_ARG(MoveAcceptHandler) handler)
+      MoveAcceptHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a MoveAcceptHandler.

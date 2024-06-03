@@ -18,15 +18,15 @@ inline system_context& system_executor::context() const ASIO_NOEXCEPT
 
 template <typename Function, typename Allocator>
 void system_executor::dispatch(
-    ASIO_MOVE_ARG(Function) f, const Allocator&) const
+    Function&& f, const Allocator&) const
 {
-  typename decay<Function>::type tmp(ASIO_MOVE_CAST(Function)(f));
+  typename decay<Function>::type tmp(static_cast<Function&&>(f));
   asio_handler_invoke_helpers::invoke(tmp, tmp);
 }
 
 template <typename Function, typename Allocator>
 void system_executor::post(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
+    Function&& f, const Allocator& a) const
 {
   typedef typename decay<Function>::type function_type;
 
@@ -35,7 +35,7 @@ void system_executor::post(
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, Allocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
-  p.p = new (p.v) op(ASIO_MOVE_CAST(Function)(f), a);
+  p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
   ctx.scheduler_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
@@ -43,7 +43,7 @@ void system_executor::post(
 
 template <typename Function, typename Allocator>
 void system_executor::defer(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
+    Function&& f, const Allocator& a) const
 {
   typedef typename decay<Function>::type function_type;
 
@@ -52,7 +52,7 @@ void system_executor::defer(
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, Allocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
-  p.p = new (p.v) op(ASIO_MOVE_CAST(Function)(f), a);
+  p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
   ctx.scheduler_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;

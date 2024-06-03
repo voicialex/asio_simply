@@ -22,7 +22,7 @@ public:
 
   completion_handler(Handler& h)
     : operation(&completion_handler::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler)(h))
+      handler_(static_cast<Handler&&>(h))
   {
     handler_work<Handler>::start(handler_);
   }
@@ -44,7 +44,7 @@ public:
     // with the handler. Consequently, a local copy of the handler is required
     // to ensure that any owning sub-object remains valid until after we have
     // deallocated the memory here.
-    Handler handler(ASIO_MOVE_CAST(Handler)(h->handler_));
+    Handler handler(static_cast<Handler&&>(h->handler_));
     p.h = asio::detail::addressof(handler);
     p.reset();
 

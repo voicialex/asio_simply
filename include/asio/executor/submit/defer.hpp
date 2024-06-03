@@ -51,7 +51,7 @@ namespace asio {
  */
 template <typename CompletionToken>
 ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
-    ASIO_MOVE_ARG(CompletionToken) token);
+    CompletionToken&& token);
 
 /// Submits a completion token or function object for execution.
 /**
@@ -85,7 +85,7 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
  */
 template <typename Executor, typename CompletionToken>
 ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
-    const Executor& ex, ASIO_MOVE_ARG(CompletionToken) token,
+    const Executor& ex, CompletionToken&& token,
     typename enable_if<is_executor<Executor>::value>::type* = 0);
 
 /// Submits a completion token or function object for execution.
@@ -94,7 +94,7 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
  */
 template <typename ExecutionContext, typename CompletionToken>
 ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
-    ExecutionContext& ctx, ASIO_MOVE_ARG(CompletionToken) token,
+    ExecutionContext& ctx, CompletionToken&& token,
     typename enable_if<is_convertible<
       ExecutionContext&, execution_context&>::value>::type* = 0);
 

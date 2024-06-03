@@ -252,7 +252,7 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
  */
 template <typename SyncWriteStream, typename DynamicBuffer>
 std::size_t write(SyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBuffer) buffers,
+    DynamicBuffer&& buffers,
     typename enable_if<
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
@@ -286,7 +286,7 @@ std::size_t write(SyncWriteStream& s,
  */
 template <typename SyncWriteStream, typename DynamicBuffer>
 std::size_t write(SyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBuffer) buffers,
+    DynamicBuffer&& buffers,
     asio::error_code& ec,
     typename enable_if<
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
@@ -331,7 +331,7 @@ std::size_t write(SyncWriteStream& s,
 template <typename SyncWriteStream, typename DynamicBuffer,
     typename CompletionCondition>
 std::size_t write(SyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBuffer) buffers,
+    DynamicBuffer&& buffers,
     CompletionCondition completion_condition,
     typename enable_if<
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
@@ -377,7 +377,7 @@ std::size_t write(SyncWriteStream& s,
 template <typename SyncWriteStream, typename DynamicBuffer,
     typename CompletionCondition>
 std::size_t write(SyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBuffer) buffers,
+    DynamicBuffer&& buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
     typename enable_if<
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
@@ -595,7 +595,7 @@ template <typename AsyncWriteStream, typename ConstBufferSequence,
 ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
-    ASIO_MOVE_ARG(WriteHandler) handler,
+    WriteHandler&& handler,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
     >::type* = 0);
@@ -673,7 +673,7 @@ ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition,
-    ASIO_MOVE_ARG(WriteHandler) handler,
+    WriteHandler&& handler,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
     >::type* = 0);
@@ -726,8 +726,8 @@ template <typename AsyncWriteStream,
 ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBuffer) buffers,
-    ASIO_MOVE_ARG(WriteHandler) handler,
+    DynamicBuffer&& buffers,
+    WriteHandler&& handler,
     typename enable_if<
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
@@ -794,9 +794,9 @@ template <typename AsyncWriteStream, typename DynamicBuffer,
 ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBuffer) buffers,
+    DynamicBuffer&& buffers,
     CompletionCondition completion_condition,
-    ASIO_MOVE_ARG(WriteHandler) handler,
+    WriteHandler&& handler,
     typename enable_if<
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
@@ -849,7 +849,7 @@ template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
 ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
-    ASIO_MOVE_ARG(WriteHandler) handler);
+    WriteHandler&& handler);
 
 /// Start an asynchronous operation to write a certain amount of data to a
 /// stream.
@@ -912,7 +912,7 @@ ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition,
-    ASIO_MOVE_ARG(WriteHandler) handler);
+    WriteHandler&& handler);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
 #endif // !defined(ASIO_NO_EXTENSIONS)

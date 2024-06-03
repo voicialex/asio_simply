@@ -17,7 +17,7 @@ class work_dispatcher
 public:
   work_dispatcher(Handler& handler)
     : work_((get_associated_executor)(handler)),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(static_cast<Handler&&>(handler))
   {
   }
 
@@ -28,9 +28,9 @@ public:
   }
 
   work_dispatcher(work_dispatcher&& other)
-    : work_(ASIO_MOVE_CAST(executor_work_guard<
-        typename associated_executor<Handler>::type>)(other.work_)),
-      handler_(ASIO_MOVE_CAST(Handler)(other.handler_))
+    : work_(static_cast<executor_work_guard<
+        typename associated_executor<Handler>::type>&&>(other.work_)),
+      handler_(static_cast<Handler&&>(other.handler_))
   {
   }
 
@@ -39,7 +39,7 @@ public:
     typename associated_allocator<Handler>::type alloc(
         (get_associated_allocator)(handler_));
     work_.get_executor().dispatch(
-        ASIO_MOVE_CAST(Handler)(handler_), alloc);
+        static_cast<Handler&&>(handler_), alloc);
     work_.reset();
   }
 

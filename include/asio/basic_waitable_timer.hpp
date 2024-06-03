@@ -432,7 +432,7 @@ public:
   template <typename WaitHandler>
   ASIO_INITFN_RESULT_TYPE(WaitHandler,
       void (asio::error_code))
-  async_wait(ASIO_MOVE_ARG(WaitHandler) handler)
+  async_wait(WaitHandler&& handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WaitHandler.

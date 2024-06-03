@@ -51,7 +51,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+  void dispatch(Function&& f, const Allocator& a) const;
 
   /// Request the system executor to invoke the given function object.
   /**
@@ -67,7 +67,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+  void post(Function&& f, const Allocator& a) const;
 
   /// Request the system executor to invoke the given function object.
   /**
@@ -83,7 +83,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+  void defer(Function&& f, const Allocator& a) const;
 
   /// Compare two executors for equality.
   /**

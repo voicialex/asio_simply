@@ -82,7 +82,7 @@ public:
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move constructor.
   basic_resolver_iterator(basic_resolver_iterator&& other)
-    : values_(ASIO_MOVE_CAST(values_ptr_type)(other.values_)),
+    : values_(static_cast<values_ptr_type&&>(other.values_)),
       index_(other.index_)
   {
     other.index_ = 0;
@@ -103,7 +103,7 @@ public:
   {
     if (this != &other)
     {
-      values_ = ASIO_MOVE_CAST(values_ptr_type)(other.values_);
+      values_ = static_cast<values_ptr_type&&>(other.values_);
       index_ = other.index_;
       other.index_ = 0;
     }
