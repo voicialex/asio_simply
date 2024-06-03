@@ -46,7 +46,7 @@
 #endif // !defined(ASIO_DISABLE_HANDLER_TYPE_REQUIREMENTS)
 
 #if defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
-# include "asio/executor/async_result.hpp"
+# include "asio/executor/helper/async_result.hpp"
 #endif // defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
 namespace asio {

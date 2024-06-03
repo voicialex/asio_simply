@@ -4,7 +4,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/scheduler/scheduler.hpp"
 #include "asio/detail/thread/thread_group.hpp"
-#include "asio/executor/execution_context.hpp"
+#include "asio/core/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -53,9 +53,9 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/executor/impl/system_context.hpp"
+#include "asio/core/impl/system_context.hpp"
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/executor/impl/system_context.ipp"
+# include "asio/core/impl/system_context.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_SYSTEM_CONTEXT_HPP

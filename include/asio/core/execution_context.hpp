@@ -353,9 +353,9 @@ service_id<Type> execution_context_service_base<Type>::id;
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/executor/impl/execution_context.hpp"
+#include "asio/core/impl/execution_context.hpp"
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/executor/impl/execution_context.ipp"
+# include "asio/core/impl/execution_context.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_EXECUTION_CONTEXT_HPP

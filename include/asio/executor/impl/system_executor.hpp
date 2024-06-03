@@ -5,7 +5,7 @@
 #include "asio/detail/base/global.hpp"
 #include "asio/detail/memory/recycling_allocator.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"
-#include "asio/executor/system_context.hpp"
+#include "asio/core/system_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 

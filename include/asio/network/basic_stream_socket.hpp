@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
-#include "asio/executor/async_result.hpp"
+#include "asio/executor/helper/async_result.hpp"
 #include "asio/network/basic_socket.hpp"
 #include "asio/detail/base/handler/handler_type_requirements.hpp"
 #include "asio/error/throw_error.hpp"

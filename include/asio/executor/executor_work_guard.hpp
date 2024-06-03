@@ -2,7 +2,7 @@
 #define ASIO_EXECUTOR_WORK_GUARD_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/executor/associated_executor.hpp"
+#include "asio/executor/helper/associated_executor.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"
 #include "asio/executor/is_executor.hpp"
 

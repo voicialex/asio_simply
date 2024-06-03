@@ -5,11 +5,11 @@
 #include <cstddef>
 #include <stdexcept>
 #include <typeinfo>
-#include "asio/executor/async_result.hpp"
+#include "asio/executor/helper/async_result.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/base/handler/wrapped_handler.hpp"
 #include "asio/error/error_code.hpp"
-#include "asio/executor/execution_context.hpp"
+#include "asio/core/execution_context.hpp"
 
 # include "asio/detail/base/stdcpp/chrono.hpp"
 

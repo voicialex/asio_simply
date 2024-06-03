@@ -4,12 +4,12 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"
 // #include "asio/detail/variadic_templates.hpp"
-#include "asio/executor/associated_executor.hpp"
+#include "asio/executor/helper/associated_executor.hpp"
 #include "asio/detail/memory/associated_allocator.hpp"
-#include "asio/executor/async_result.hpp"
-#include "asio/executor/execution_context.hpp"
+#include "asio/executor/helper/async_result.hpp"
+#include "asio/core/execution_context.hpp"
 #include "asio/executor/is_executor.hpp"
-#include "asio/executor/uses_executor.hpp"
+#include "asio/executor/helper/uses_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 

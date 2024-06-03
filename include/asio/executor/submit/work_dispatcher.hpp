@@ -2,7 +2,7 @@
 #define ASIO_DETAIL_WORK_DISPATCHER_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/executor/associated_executor.hpp"
+#include "asio/executor/helper/associated_executor.hpp"
 #include "asio/detail/memory/associated_allocator.hpp"
 #include "asio/executor/executor_work_guard.hpp"
 

@@ -6,7 +6,7 @@
 #include "asio/detail/base/stdcpp/cstddef.hpp"
 #include "asio/detail/memory/memory.hpp"
 #include "asio/error/throw_exception.hpp"
-#include "asio/executor/execution_context.hpp"
+#include "asio/core/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 

@@ -2,7 +2,7 @@
 #define ASIO_DETAIL_HANDLER_WORK_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/executor/associated_executor.hpp"
+#include "asio/executor/helper/associated_executor.hpp"
 #include "asio/detail/scheduler/invoke/handler_invoke_helpers.hpp"
 
 #include "asio/detail/push_options.hpp"

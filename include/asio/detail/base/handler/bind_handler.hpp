@@ -3,7 +3,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/memory/associated_allocator.hpp"
-#include "asio/executor/associated_executor.hpp"
+#include "asio/executor/helper/associated_executor.hpp"
 #include "asio/detail/memory/handler_alloc_helpers.hpp"
 #include "asio/detail/base/handler/handler_cont_helpers.hpp"
 #include "asio/detail/scheduler/invoke/handler_invoke_helpers.hpp"

@@ -5,7 +5,7 @@
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/scheduler/scheduler.hpp"
 #include "asio/detail/thread/thread_group.hpp"
-#include "asio/executor/execution_context.hpp"
+#include "asio/core/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 

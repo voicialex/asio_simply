@@ -5,7 +5,7 @@
 #include "asio/detail/thread/fenced_block.hpp"
 #include "asio/detail/memory/recycling_allocator.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"
-#include "asio/executor/execution_context.hpp"
+#include "asio/core/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 

@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/memory/associated_allocator.hpp"
-#include "asio/executor/associated_executor.hpp"
+#include "asio/executor/helper/associated_executor.hpp"
 #include "asio/executor/submit/work_dispatcher.hpp"
 
 #include "asio/detail/push_options.hpp"
