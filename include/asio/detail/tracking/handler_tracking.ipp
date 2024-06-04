@@ -83,11 +83,7 @@ void handler_tracking::creation(execution_context&,
     current_id = current_completion->id_;
 
   write_line(
-#if defined(ASIO_WINDOWS)
-      "@asio|%I64u.%06I64u|%I64u*%I64u|%.20s@%p.%.50s\n",
-#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|%llu*%llu|%.20s@%p.%.50s\n",
-#endif // defined(ASIO_WINDOWS)
       timestamp.seconds, timestamp.microseconds,
       current_id, h.id_, object_type, object, op_name);
 }
@@ -108,11 +104,7 @@ handler_tracking::completion::~completion()
     handler_tracking_timestamp timestamp;
 
     write_line(
-#if defined(ASIO_WINDOWS)
-        "@asio|%I64u.%06I64u|%c%I64u|\n",
-#else // defined(ASIO_WINDOWS)
         "@asio|%llu.%06llu|%c%llu|\n",
-#endif // defined(ASIO_WINDOWS)
         timestamp.seconds, timestamp.microseconds,
         invoked_ ? '!' : '~', id_);
   }
@@ -125,11 +117,7 @@ void handler_tracking::completion::invocation_begin()
   handler_tracking_timestamp timestamp;
 
   write_line(
-#if defined(ASIO_WINDOWS)
-      "@asio|%I64u.%06I64u|>%I64u|\n",
-#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|\n",
-#endif // defined(ASIO_WINDOWS)
       timestamp.seconds, timestamp.microseconds, id_);
 
   invoked_ = true;
@@ -141,11 +129,7 @@ void handler_tracking::completion::invocation_begin(
   handler_tracking_timestamp timestamp;
 
   write_line(
-#if defined(ASIO_WINDOWS)
-      "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d\n",
-#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d\n",
-#endif // defined(ASIO_WINDOWS)
       timestamp.seconds, timestamp.microseconds,
       id_, ec.category().name(), ec.value());
 
@@ -158,11 +142,7 @@ void handler_tracking::completion::invocation_begin(
   handler_tracking_timestamp timestamp;
 
   write_line(
-#if defined(ASIO_WINDOWS)
-      "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d,bytes_transferred=%I64u\n",
-#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,bytes_transferred=%llu\n",
-#endif // defined(ASIO_WINDOWS)
       timestamp.seconds, timestamp.microseconds,
       id_, ec.category().name(), ec.value(),
       static_cast<uint64_t>(bytes_transferred));
@@ -176,11 +156,7 @@ void handler_tracking::completion::invocation_begin(
   handler_tracking_timestamp timestamp;
 
   write_line(
-#if defined(ASIO_WINDOWS)
-      "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d,signal_number=%d\n",
-#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,signal_number=%d\n",
-#endif // defined(ASIO_WINDOWS)
       timestamp.seconds, timestamp.microseconds,
       id_, ec.category().name(), ec.value(), signal_number);
 
@@ -193,11 +169,7 @@ void handler_tracking::completion::invocation_begin(
   handler_tracking_timestamp timestamp;
 
   write_line(
-#if defined(ASIO_WINDOWS)
-      "@asio|%I64u.%06I64u|>%I64u|ec=%.20s:%d,%.50s\n",
-#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|>%llu|ec=%.20s:%d,%.50s\n",
-#endif // defined(ASIO_WINDOWS)
       timestamp.seconds, timestamp.microseconds,
       id_, ec.category().name(), ec.value(), arg);
 
@@ -211,11 +183,7 @@ void handler_tracking::completion::invocation_end()
     handler_tracking_timestamp timestamp;
 
     write_line(
-#if defined(ASIO_WINDOWS)
-        "@asio|%I64u.%06I64u|<%I64u|\n",
-#else // defined(ASIO_WINDOWS)
         "@asio|%llu.%06llu|<%llu|\n",
-#endif // defined(ASIO_WINDOWS)
         timestamp.seconds, timestamp.microseconds, id_);
 
     id_ = 0;
@@ -235,11 +203,7 @@ void handler_tracking::operation(execution_context&,
     current_id = current_completion->id_;
 
   write_line(
-#if defined(ASIO_WINDOWS)
-      "@asio|%I64u.%06I64u|%I64u|%.20s@%p.%.50s\n",
-#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|%llu|%.20s@%p.%.50s\n",
-#endif // defined(ASIO_WINDOWS)
       timestamp.seconds, timestamp.microseconds,
       current_id, object_type, object, op_name);
 }
@@ -266,11 +230,7 @@ void handler_tracking::reactor_operation(
   handler_tracking_timestamp timestamp;
 
   write_line(
-#if defined(ASIO_WINDOWS)
-      "@asio|%I64u.%06I64u|.%I64u|%s,ec=%.20s:%d\n",
-#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|.%llu|%s,ec=%.20s:%d\n",
-#endif // defined(ASIO_WINDOWS)
       timestamp.seconds, timestamp.microseconds,
       h.id_, op_name, ec.category().name(), ec.value());
 }
@@ -282,11 +242,7 @@ void handler_tracking::reactor_operation(
   handler_tracking_timestamp timestamp;
 
   write_line(
-#if defined(ASIO_WINDOWS)
-      "@asio|%I64u.%06I64u|.%I64u|%s,ec=%.20s:%d,bytes_transferred=%I64u\n",
-#else // defined(ASIO_WINDOWS)
       "@asio|%llu.%06llu|.%llu|%s,ec=%.20s:%d,bytes_transferred=%llu\n",
-#endif // defined(ASIO_WINDOWS)
       timestamp.seconds, timestamp.microseconds,
       h.id_, op_name, ec.category().name(), ec.value(),
       static_cast<uint64_t>(bytes_transferred));

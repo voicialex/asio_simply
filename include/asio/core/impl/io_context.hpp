@@ -3,10 +3,10 @@
 
 
 
-#include "asio/detail/base/handler/completion_handler.hpp"
+#include "asio/core/handler/completion_handler.hpp"
 #include "asio/detail/scheduler/op/executor_op.hpp"
 #include "asio/detail/thread/fenced_block.hpp"
-#include "asio/detail/base/handler/handler_type_requirements.hpp"
+#include "asio/core/handler/handler_type_requirements.hpp"
 #include "asio/detail/memory/recycling_allocator.hpp"
 #include "asio/core/service_registry.hpp"
 #include "asio/error/throw_error.hpp"

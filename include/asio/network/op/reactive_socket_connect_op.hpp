@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/base/handler/bind_handler.hpp"
+#include "asio/core/handler/bind_handler.hpp"
 #include "asio/network/buffer/buffer_sequence_adapter.hpp"
 #include "asio/detail/thread/fenced_block.hpp"
 #include "asio/detail/memory/memory.hpp"

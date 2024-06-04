@@ -4,7 +4,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/thread/fenced_block.hpp"
 #include "asio/detail/memory/handler_alloc_helpers.hpp"
-#include "asio/detail/scheduler/invoke/handler_invoke_helpers.hpp"
+#include "asio/core/handler/handler_invoke_helpers.hpp"
 #include "asio/detail/scheduler/op/scheduler_operation.hpp"
 
 #include "asio/detail/push_options.hpp"

@@ -7,7 +7,7 @@
 #include <typeinfo>
 #include "asio/executor/helper/async_result.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/base/handler/wrapped_handler.hpp"
+#include "asio/core/handler/wrapped_handler.hpp"
 #include "asio/error/error_code.hpp"
 #include "asio/core/execution_context.hpp"
 

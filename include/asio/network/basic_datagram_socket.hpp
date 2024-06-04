@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include "asio/network/basic_socket.hpp"
-#include "asio/detail/base/handler/handler_type_requirements.hpp"
+#include "asio/core/handler/handler_type_requirements.hpp"
 #include "asio/error/throw_error.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"
 #include "asio/error/error.hpp"

@@ -19,7 +19,7 @@
 #include <string>
 #include "asio/executor/helper/async_result.hpp"
 #include "asio/basic_io_object.hpp"
-#include "asio/detail/base/handler/handler_type_requirements.hpp"
+#include "asio/core/handler/handler_type_requirements.hpp"
 #include "asio/detail/base/stdcpp/string_view.hpp"
 #include "asio/error/throw_error.hpp"
 #include "asio/error/error.hpp"

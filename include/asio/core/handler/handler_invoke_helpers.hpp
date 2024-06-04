@@ -3,7 +3,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/memory/memory.hpp"
-#include "asio/detail/scheduler/invoke/handler_invoke_hook.hpp"
+#include "asio/core/handler/handler_invoke_hook.hpp"
 
 #include "asio/detail/push_options.hpp"
 

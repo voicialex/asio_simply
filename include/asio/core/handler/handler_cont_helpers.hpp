@@ -4,7 +4,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/memory/memory.hpp"
-#include "asio/detail/base/handler/handler_continuation_hook.hpp"
+#include "asio/core/handler/handler_continuation_hook.hpp"
 
 #include "asio/detail/push_options.hpp"
 

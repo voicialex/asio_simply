@@ -5,7 +5,7 @@
 #include <cstddef>
 #include "asio/error/error.hpp"
 #include "asio/core/io_context.hpp"
-#include "asio/detail/base/handler/bind_handler.hpp"
+#include "asio/core/handler/bind_handler.hpp"
 #include "asio/detail/thread/fenced_block.hpp"
 #include "asio/detail/memory/memory.hpp"
 #include "asio/detail/noncopyable.hpp"

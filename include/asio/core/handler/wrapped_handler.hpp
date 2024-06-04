@@ -1,10 +1,10 @@
 #ifndef ASIO_DETAIL_WRAPPED_HANDLER_HPP
 #define ASIO_DETAIL_WRAPPED_HANDLER_HPP
 
-#include "asio/detail/base/handler/bind_handler.hpp"
+#include "asio/core/handler/bind_handler.hpp"
 #include "asio/detail/memory/handler_alloc_helpers.hpp"
-#include "asio/detail/base/handler/handler_cont_helpers.hpp"
-#include "asio/detail/scheduler/invoke/handler_invoke_helpers.hpp"
+#include "asio/core/handler/handler_cont_helpers.hpp"
+#include "asio/core/handler/handler_invoke_helpers.hpp"
 
 #include "asio/detail/push_options.hpp"
 
