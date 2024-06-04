@@ -81,7 +81,7 @@ private:
 #include "asio/detail/pop_options.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/detail/base/posix/null_event.ipp"
+# include "asio/detail/base/null/null_event.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_NULL_EVENT_HPP

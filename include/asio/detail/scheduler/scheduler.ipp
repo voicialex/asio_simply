@@ -88,6 +88,10 @@ scheduler::scheduler(
     shutdown_(false),
     concurrency_hint_(concurrency_hint)
 {
+  ASIO_HANDLER_TRACKING_INIT;
+#ifdef ASIO_ENABLE_STUDY
+  std::cout << "scheduler" << std::endl;
+#endif
 }
 
 void scheduler::shutdown()

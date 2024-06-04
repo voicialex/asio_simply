@@ -5,7 +5,7 @@
 #include "asio/detail/base/conditionally_enabled_mutex.hpp"
 #include "asio/detail/base/event.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/base/null_event.hpp"
+#include "asio/detail/base/null/null_event.hpp"
 #include "asio/detail/base/scoped_lock.hpp"
 
 #include "asio/detail/push_options.hpp"

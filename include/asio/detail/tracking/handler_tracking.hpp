@@ -12,10 +12,10 @@ class execution_context;
 #if defined(ASIO_CUSTOM_HANDLER_TRACKING)
 # include ASIO_CUSTOM_HANDLER_TRACKING
 #elif defined(ASIO_ENABLE_HANDLER_TRACKING)
-# include "asio/error_code.hpp"
-# include "asio/detail/cstdint.hpp"
-# include "asio/detail/static_mutex.hpp"
-# include "asio/detail/tss_ptr.hpp"
+# include "asio/error/error_code.hpp"
+# include "asio/detail/base/stdcpp/cstdint.hpp"
+# include "asio/detail/base/static_mutex.hpp"
+# include "asio/detail/base/tss_ptr.hpp"
 #endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
 
 #include "asio/detail/push_options.hpp"

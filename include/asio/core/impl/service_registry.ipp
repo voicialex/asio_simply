@@ -15,6 +15,9 @@ service_registry::service_registry(execution_context& owner)
   : owner_(owner),
     first_service_(0)
 {
+#ifdef ASIO_ENABLE_STUDY
+  std::cout << "service_registry" << std::endl;
+#endif
 }
 
 service_registry::~service_registry()

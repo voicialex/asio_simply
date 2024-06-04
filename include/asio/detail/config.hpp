@@ -11,6 +11,11 @@
 #ifndef ASIO_DETAIL_CONFIG_HPP
 #define ASIO_DETAIL_CONFIG_HPP
 
+// for study
+#include <iostream>
+#define ASIO_ENABLE_HANDLER_TRACKING
+#define ASIO_ENABLE_STUDY
+
 #if defined(ASIO_STANDALONE)
 # define ASIO_DISABLE_BOOST_ARRAY 1
 # define ASIO_DISABLE_BOOST_ASSERT 1

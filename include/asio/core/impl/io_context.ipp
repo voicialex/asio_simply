@@ -18,17 +18,22 @@ namespace asio {
 io_context::io_context()
   : impl_(add_impl(new impl_type(*this, ASIO_CONCURRENCY_HINT_DEFAULT)))
 {
+#ifdef ASIO_ENABLE_STUDY
+  std::cout << "io_context " << "()" << std::endl;
+#endif
 }
 
 io_context::io_context(int concurrency_hint)
   : impl_(add_impl(new impl_type(*this, concurrency_hint == 1
           ? ASIO_CONCURRENCY_HINT_1 : concurrency_hint)))
 {
+  std::cout << "io_context " << "(concurrency_hint:" << concurrency_hint << ")" << std::endl;
 }
 
 io_context::impl_type& io_context::add_impl(io_context::impl_type* impl)
 {
   asio::detail::scoped_ptr<impl_type> scoped_impl(impl);
+  std::cout << "add_impl io_context_impl(scheduler) in service" << std::endl;
   asio::add_service<impl_type>(*this, scoped_impl.get());
   return *scoped_impl.release();
 }

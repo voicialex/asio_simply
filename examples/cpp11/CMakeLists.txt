@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 
 link_libraries(Threads::Threads)
 
-
 set(TARGET_NAME allocation)
 add_executable(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/allocation/server.cpp)
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/test/asio)

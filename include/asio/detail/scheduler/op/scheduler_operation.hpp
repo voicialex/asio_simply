@@ -14,7 +14,7 @@ class scheduler;
 
 // Base class for all operations. A function pointer is used instead of virtual
 // functions to avoid the associated overhead.
-class scheduler_operation
+class scheduler_operation ASIO_INHERIT_TRACKED_HANDLER
 {
 public:
   typedef scheduler_operation operation_type;

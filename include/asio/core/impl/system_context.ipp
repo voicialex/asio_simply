@@ -40,6 +40,9 @@ system_context::system_context()
 
   thread_function f = { &scheduler_ };
   std::size_t num_threads = detail::thread::hardware_concurrency() * 2;
+#ifdef ASIO_ENABLE_STUDY
+  std::cout << "system_context, create threads " << (num_threads ? num_threads : 2) << std::endl;
+#endif
   threads_.create_threads(f, num_threads ? num_threads : 2);
 }
 

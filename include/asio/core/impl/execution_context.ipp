@@ -12,6 +12,9 @@ namespace asio {
 execution_context::execution_context()
   : service_registry_(new asio::detail::service_registry(*this))
 {
+#ifdef ASIO_ENABLE_STUDY
+  std::cout << "execution_context" << std::endl;
+#endif
 }
 
 execution_context::~execution_context()

@@ -14,7 +14,7 @@
 #include "asio/detail/tracking/handler_tracking.hpp"
 
 # include "asio/detail/base/stdcpp/chrono.hpp"
-# include "asio/detail/chrono_time_traits.hpp"
+# include "asio/detail/base/chrono_time_traits.hpp"
 # include "asio/wait_traits.hpp"
 
 # include <unistd.h>

@@ -4,7 +4,7 @@
 #include "asio/detail/config.hpp"
 
 #if !defined(ASIO_HAS_THREADS)
-# include "asio/detail/base/null_event.hpp"
+# include "asio/detail/base/null/null_event.hpp"
 #elif defined(ASIO_HAS_PTHREADS)
 # include "asio/detail/base/posix/posix_event.hpp"
 #elif defined(ASIO_HAS_STD_MUTEX_AND_CONDVAR)
