@@ -8,12 +8,12 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "asio/buffer.hpp"
-#include "asio/io_context.hpp"
+#include "asio/buffer/buffer.hpp"
+#include "asio/core/io_context.hpp"
 #include "asio/ip/tcp.hpp"
-#include "asio/read_until.hpp"
-#include "asio/steady_timer.hpp"
-#include "asio/write.hpp"
+#include "asio/transmit/read_until.hpp"
+#include "asio/timer/steady_timer.hpp"
+#include "asio/transmit/write.hpp"
 #include <functional>
 #include <iostream>
 #include <string>

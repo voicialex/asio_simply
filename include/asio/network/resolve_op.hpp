@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/error/error.hpp"
-#include "asio/detail/scheduler/op/operation.hpp"
+#include "asio/core/operation.hpp"
 
 #include "asio/detail/push_options.hpp"
 

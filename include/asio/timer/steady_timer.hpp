@@ -19,7 +19,7 @@
 
 #if defined(ASIO_HAS_CHRONO)
 
-#include "asio/basic_waitable_timer.hpp"
+#include "asio/timer/basic_waitable_timer.hpp"
 #include "asio/detail/base/stdcpp/chrono.hpp"
 
 namespace asio {

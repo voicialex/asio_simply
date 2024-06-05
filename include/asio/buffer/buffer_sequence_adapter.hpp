@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/network/buffer/buffer.hpp"
+#include "asio/buffer/buffer.hpp"
 #include "asio/detail/base/boost/array_fwd.hpp"
 #include "asio/network/socket_types.hpp"
 
@@ -538,7 +538,7 @@ private:
 #include "asio/detail/pop_options.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/network/buffer/buffer_sequence_adapter.ipp"
+# include "asio/buffer/buffer_sequence_adapter.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_BUFFER_SEQUENCE_ADAPTER_HPP

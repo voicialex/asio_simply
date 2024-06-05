@@ -20,7 +20,7 @@
 #include "asio/detail/base/conditionally_enabled_mutex.hpp"
 #include "asio/detail/container/op_queue.hpp"
 #include "asio/detail/reactor/reactor_fwd.hpp"
-#include "asio/detail/scheduler/op/scheduler_operation.hpp"
+#include "asio/core/scheduler/scheduler_operation.hpp"
 #include "asio/detail/thread/thread_context.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -203,7 +203,7 @@ private:
 #include "asio/detail/pop_options.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/detail/scheduler/scheduler.ipp"
+# include "asio/core/scheduler/scheduler.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_SCHEDULER_HPP

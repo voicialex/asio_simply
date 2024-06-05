@@ -415,7 +415,11 @@ int socketpair(int af, int type, int protocol,
     socket_type sv[2], asio::error_code& ec)
 {
   clear_last_error();
+#if defined(__VXWORKS__)
+  int result = error_wrapper(::ipcom_socketpair(af, type, protocol, sv), ec);
+#else
   int result = error_wrapper(::socketpair(af, type, protocol, sv), ec);
+#endif
   if (result == 0)
     ec = asio::error_code();
   return result;

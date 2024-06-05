@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/basic_io_object.hpp"
+#include "asio/core/basic_io_object.hpp"
 #include "asio/network/basic_socket.hpp"
 #include "asio/core/handler/handler_type_requirements.hpp"
 #include "asio/error/throw_error.hpp"

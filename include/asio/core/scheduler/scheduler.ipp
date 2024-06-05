@@ -8,8 +8,8 @@
 // #include "asio/detail/base/stdcpp/stdcpp/limits.hpp"
 #include <limits>
 #include "asio/detail/reactor/reactor.hpp"
-#include "asio/detail/scheduler/scheduler.hpp"
-#include "asio/detail/scheduler/scheduler_thread_info.hpp"
+#include "asio/core/scheduler/scheduler.hpp"
+#include "asio/core/scheduler/scheduler_thread_info.hpp"
 
 #include "asio/detail/push_options.hpp"
 

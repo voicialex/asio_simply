@@ -3,16 +3,16 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
-#include "asio/basic_io_object.hpp"
+#include "asio/core/basic_io_object.hpp"
 #include "asio/core/handler/handler_type_requirements.hpp"
 #include "asio/error/throw_error.hpp"
 #include "asio/error/error.hpp"
-#include "asio/wait_traits.hpp"
+#include "asio/timer/wait_traits.hpp"
 
 # include <utility>
 
-# include "asio/detail/base/chrono_time_traits.hpp"
-# include "asio/core/detail/deadline_timer_service.hpp"
+# include "asio/timer/chrono_time_traits.hpp"
+# include "asio/service/deadline_timer_service.hpp"
 # define ASIO_SVC_T \
     detail::deadline_timer_service< \
       detail::chrono_time_traits<Clock, WaitTraits> >

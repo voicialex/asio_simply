@@ -15,7 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/network/buffer/buffer.hpp"
+#include "asio/buffer/buffer.hpp"
 #include "asio/transmit/completion_condition.hpp"
 #include "asio/transmit/read.hpp"
 #include "asio/transmit/write.hpp"

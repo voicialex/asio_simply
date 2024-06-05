@@ -31,6 +31,9 @@ epoll_reactor::epoll_reactor(asio::execution_context& ctx)
     shutdown_(false),
     registered_descriptors_mutex_(mutex_.enabled())
 {
+#ifdef ASIO_ENABLE_STUDY
+  std::cout << "epoll_reactor" << std::endl;
+#endif
   // Add the interrupter's descriptor to epoll.
   epoll_event ev = { 0, { 0 } };
   ev.events = EPOLLIN | EPOLLERR | EPOLLET;

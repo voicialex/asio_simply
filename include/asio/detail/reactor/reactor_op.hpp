@@ -2,7 +2,7 @@
 #define ASIO_DETAIL_REACTOR_OP_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/scheduler/op/operation.hpp"
+#include "asio/core/operation.hpp"
 
 #include "asio/detail/push_options.hpp"
 

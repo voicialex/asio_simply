@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/core/handler/bind_handler.hpp"
-#include "asio/network/buffer/buffer_sequence_adapter.hpp"
+#include "asio/buffer/buffer_sequence_adapter.hpp"
 #include "asio/detail/thread/fenced_block.hpp"
 #include "asio/detail/memory/memory.hpp"
 #include "asio/detail/reactor/reactor_op.hpp"

@@ -20,11 +20,11 @@
 #if !defined(ASIO_HAS_IOCP) \
   && !defined(ASIO_WINDOWS_RUNTIME)
 
-#include "asio/network/buffer/buffer.hpp"
+#include "asio/buffer/buffer.hpp"
 #include "asio/error/error.hpp"
 #include "asio/core/io_context.hpp"
 #include "asio/network/socket_base.hpp"
-#include "asio/network/buffer/buffer_sequence_adapter.hpp"
+#include "asio/buffer/buffer_sequence_adapter.hpp"
 #include "asio/detail/memory/memory.hpp"
 #include "asio/network/op/reactive_null_buffers_op.hpp"
 #include "asio/network/op/reactive_socket_recv_op.hpp"

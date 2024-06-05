@@ -131,6 +131,9 @@ execution_context::service* service_registry::do_use_service(
     service = service->next_;
   }
 
+#ifdef ASIO_ENABLE_STUDY
+  std::cout << "service_registry::do_use_service(new): " << key.type_info_->name() << std::endl;
+#endif
   // Service was successfully initialised, pass ownership to registry.
   new_service.ptr_->next_ = first_service_;
   first_service_ = new_service.ptr_;
@@ -156,6 +159,9 @@ void service_registry::do_add_service(
     service = service->next_;
   }
 
+#ifdef ASIO_ENABLE_STUDY
+  std::cout << "service_registry::do_add_service: " << key.type_info_->name() << std::endl;
+#endif
   // Take ownership of the service object.
   new_service->key_ = key;
   new_service->next_ = first_service_;

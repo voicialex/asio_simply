@@ -2,7 +2,7 @@
 #define ASIO_SYSTEM_CONTEXT_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/scheduler/scheduler.hpp"
+#include "asio/core/scheduler/scheduler.hpp"
 #include "asio/detail/thread/thread_group.hpp"
 #include "asio/core/execution_context.hpp"
 

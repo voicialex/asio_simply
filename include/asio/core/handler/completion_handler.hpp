@@ -7,7 +7,7 @@
 #include "asio/detail/memory/handler_alloc_helpers.hpp"
 #include "asio/core/handler/handler_work.hpp"
 #include "asio/detail/memory/memory.hpp"
-#include "asio/detail/scheduler/op/operation.hpp"
+#include "asio/core/operation.hpp"
 
 #include "asio/detail/push_options.hpp"
 

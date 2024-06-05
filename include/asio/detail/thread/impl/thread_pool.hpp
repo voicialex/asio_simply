@@ -1,7 +1,7 @@
 #ifndef ASIO_IMPL_THREAD_POOL_HPP
 #define ASIO_IMPL_THREAD_POOL_HPP
 
-#include "asio/detail/scheduler/op/executor_op.hpp"
+#include "asio/executor/executor_op.hpp"
 #include "asio/detail/thread/fenced_block.hpp"
 #include "asio/detail/memory/recycling_allocator.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"

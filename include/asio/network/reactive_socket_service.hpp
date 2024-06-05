@@ -19,11 +19,11 @@
 
 #if !defined(ASIO_HAS_IOCP)
 
-#include "asio/network/buffer/buffer.hpp"
+#include "asio/buffer/buffer.hpp"
 #include "asio/error/error.hpp"
 #include "asio/core/io_context.hpp"
 #include "asio/network/socket_base.hpp"
-#include "asio/network/buffer/buffer_sequence_adapter.hpp"
+#include "asio/buffer/buffer_sequence_adapter.hpp"
 #include "asio/detail/memory/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/network/op/reactive_null_buffers_op.hpp"
@@ -77,6 +77,9 @@ public:
     : service_base<reactive_socket_service<Protocol> >(io_context),
       reactive_socket_service_base(io_context)
   {
+#ifdef ASIO_ENABLE_STUDY
+  std::cout << "reactive_socket_service" << std::endl;
+#endif
   }
 
   // Destroy all user-defined handler objects owned by the service.

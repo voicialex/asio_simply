@@ -23,12 +23,12 @@
 #include <vector>
 #include "asio/network/basic_socket.hpp"
 #include "asio/network/basic_stream_socket.hpp"
-#include "asio/network/buffer/buffer_sequence_adapter.hpp"
+#include "asio/buffer/buffer_sequence_adapter.hpp"
 #include "asio/detail/memory/memory.hpp"
 #include "asio/error/throw_error.hpp"
 #include "asio/core/io_context.hpp"
 
-# include "asio/steady_timer.hpp"
+# include "asio/timer/steady_timer.hpp"
 
 #if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 

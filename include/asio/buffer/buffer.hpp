@@ -2117,7 +2117,7 @@ inline std::size_t buffer_copy(const MutableBufferSequence& target,
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
-#include "asio/network/buffer/is_buffer_sequence.hpp"
+#include "asio/buffer/is_buffer_sequence.hpp"
 #include "asio/detail/push_options.hpp"
 
 namespace asio {

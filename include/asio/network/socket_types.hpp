@@ -37,6 +37,10 @@
 #  include <sys/sockio.h>
 # endif
 
+#if defined(__VXWORKS__)
+# include <ipcom_sock2.h>
+#endif
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {

@@ -83,19 +83,20 @@ int main()
     time_t_timer timer(io_context);
 
     timer.expires_after(std::chrono::seconds(5));
-    std::cout << "Starting synchronous wait\n";
+    std::cout << "Starting synchronous wait 5s\n";
     timer.wait();
-    std::cout << "Finished synchronous wait\n";
+    std::cout << "Finished synchronous wait 5s\n";
 
     timer.expires_after(std::chrono::seconds(5));
-    std::cout << "Starting asynchronous wait\n";
+    std::cout << "Starting asynchronous wait 5s\n";
     timer.async_wait(
         [](const std::error_code& /*error*/)
         {
           std::cout << "timeout\n";
         });
     io_context.run();
-    std::cout << "Finished asynchronous wait\n";
+    std::cout << "Starting io_context run\n";
+    std::cout << "Finished asynchronous wait 5s\n";
   }
   catch (std::exception& e)
   {

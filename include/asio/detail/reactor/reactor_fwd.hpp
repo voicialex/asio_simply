@@ -7,7 +7,11 @@
 namespace asio {
 namespace detail {
 
+#if defined(ASIO_HAS_EPOLL)
 typedef class epoll_reactor reactor;
+#else
+typedef class select_reactor reactor;
+#endif
 
 } // namespace detail
 } // namespace asio

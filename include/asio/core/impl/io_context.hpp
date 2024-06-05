@@ -4,7 +4,7 @@
 
 
 #include "asio/core/handler/completion_handler.hpp"
-#include "asio/detail/scheduler/op/executor_op.hpp"
+#include "asio/executor/executor_op.hpp"
 #include "asio/detail/thread/fenced_block.hpp"
 #include "asio/core/handler/handler_type_requirements.hpp"
 #include "asio/detail/memory/recycling_allocator.hpp"
@@ -37,7 +37,7 @@ inline detail::io_context_impl& use_service<detail::io_context_impl>(
 
 #include "asio/detail/pop_options.hpp"
 
-# include "asio/detail/scheduler/scheduler.hpp"
+# include "asio/core/scheduler/scheduler.hpp"
 
 #include "asio/detail/push_options.hpp"
 

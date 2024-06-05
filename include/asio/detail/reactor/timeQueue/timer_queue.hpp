@@ -9,7 +9,7 @@
 #include "asio/detail/base/stdcpp/limits.hpp"
 #include "asio/detail/container/op_queue.hpp"
 #include "asio/detail/reactor/timeQueue/timer_queue_base.hpp"
-#include "asio/detail/scheduler/op/wait_op.hpp"
+#include "asio/detail/reactor/wait_op.hpp"
 #include "asio/error/error.hpp"
 
 #include "asio/detail/push_options.hpp"

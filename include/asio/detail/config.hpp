@@ -1455,4 +1455,5 @@
 # endif // defined(__clang__)
 #endif // !defined(ASIO_HAS_CO_AWAIT)
 
+#undef ASIO_HAS_EPOLL
 #endif // ASIO_DETAIL_CONFIG_HPP

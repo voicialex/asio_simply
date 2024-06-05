@@ -16,7 +16,7 @@
 #include "asio/network/socket_types.hpp"
 #include "asio/detail/reactor/timeQueue/timer_queue_base.hpp"
 #include "asio/detail/reactor/timeQueue/timer_queue_set.hpp"
-#include "asio/detail/scheduler/op/wait_op.hpp"
+#include "asio/detail/reactor/wait_op.hpp"
 #include "asio/core/execution_context.hpp"
 
 #if defined(ASIO_HAS_TIMERFD)

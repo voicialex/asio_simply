@@ -13,9 +13,9 @@
 #include "asio/network/socket_types.hpp"
 #include "asio/detail/reactor/timeQueue/timer_queue.hpp"
 #include "asio/detail/reactor/timeQueue/timer_queue_ptime.hpp"
-#include "asio/detail/scheduler/timer_scheduler.hpp"
-#include "asio/detail/scheduler/op/wait_handler.hpp"
-#include "asio/detail/scheduler/op/wait_op.hpp"
+#include "asio/service/timer_scheduler.hpp"
+#include "asio/service/wait_handler.hpp"
+#include "asio/detail/reactor/wait_op.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -48,6 +48,9 @@ public:
     : service_base<deadline_timer_service<Time_Traits> >(io_context),
       scheduler_(asio::use_service<timer_scheduler>(io_context))
   {
+#ifdef ASIO_ENABLE_STUDY
+  std::cout << "deadline_timer_service" << std::endl;
+#endif
     scheduler_.init_task();
     scheduler_.add_timer_queue(timer_queue_);
   }

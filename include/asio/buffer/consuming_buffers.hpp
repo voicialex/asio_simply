@@ -17,8 +17,8 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
-#include "asio/network/buffer/buffer.hpp"
-#include "asio/network/buffer/buffer_sequence_adapter.hpp"
+#include "asio/buffer/buffer.hpp"
+#include "asio/buffer/buffer_sequence_adapter.hpp"
 #include "asio/detail/base/stdcpp/limits.hpp"
 
 #include "asio/detail/push_options.hpp"

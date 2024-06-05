@@ -3,7 +3,7 @@
 
 #include "asio/detail/config.hpp"
 
-# include "asio/detail/scheduler/op/scheduler_operation.hpp"
+# include "asio/core/scheduler/scheduler_operation.hpp"
 
 namespace asio {
 namespace detail {

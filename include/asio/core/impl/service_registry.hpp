@@ -29,9 +29,6 @@ void service_registry::add_service(Service* new_service)
 {
   execution_context::service::key key;
   init_key<Service>(key, 0);
-#ifdef ASIO_ENABLE_STUDY
-  std::cout << "add_service: " << key.type_info_->name() << std::endl;
-#endif
   return do_add_service(key, new_service);
 }
 
