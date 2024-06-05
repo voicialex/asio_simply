@@ -13,7 +13,7 @@
 
 // for study
 #include <iostream>
-#define ASIO_ENABLE_HANDLER_TRACKING
+// #define ASIO_ENABLE_HANDLER_TRACKING
 #define ASIO_ENABLE_STUDY
 
 #if defined(ASIO_STANDALONE)

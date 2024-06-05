@@ -15,8 +15,14 @@
 #include <memory>
 #include <set>
 #include <utility>
-#include "asio.hpp"
 #include "chat_message.hpp"
+
+// #include "asio.hpp"
+#include "asio/core/io_context.hpp"
+#include "asio/buffer/buffer.hpp"
+#include "asio/ip/tcp.hpp"
+#include "asio/transmit/write.hpp"
+#include "asio/transmit/read.hpp"
 
 using asio::ip::tcp;
 

@@ -12,8 +12,15 @@
 #include <deque>
 #include <iostream>
 #include <thread>
-#include "asio.hpp"
 #include "chat_message.hpp"
+
+// #include "asio.hpp"
+#include "asio/core/io_context.hpp"
+#include "asio/buffer/buffer.hpp"
+#include "asio/ip/tcp.hpp"
+#include "asio/transmit/write.hpp"
+#include "asio/transmit/read.hpp"
+#include "asio/transmit/connect.hpp"
 
 using asio::ip::tcp;
 
