@@ -20,6 +20,7 @@ namespace services {
 /// typedef.
 template <typename Service>
 class basic_logger
+  : private asio::detail::noncopyable
 {
 public:
   /// The type of the service that will be used to provide timer operations.
@@ -43,9 +44,6 @@ public:
   {
     service_.create(impl_, identifier);
   }
-
-  basic_logger(const basic_logger&) = delete;
-  basic_logger& operator=(basic_logger&) = delete;
 
   /// Destructor.
   ~basic_logger()

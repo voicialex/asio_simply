@@ -299,9 +299,9 @@ ASIO_USES_ALLOCATOR(asio::executor)
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/executor/impl/executor.hpp"
+#include "asio/core/executor/impl/executor.hpp"
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/executor/impl/executor.ipp"
+# include "asio/core/executor/impl/executor.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_EXECUTOR_HPP

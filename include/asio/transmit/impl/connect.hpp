@@ -17,7 +17,7 @@
 
 #include <algorithm>
 #include "asio/detail/memory/associated_allocator.hpp"
-#include "asio/executor/helper/associated_executor.hpp"
+#include "asio/core/executor/helper/associated_executor.hpp"
 #include "asio/core/handler/bind_handler.hpp"
 #include "asio/detail/memory/handler_alloc_helpers.hpp"
 #include "asio/core/handler/handler_cont_helpers.hpp"
@@ -25,7 +25,7 @@
 #include "asio/core/handler/handler_type_requirements.hpp"
 #include "asio/error/throw_error.hpp"
 #include "asio/error/error.hpp"
-#include "asio/executor/submit/post.hpp"
+#include "asio/core/executor/submit/post.hpp"
 
 #include "asio/detail/push_options.hpp"
 

@@ -1,0 +1,7 @@
+
+猜测想让责任单一分离: context是一个上下文, 其中包含调度器 scheduler与 执行器executor(具体通过executor来post任务给scheduler)
+context (io_context, system_context, priority_scheduler)
+* 内部持有一个调度器 scheduler 与 executor(executor_type)
+* 对 executor_type 保持friend (executor, system_executor)
+** executor 要将事件任务class function 通过post, dispatch 提交给context的scheduler运行
+** executor 内部也会通过传入指针或者global() 方式持有scheduler对象

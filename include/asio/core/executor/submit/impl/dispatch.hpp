@@ -1,6 +1,6 @@
 //
-// impl/defer.hpp
-// ~~~~~~~~~~~~~~
+// impl/dispatch.hpp
+// ~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_IMPL_DEFER_HPP
-#define ASIO_IMPL_DEFER_HPP
+#ifndef ASIO_IMPL_DISPATCH_HPP
+#define ASIO_IMPL_DISPATCH_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,15 +17,15 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/memory/associated_allocator.hpp"
-#include "asio/executor/helper/associated_executor.hpp"
-#include "asio/executor/submit/work_dispatcher.hpp"
+#include "asio/core/executor/helper/associated_executor.hpp"
+#include "asio/core/executor/submit/work_dispatcher.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
 template <typename CompletionToken>
-ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
+ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
     CompletionToken&& token)
 {
   typedef ASIO_HANDLER_TYPE(CompletionToken, void()) handler;
@@ -38,13 +38,13 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
   typename associated_allocator<handler>::type alloc(
       (get_associated_allocator)(init.completion_handler));
 
-  ex.defer(static_cast<handler&&>(init.completion_handler), alloc);
+  ex.dispatch(static_cast<handler&&>(init.completion_handler), alloc);
 
   return init.result.get();
 }
 
 template <typename Executor, typename CompletionToken>
-ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
+ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
     const Executor& ex, CompletionToken&& token,
     typename enable_if<is_executor<Executor>::value>::type*)
 {
@@ -55,18 +55,19 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
   typename associated_allocator<handler>::type alloc(
       (get_associated_allocator)(init.completion_handler));
 
-  ex.defer(detail::work_dispatcher<handler>(init.completion_handler), alloc);
+  ex.dispatch(detail::work_dispatcher<handler>(
+        init.completion_handler), alloc);
 
   return init.result.get();
 }
 
 template <typename ExecutionContext, typename CompletionToken>
-inline ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
+inline ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
     ExecutionContext& ctx, CompletionToken&& token,
     typename enable_if<is_convertible<
       ExecutionContext&, execution_context&>::value>::type*)
 {
-  return (defer)(ctx.get_executor(),
+  return (dispatch)(ctx.get_executor(),
       static_cast<CompletionToken&&>(token));
 }
 
@@ -74,4 +75,4 @@ inline ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_IMPL_DEFER_HPP
+#endif // ASIO_IMPL_DISPATCH_HPP

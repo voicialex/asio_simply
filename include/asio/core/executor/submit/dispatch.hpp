@@ -1,25 +1,11 @@
-//
-// defer.hpp
-// ~~~~~~~~~
-//
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
-#ifndef ASIO_DEFER_HPP
-#define ASIO_DEFER_HPP
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+#ifndef ASIO_DISPATCH_HPP
+#define ASIO_DISPATCH_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/executor/helper/async_result.hpp"
+#include "asio/core/executor/helper/async_result.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"
 #include "asio/core/execution_context.hpp"
-#include "asio/executor/is_executor.hpp"
+#include "asio/core/executor/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -29,7 +15,7 @@ namespace asio {
 /**
  * This function submits an object for execution using the object's associated
  * executor. The function object is queued for execution, and is never called
- * from the current thread prior to returning from <tt>defer()</tt>.
+ * from the current thread prior to returning from <tt>dispatch()</tt>.
  *
  * This function has the following effects:
  *
@@ -45,19 +31,19 @@ namespace asio {
  * @li Obtains the handler's associated allocator object @c alloc by performing
  * <tt>get_associated_allocator(handler)</tt>.
  *
- * @li Performs <tt>ex.defer(std::move(handler), alloc)</tt>.
+ * @li Performs <tt>ex.dispatch(std::move(handler), alloc)</tt>.
  *
  * @li Returns <tt>result.get()</tt>.
  */
 template <typename CompletionToken>
-ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
+ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
     CompletionToken&& token);
 
 /// Submits a completion token or function object for execution.
 /**
  * This function submits an object for execution using the specified executor.
  * The function object is queued for execution, and is never called from the
- * current thread prior to returning from <tt>defer()</tt>.
+ * current thread prior to returning from <tt>dispatch()</tt>.
  *
  * This function has the following effects:
  *
@@ -79,21 +65,22 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
  * performs <tt>ex1.dispatch(std::move(handler), alloc)</tt> followed by
  * <tt>w.reset()</tt>.
  *
- * @li Performs <tt>Executor(ex).defer(std::move(f), alloc)</tt>.
+ * @li Performs <tt>Executor(ex).dispatch(std::move(f), alloc)</tt>.
  *
  * @li Returns <tt>result.get()</tt>.
  */
 template <typename Executor, typename CompletionToken>
-ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
+ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
     const Executor& ex, CompletionToken&& token,
     typename enable_if<is_executor<Executor>::value>::type* = 0);
 
 /// Submits a completion token or function object for execution.
 /**
- * @returns <tt>defer(ctx.get_executor(), forward<CompletionToken>(token))</tt>.
+ * @returns <tt>dispatch(ctx.get_executor(),
+ * forward<CompletionToken>(token))</tt>.
  */
 template <typename ExecutionContext, typename CompletionToken>
-ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
+ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
     ExecutionContext& ctx, CompletionToken&& token,
     typename enable_if<is_convertible<
       ExecutionContext&, execution_context&>::value>::type* = 0);
@@ -102,6 +89,6 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/executor/submit/impl/defer.hpp"
+#include "asio/core/executor/submit/impl/dispatch.hpp"
 
-#endif // ASIO_DEFER_HPP
+#endif // ASIO_DISPATCH_HPP

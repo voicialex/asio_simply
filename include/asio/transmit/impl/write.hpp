@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/memory/associated_allocator.hpp"
-#include "asio/executor/helper/associated_executor.hpp"
+#include "asio/core/executor/helper/associated_executor.hpp"
 #include "asio/buffer/buffer.hpp"
 #include "asio/transmit/completion_condition.hpp"
 #include "asio/detail/base/boost/array_fwd.hpp"

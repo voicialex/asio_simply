@@ -2,7 +2,7 @@
 #define ASIO_IMPL_EXECUTOR_IPP
 
 #include "asio/detail/config.hpp"
-#include "asio/executor/executor.hpp"
+#include "asio/core/executor/executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 

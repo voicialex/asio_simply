@@ -3,12 +3,12 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/base/stdcpp/atomic_count.hpp"
-#include "asio/executor/executor_function.hpp"
+#include "asio/core/executor/executor_function.hpp"
 #include "asio/detail/base/global.hpp"
 #include "asio/detail/memory/memory.hpp"
 #include "asio/detail/memory/recycling_allocator.hpp"
-#include "asio/executor/executor.hpp"
-#include "asio/executor/system_executor.hpp"
+#include "asio/core/executor/executor.hpp"
+#include "asio/core/executor/system_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 

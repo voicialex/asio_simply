@@ -110,6 +110,6 @@ public:
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/executor/impl/system_executor.hpp"
+#include "asio/core/executor/impl/system_executor.hpp"
 
 #endif // ASIO_SYSTEM_EXECUTOR_HPP

@@ -2,7 +2,7 @@
 #define ASIO_IS_EXECUTOR_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/executor/impl/is_executor.hpp"
+#include "asio/core/executor/impl/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 

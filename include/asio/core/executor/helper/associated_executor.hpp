@@ -3,8 +3,8 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"
-#include "asio/executor/is_executor.hpp"
-#include "asio/executor/system_executor.hpp"
+#include "asio/core/executor/is_executor.hpp"
+#include "asio/core/executor/system_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 

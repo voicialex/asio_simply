@@ -16,13 +16,13 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/executor/helper/async_result.hpp"
+#include "asio/core/executor/helper/async_result.hpp"
 #include "asio/core/basic_io_object.hpp"
 #include "asio/core/handler/handler_type_requirements.hpp"
 #include "asio/error/throw_error.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"
 #include "asio/error/error.hpp"
-#include "asio/executor/submit/post.hpp"
+#include "asio/core/executor/submit/post.hpp"
 #include "asio/network/socket_base.hpp"
 
 #if defined(ASIO_HAS_MOVE)

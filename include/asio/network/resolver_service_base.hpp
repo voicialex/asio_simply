@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/error/error.hpp"
-#include "asio/executor/executor_work_guard.hpp"
+#include "asio/core/executor/executor_work_guard.hpp"
 #include "asio/core/io_context.hpp"
 #include "asio/detail/base/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"

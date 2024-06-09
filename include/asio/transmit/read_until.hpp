@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include <string>
-#include "asio/executor/helper/async_result.hpp"
+#include "asio/core/executor/helper/async_result.hpp"
 #include "asio/detail/base/boost/regex_fwd.hpp"
 #include "asio/detail/base/stdcpp/string_view.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"

@@ -41,3 +41,11 @@ install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/test/asio)
 set(TARGET_NAME log_server)
 add_executable(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/chat/log_server.cpp)
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/test/asio)
+
+set(TARGET_NAME daytime_client)
+add_executable(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/services/daytime_client.cpp)
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/test/asio)
+
+set(TARGET_NAME logger_test)
+add_executable(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/services/logger_test.cpp)
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/test/asio)

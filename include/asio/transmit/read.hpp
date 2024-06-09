@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
-#include "asio/executor/helper/async_result.hpp"
+#include "asio/core/executor/helper/async_result.hpp"
 #include "asio/buffer/buffer.hpp"
 #include "asio/error/error.hpp"
 

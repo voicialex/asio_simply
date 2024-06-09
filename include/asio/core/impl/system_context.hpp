@@ -1,7 +1,7 @@
 #ifndef ASIO_IMPL_SYSTEM_CONTEXT_HPP
 #define ASIO_IMPL_SYSTEM_CONTEXT_HPP
 
-#include "asio/executor/system_executor.hpp"
+#include "asio/core/executor/system_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
