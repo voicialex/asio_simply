@@ -1,14 +1,15 @@
 
-#include <deque>
 #include <iostream>
 #include <string>
 #include <thread>
 #ifdef __linux__
 #include <pthread.h>
 #endif
-#include <functional>
-#include "log_message.hpp"
 #include "asio.hpp"
+#include "log_message.hpp"
+#include <deque>
+#include <functional>
+#include <memory>
 
 #define ENABLE_HEARTBEAT
 
@@ -24,7 +25,7 @@ class LogClient
 
     void start();
 
-    void write(const log_message &msg);
+    void write(const std::string &msg);
 
     void set_callback(OnRecvCallback func = OnRecvCallback());
 
@@ -37,8 +38,6 @@ class LogClient
 using asio::steady_timer;
 using asio::ip::tcp;
 
-using log_message_queue = std::deque<log_message>;
-
 class LogClientImpl
 {
   public:
@@ -46,7 +45,7 @@ class LogClientImpl
 
     ~LogClientImpl();
 
-    void write(const log_message &msg);
+    void async_write(const std::string &msg);
 
     void set_callback(OnRecvCallback func = OnRecvCallback());
 
@@ -57,15 +56,13 @@ class LogClientImpl
   private:
     void start_connect();
 
-    void retry_connect();
+    void retry_connect(const char *err);
 
-    void start_read();
+    void on_connect();
 
-    void do_read_header();
+    void do_async_read();
 
-    void do_read_body();
-
-    void do_write();
+    void do_async_write();
 
     void start_heartbeat();
 
@@ -76,14 +73,15 @@ class LogClientImpl
     tcp::socket socket_;
     tcp::resolver::results_type endpoints_;
     steady_timer heartbeat_timer_;
-    log_message read_msg_;
-    log_message_queue write_msgs_;
+    std::string read_msg_;
+    std::deque<std::string> write_msgs_;
     OnRecvCallback on_recv_;
     std::thread io_thread_;
+    bool is_connected_;
 };
 
 LogClientImpl::LogClientImpl(const std::string &host, const std::string &port)
-    : socket_(io_context_), heartbeat_timer_(io_context_)
+    : socket_(io_context_), heartbeat_timer_(io_context_), is_connected_(false)
 {
     // 在构造函数内部解析主机和端口
     tcp::resolver resolver(io_context_);
@@ -92,6 +90,7 @@ LogClientImpl::LogClientImpl(const std::string &host, const std::string &port)
 
 LogClientImpl::~LogClientImpl()
 {
+    is_connected_ = false;
     heartbeat_timer_.cancel();
     close();
     io_context_.stop();
@@ -115,54 +114,31 @@ void LogClientImpl::start()
     });
 }
 
-void LogClientImpl::write(const log_message &msg)
+void LogClientImpl::async_write(const std::string &msg)
 {
-#ifdef ENABLE_MESSAGE_QUEUE
-    asio::post(io_context_, [this, msg]() {
-        bool write_in_progress = !write_msgs_.empty();
-        write_msgs_.push_back(msg);
-        if (!write_in_progress)
-        {
-            do_write();
-        }
-    });
-#else
-    asio::async_write(socket_, asio::buffer(msg.data(), msg.length()),
-                      [this](std::error_code ec, std::size_t /*length*/) {
-                          if (!ec)
-                          {
-                              // send success
-                          }
-                          else if (ec == asio::error::eof)
-                          {
-                              retry_connect();
-                          }
-                          else
-                          {
-                              socket_.close();
-                          }
-                      });
-#endif
+    bool write_in_progress = !write_msgs_.empty();
+    write_msgs_.push_back(msg);
+    if (!write_in_progress)
+    {
+        do_async_write();
+    }
 }
 
-void LogClientImpl::do_write()
+void LogClientImpl::do_async_write()
 {
-    asio::async_write(socket_, asio::buffer(write_msgs_.front().data(), write_msgs_.front().length()),
-                      [this](std::error_code ec, std::size_t /*length*/) {
+    asio::async_write(socket_, asio::buffer(write_msgs_.front()),
+                      [this](std::error_code ec, std::size_t len) {
                           if (!ec)
                           {
                               write_msgs_.pop_front();
                               if (!write_msgs_.empty())
                               {
-                                  do_write();
+                                  do_async_write();
                               }
-                          }
-                          else if (ec == asio::error::eof)
-                          {
-                              retry_connect();
                           }
                           else
                           {
+                              THROW_C3LOG_EXCEPTION("Error in async_write: %s", ec.message().c_str());
                               socket_.close();
                           }
                       });
@@ -187,21 +163,46 @@ void LogClientImpl::start_connect()
     asio::async_connect(socket_, endpoints_, [this](std::error_code ec, tcp::endpoint) {
         if (!ec)
         {
-            start_read();
-#ifdef ENABLE_HEARTBEAT
-            start_heartbeat();
-#endif
+            on_connect();
         }
         else
         {
-            retry_connect();
+            retry_connect("start_connect");
         }
     });
 }
 
-void LogClientImpl::retry_connect()
+void LogClientImpl::on_connect()
 {
-    THROW_C3LOG_VERBOSE("start_connect failed, retrying in %d ms", DEFAULT_RECONNECT_TIME);
+    auto msg = std::make_shared<log_msg>();
+    msg->set_online_info();
+
+    // Capture by value to ensure the shared_ptr is kept alive until the async operation completes
+    asio::async_write(socket_, asio::buffer(msg->to_string()), [this, msg](std::error_code ec, std::size_t len) {
+        if (!ec)
+        {
+            THROW_C3LOG_VERBOSE("on_connect ...");
+            // send success
+            is_connected_ = true;
+            do_async_read();
+            start_heartbeat();
+        }
+        else if (ec == asio::error::eof)
+        {
+            retry_connect("async_write");
+        }
+        else
+        {
+            socket_.close();
+        }
+    });
+}
+
+void LogClientImpl::retry_connect(const char *err)
+{
+    THROW_C3LOG_VERBOSE("err: %s, retry_connect in %d ms", err, DEFAULT_RECONNECT_TIME);
+    is_connected_ = false;
+    heartbeat_timer_.cancel();
     int retry_delay = DEFAULT_RECONNECT_TIME;
     post(io_context_, [this, retry_delay]() {
         std::this_thread::sleep_for(std::chrono::milliseconds(retry_delay));
@@ -209,85 +210,54 @@ void LogClientImpl::retry_connect()
     });
 }
 
-void LogClientImpl::start_read()
+void LogClientImpl::do_async_read()
 {
-    do_read_header();
-}
+    asio::async_read_until(socket_, asio::dynamic_buffer(read_msg_), '\n', [this](std::error_code ec, std::size_t len) {
+        THROW_C3LOG_VERBOSE("do_async_read len: %ld", len);
+        if (!ec)
+        {
+            if (on_recv_)
+            {
+                on_recv_(this, read_msg_.data(), read_msg_.length());
+            }
 
-void LogClientImpl::do_read_header()
-{
-    THROW_C3LOG_VERBOSE("do_read_header");
-    asio::async_read(socket_, asio::buffer(read_msg_.data(), log_message::header_length),
-                     [this](std::error_code ec, std::size_t /*length*/) {
-                         if (!ec && read_msg_.decode_header())
-                         {
-                             do_read_body();
-                         }
-                         else if (ec == asio::error::eof)
-                         {
-                             retry_connect();
-                         }
-                         else
-                         {
-                             socket_.close();
-                         }
-                     });
-}
-
-void LogClientImpl::do_read_body()
-{
-    THROW_C3LOG_VERBOSE("do_read_body");
-    asio::async_read(socket_, asio::buffer(read_msg_.body(), read_msg_.body_length()),
-                     [this](std::error_code ec, std::size_t /*length*/) {
-                         if (!ec)
-                         {
-                             if (on_recv_)
-                             {
-                                 on_recv_(this, read_msg_.body(), read_msg_.body_length());
-                             }
-                             read_msg_.clear();
-                             do_read_header();
-                         }
-                         else if (ec == asio::error::eof)
-                         {
-                             retry_connect();
-                         }
-                         else
-                         {
-                             socket_.close();
-                         }
-                     });
+            read_msg_.erase(0, len);
+            do_async_read();
+        }
+        else if (ec == asio::error::eof)
+        {
+            retry_connect("do_async_read");
+        }
+        else
+        {
+            socket_.close();
+        }
+    });
 }
 
 void LogClientImpl::start_heartbeat()
 {
-    THROW_C3LOG_VERBOSE("start_heartbeat");
-    c3log_protocol heartbeat_msg;
-    heartbeat_msg.clear();
-    heartbeat_msg.type(c3log_protocol::Type::heartbeat_req);
-    heartbeat_msg.status(c3log_protocol::Status::status_success);
-    heartbeat_msg.add_app(__progname);
-    heartbeat_msg.encode();
+    static uint32_t heartbeat_sequence = 0;
+    static log_msg msg;
+    msg.set_sequence(++heartbeat_sequence);
 
-    log_message msg;
-    msg.body_length(heartbeat_msg.size());
-    std::memcpy(msg.body(), heartbeat_msg.data(), heartbeat_msg.size());
-    msg.encode_header();
-    printf("start_heartbeat length: %d\n", msg.length());
-
+    THROW_C3LOG_VERBOSE("start_heartbeat %d %d", heartbeat_sequence, msg.size());
     // Start an asynchronous operation to send a heartbeat message.
-    asio::async_write(socket_, asio::buffer(msg.data(), msg.length()),
+    asio::async_write(socket_, asio::buffer(msg.to_string()),
                       std::bind(&LogClientImpl::send_heartbeat, this, std::placeholders::_1));
 }
 
 void LogClientImpl::send_heartbeat(const std::error_code &error)
 {
-    THROW_C3LOG_VERBOSE("send_heartbeat: %s", error.message().c_str());
-    if (!error)
+    puts("send_heartbeat");
+    if (!is_connected_)
+        return;
+    if (error)
     {
-        heartbeat_timer_.expires_after(std::chrono::milliseconds(DEFAULT_RECONNECT_TIME));
-        heartbeat_timer_.async_wait(std::bind(&LogClientImpl::start_heartbeat, this));
+        THROW_C3LOG_VERBOSE("start_heartbeat error: %s", error.message().c_str());
     }
+    heartbeat_timer_.expires_after(std::chrono::milliseconds(DEFAULT_RECONNECT_TIME));
+    heartbeat_timer_.async_wait(std::bind(&LogClientImpl::start_heartbeat, this));
 }
 
 ////////////////// impl for LogClient //////////////////
@@ -308,10 +278,10 @@ void LogClient::start()
         pimpl_->start();
 }
 
-void LogClient::write(const log_message &msg)
+void LogClient::write(const std::string &msg)
 {
     if (pimpl_)
-        pimpl_->write(msg);
+        pimpl_->async_write(msg);
 }
 
 void LogClient::set_callback(OnRecvCallback func)
@@ -326,35 +296,23 @@ static int action(void *self, const char *data, int size)
 {
     LogClientImpl *client = static_cast<LogClientImpl *>(self);
 
-    c3log_protocol proto_msg(data, size);
-    proto_msg.decode();
-    if (proto_msg.type() == c3log_protocol::Type::request_part)
+    log_msg msg(data, size);
+    char type = msg.get_type();
+    if (type == 'i')
     {
-        if (proto_msg.status() == c3log_protocol::Status::status_success)
-        {
-            std::vector<std::string> apps = proto_msg.apps();
-            for (const auto &app : apps)
-            {
-                if (strcmp(__progname, app.c_str()) == 0)
-                {
-                    // correct object, do some action
-                    THROW_C3LOG_DEBUG("correct app %s, action!", __progname);
-                    proto_msg.clear();
-                    proto_msg.type(c3log_protocol::Type::response);
-                    proto_msg.status(c3log_protocol::Status::status_success);
-                    proto_msg.add_app(__progname);
-                    proto_msg.encode();
-
-                    log_message msg;
-                    msg.body_length(proto_msg.size());
-                    std::memcpy(msg.body(), proto_msg.data(), proto_msg.size());
-                    puts("action");
-                    msg.encode_header();
-                    client->write(msg);
-                }
-            }
-        }
+        std::string info = msg.get_online_info();
+        THROW_C3LOG_DEBUG("on online reply: %s", info.c_str());
     }
+    else if (type == 's')
+    {
+        uint32_t seq = msg.get_sequence();
+        THROW_C3LOG_DEBUG("on heartbeat reply: %d", seq);
+    }
+    else
+    {
+        THROW_C3LOG_DEBUG("unknown type: %c", type);
+    }
+
     return 1;
 }
 
@@ -366,15 +324,12 @@ int main(int argc, char *argv[])
         cli.set_callback(action);
         cli.start();
 
-        char line[log_message::max_body_length + 1];
-        while (std::cin.getline(line, log_message::max_body_length + 1))
+        char line[1024];
+        while (std::cin.getline(line, 1024))
         {
-            log_message msg;
-            msg.body_length(std::strlen(line));
-            std::memcpy(msg.body(), line, msg.body_length());
-            puts("main");
-            msg.encode_header();
-            cli.write(msg);
+            std::cout << line << std::endl;
+            std::string line_str = line + std::string("\n");
+            cli.write(line_str);
         }
     }
     catch (std::exception &e)

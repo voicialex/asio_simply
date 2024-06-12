@@ -1,429 +1,366 @@
-#include <set>
 #include <deque>
 #include <iostream>
+#include <set>
 #include <thread>
 #ifdef __linux__
 #include <pthread.h>
 #endif
-#include <functional>
-#include "log_message.hpp"
 #include "asio.hpp"
+#include "log_message.hpp"
+#include <functional>
 
-typedef std::function<int(void*, const char*, int)> OnRecvCallback;
+typedef std::function<int(void *, const char *, int)> OnRecvCallback;
 
 class LogServerImpl;
 class LogServer
 {
-public:
-  LogServer(const std::string& host, const std::string& port);
+  public:
+    LogServer(const std::string &host, const std::string &port);
 
-  ~LogServer();
+    ~LogServer();
 
-  void start();
+    void start();
 
-  void broadcast(const log_message& msg);
+    void broadcast(const std::string &msg);
 
-  void set_callback(OnRecvCallback func = OnRecvCallback());
+    void set_callback(OnRecvCallback func = OnRecvCallback());
 
-private:
-  LogServerImpl* pimpl_;
+  private:
+    LogServerImpl *pimpl_;
 };
 
 //////////////////////////////////////
 
 using asio::ip::tcp;
 
-using log_message_queue = std::deque<log_message>;
+class LogChannel;
 
-class LogParticipant
+class LogSession : public std::enable_shared_from_this<LogSession>
 {
-public:
-  LogParticipant(tcp::socket socket) : socket_(std::move(socket)) {}
+  public:
+    LogSession(tcp::socket socket, LogChannel &room);
 
-  virtual ~LogParticipant() {}
+    ~LogSession();
 
-  virtual void deliver(const log_message& msg) = 0;
+    void start();
 
-  tcp::socket& get_socket() { return socket_; }
+    void set_callback(OnRecvCallback func = OnRecvCallback());
 
-protected:
-  tcp::socket socket_;
+    void set_remote_name(std::string name);
+
+    void async_write(const std::string &msg);
+
+    std::string session_info();
+
+  private:
+    void do_async_read();
+
+    void do_async_write();
+
+    tcp::socket socket_;
+    LogChannel &channel_;
+    std::string name_;
+    std::string ip_port_;
+    std::string read_msg_;
+    std::deque<std::string> write_msgs_;
+    OnRecvCallback on_recv_;
 };
 
-using LogParticipantPtr = std::shared_ptr<LogParticipant>;
+using LogSessionPtr = std::shared_ptr<LogSession>;
 
 //----------------------------------------------------------------------
 
-class LogRoom
+class LogChannel
 {
-public:
-  void join(LogParticipantPtr participant)
-  {
-    participants_.insert(participant);
-    for (auto msg: recent_msgs_)
-      participant->deliver(msg);
-  }
+  public:
+    void join(LogSessionPtr session)
+    {
+        sessions_.insert(session);
+    }
 
-  void leave(LogParticipantPtr participant)
-  {
-    participants_.erase(participant);
-  }
+    void leave(LogSessionPtr session)
+    {
+        sessions_.erase(session);
+    }
 
-  void deliver(const log_message& msg)
-  {
-    recent_msgs_.push_back(msg);
-    while (recent_msgs_.size() > max_recent_msgs)
-      recent_msgs_.pop_front();
+    void deliver(const std::string &msg)
+    {
+        for (auto session : sessions_)
+            session->async_write(msg);
+    }
 
-    for (auto participant: participants_)
-      participant->deliver(msg);
-  }
+    void print_member_info()
+    {
+        for (auto session : sessions_)
+        {
+            THROW_C3LOG_VERBOSE("member_info --> %s", session->session_info().c_str());
+        }
+    }
 
-  void print_member_info()
-  {
-      for (auto participant: participants_)
-      {
-        tcp::endpoint endpoint = participant->get_socket().remote_endpoint();
-        THROW_C3LOG_VERBOSE("member_info --> %s:%d",
-              endpoint.address().to_string().c_str(),
-              endpoint.port());
-      }
-  }
-
-private:
-  std::set<LogParticipantPtr> participants_;
-  enum { max_recent_msgs = 100 };
-  log_message_queue recent_msgs_;
-};
-
-//----------------------------------------------------------------------
-
-class LogSession
-  : public LogParticipant,
-    public std::enable_shared_from_this<LogSession>
-{
-public:
-  LogSession(tcp::socket socket, LogRoom& room);
-
-  void start();
-
-  void set_callback(OnRecvCallback func = OnRecvCallback());
-
-  void deliver(const log_message& msg);
-
-private:
-  void start_read();
-
-  void do_read_header();
-
-  void do_read_body();
-
-  void do_write();
-
-  LogRoom& room_;
-  log_message read_msg_;
-  log_message_queue write_msgs_;
-  OnRecvCallback on_recv_;
+  private:
+    std::set<LogSessionPtr> sessions_;
+    enum
+    {
+        max_recent_msgs = 100
+    };
 };
 
 class LogServerImpl
 {
-public:
-  LogServerImpl(const std::string& host, const std::string& port);
+  public:
+    LogServerImpl(const std::string &host, const std::string &port);
 
-  ~LogServerImpl();
+    ~LogServerImpl();
 
-  void start();
+    void start();
 
-  void broadcast(const log_message& msg);
+    void broadcast(const std::string &msg);
 
-  void set_callback(OnRecvCallback func = OnRecvCallback());
+    void set_callback(OnRecvCallback func = OnRecvCallback());
 
-private:
-  void do_accept();
+  private:
+    void do_accept();
 
-  asio::io_context io_context_;
-  tcp::acceptor acceptor_;
-  tcp::endpoint endpoint_;
-  LogRoom room_;
-  OnRecvCallback on_sync_;
-  std::thread io_thread_;
+    asio::io_context io_context_;
+    tcp::acceptor acceptor_;
+    tcp::endpoint endpoint_;
+    LogChannel channel_;
+    OnRecvCallback on_session_recv_;
+    std::thread io_thread_;
 };
 
-LogSession::LogSession(tcp::socket socket, LogRoom& room)
-          : LogParticipant(std::move(socket)),
-            room_(room) {}
+//----------------------------------------------------------------------
+
+LogSession::LogSession(tcp::socket socket, LogChannel &room)
+    : socket_(std::move(socket)), channel_(room), name_("unknown"), ip_port_(std::string())
+{
+    tcp::endpoint endpoint = socket_.remote_endpoint();
+    ip_port_ = endpoint.address().to_string() + ":" + std::to_string(endpoint.port());
+    THROW_C3LOG_VERBOSE("new session : %s", session_info().c_str());
+}
+
+LogSession::~LogSession()
+{
+    THROW_C3LOG_VERBOSE("del session : %s", session_info().c_str());
+}
 
 void LogSession::start()
 {
-  room_.join(shared_from_this());
-  room_.print_member_info();
-  start_read();
+    channel_.join(shared_from_this());
+    do_async_read();
+}
+
+std::string LogSession::session_info()
+{
+    return ip_port_ + " (" + name_ + ")";
 }
 
 void LogSession::set_callback(OnRecvCallback func)
 {
-  if(func)
-    on_recv_ = func;
+    if (func)
+        on_recv_ = func;
 }
 
-void LogSession::deliver(const log_message& msg)
+void LogSession::set_remote_name(std::string name)
 {
-  bool write_in_progress = !write_msgs_.empty();
-  write_msgs_.push_back(msg);
-  if (!write_in_progress)
-  {
-    do_write();
-  }
+    name_ = name;
 }
 
-void LogSession::do_write()
+void LogSession::async_write(const std::string &msg)
 {
-  auto self(shared_from_this());
-  asio::async_write(socket_,
-      asio::buffer(write_msgs_.front().data(),
-        write_msgs_.front().length()),
-      [this, self](std::error_code ec, std::size_t /*length*/)
-      {
-        if (!ec)
-        {
-          write_msgs_.pop_front();
-          if (!write_msgs_.empty())
-          {
-            do_write();
-          }
-        }
-        else
-        {
-          THROW_C3LOG_EXCEPTION("Error in async_write: %s", ec.message().c_str());
-          room_.leave(shared_from_this());
-        }
-      });
-}
-
-void LogSession::start_read()
-{
-  do_read_header();
-}
-
-void LogSession::do_read_header()
-{
-  auto self(shared_from_this());
-  asio::async_read(socket_,
-      asio::buffer(read_msg_.data(), log_message::header_length),
-      [this, self](std::error_code ec, std::size_t /*length*/)
-      {
-        bool decode_res = read_msg_.decode_header();
-        printf("decode_header --> %d **\n", decode_res);
-        if (!ec && decode_res)
-        {
-          do_read_body();
-        }
-        else
-        {
-          THROW_C3LOG_DEBUG("app leave %d \n", decode_res);
-          room_.leave(shared_from_this());
-        }
-      });
-}
-
-static void read_debug(const char* data, int size)
-{
-  c3log_protocol proto_msg(data, size);
-  proto_msg.decode();
-  if (proto_msg.type() == c3log_protocol::Type::heartbeat_req)
-  {
-    if (proto_msg.status() == c3log_protocol::Status::status_success)
+    bool write_in_progress = !write_msgs_.empty();
+    write_msgs_.push_back(msg);
+    if (!write_in_progress)
     {
-      std::vector<std::string> apps = proto_msg.apps();
-      for (const auto &app : apps)
-      {
-        THROW_C3LOG_DEBUG("app %s, heartbeat!", app.c_str());
-      }
+        do_async_write();
     }
-  }
 }
 
-void LogSession::do_read_body()
+void LogSession::do_async_write()
 {
-  auto self(shared_from_this());
-  asio::async_read(socket_,
-      asio::buffer(read_msg_.body(), read_msg_.body_length()),
-      [this, self](std::error_code ec, std::size_t /*length*/)
-      {
-        if (!ec)
-        {
-          if (on_recv_)
-            on_recv_(self.get(), read_msg_.body(), read_msg_.body_length());
+    auto self(shared_from_this());
+    asio::async_write(socket_, asio::buffer(write_msgs_.front()),
+                      [this, self](std::error_code ec, std::size_t /*length*/) {
+                          if (!ec)
+                          {
+                              write_msgs_.pop_front();
+                              if (!write_msgs_.empty())
+                              {
+                                  do_async_write();
+                              }
+                          }
+                          else
+                          {
+                              THROW_C3LOG_EXCEPTION("Error in async_write: %s", ec.message().c_str());
+                              channel_.leave(shared_from_this());
+                          }
+                      });
+}
 
-          // read_debug(read_msg_.body(), read_msg_.body_length());
+void LogSession::do_async_read()
+{
+    THROW_C3LOG_VERBOSE("do_async_read");
+    auto self(shared_from_this());
+    asio::async_read_until(socket_, asio::dynamic_buffer(read_msg_), '\n',
+                           [this, self](std::error_code ec, std::size_t len) {
+                               if (!ec)
+                               {
+                                   if (on_recv_)
+                                       on_recv_(self.get(), read_msg_.data(), read_msg_.size());
 
-          read_msg_.clear();
-          do_read_header();
-        }
-        else
-        {
-          THROW_C3LOG_EXCEPTION("Error in async_read: %s", ec.message().c_str());
-          room_.leave(shared_from_this());
-        }
-      });
+                                   read_msg_.erase(0, len);
+                                   do_async_read();
+                               }
+                               else
+                               {
+                                   THROW_C3LOG_DEBUG("app leave, reason: %s\n", ec.message().c_str());
+                                   channel_.leave(shared_from_this());
+                               }
+                           });
 }
 
 //----------------------------------------------------------------------
 
-
-LogServerImpl::LogServerImpl(const std::string& host, const std::string& port)
-    : acceptor_(io_context_),
-      endpoint_(asio::ip::make_address(host), std::stoi(port))
+LogServerImpl::LogServerImpl(const std::string &host, const std::string &port)
+    : acceptor_(io_context_), endpoint_(asio::ip::make_address(host), std::stoi(port))
 {
-  acceptor_.open(endpoint_.protocol());
-  acceptor_.set_option(asio::ip::tcp::acceptor::reuse_address(true));
-  acceptor_.bind(endpoint_);
-  acceptor_.listen();
-  do_accept();
+    acceptor_.open(endpoint_.protocol());
+    acceptor_.set_option(asio::ip::tcp::acceptor::reuse_address(true));
+    acceptor_.bind(endpoint_);
+    acceptor_.listen();
+    do_accept();
 }
 
 LogServerImpl::~LogServerImpl()
 {
-  io_context_.stop();
-  if (io_thread_.joinable())
-  {
-    io_thread_.join();
-  }
+    io_context_.stop();
+    if (io_thread_.joinable())
+    {
+        io_thread_.join();
+    }
 }
 
 void LogServerImpl::start()
 {
-  io_thread_ = std::thread([this]() {
+    io_thread_ = std::thread([this]() {
 #ifdef __linux__
-    pthread_setname_np(pthread_self(), "IOThread.Svr");
+        pthread_setname_np(pthread_self(), "IOThread.Svr");
 #endif
-    io_context_.run();
-  });
+        io_context_.run();
+    });
 }
 
-void LogServerImpl::broadcast(const log_message& msg)
+void LogServerImpl::broadcast(const std::string &msg)
 {
-  room_.deliver(msg);
+    channel_.deliver(msg);
 }
 
 void LogServerImpl::set_callback(OnRecvCallback func)
 {
-  if(func)
-  {
-    on_sync_ = func;
-  }
+    if (func)
+    {
+        on_session_recv_ = func;
+    }
 }
 
 void LogServerImpl::do_accept()
 {
-  acceptor_.async_accept(
-      [this](std::error_code ec, tcp::socket socket)
-      {
+    acceptor_.async_accept([this](std::error_code ec, tcp::socket socket) {
         if (!ec)
         {
-          auto session = std::make_shared<LogSession>(std::move(socket), room_);
-          session->start();
-          if (on_sync_)
-            session->set_callback(on_sync_);
+            auto session = std::make_shared<LogSession>(std::move(socket), channel_);
+            session->start();
+            if (on_session_recv_)
+                session->set_callback(on_session_recv_);
         }
         else
         {
-          THROW_C3LOG_EXCEPTION("Error in async_accept: %s", ec.message().c_str());
+            THROW_C3LOG_EXCEPTION("Error in async_accept: %s", ec.message().c_str());
         }
 
         do_accept();
-      });
+    });
 }
 
 ////////////////// impl for LogServer //////////////////
-LogServer::LogServer(const std::string& host, const std::string& port)
-  : pimpl_(nullptr)
+LogServer::LogServer(const std::string &host, const std::string &port) : pimpl_(nullptr)
 {
-  pimpl_ = new LogServerImpl(host, port);
+    pimpl_ = new LogServerImpl(host, port);
 }
 
 LogServer::~LogServer()
 {
-  if (pimpl_ != nullptr)
-    delete pimpl_;
+    if (pimpl_ != nullptr)
+        delete pimpl_;
 }
 
 void LogServer::start()
 {
-  if (pimpl_ != nullptr)
-    pimpl_->start();
+    if (pimpl_ != nullptr)
+        pimpl_->start();
 }
 
-void LogServer::broadcast(const log_message& msg)
+void LogServer::broadcast(const std::string &msg)
 {
-  if (pimpl_)
-    pimpl_->broadcast(msg);
+    if (pimpl_)
+        pimpl_->broadcast(msg);
 }
 
 void LogServer::set_callback(OnRecvCallback func)
 {
-  if (pimpl_)
-    pimpl_->set_callback(func);
+    if (pimpl_)
+        pimpl_->set_callback(func);
 }
 
 //----------------------------------------------------------------------
 
-static int action(void *self, const char* data, int size)
+static int action(void *self, const char *data, int size)
 {
-  LogServer* server = static_cast<LogServer*>(self);
+    LogSession *session = static_cast<LogSession *>(self);
 
-  c3log_protocol proto_msg(data, size);
-  proto_msg.decode();
-  if (proto_msg.type() == c3log_protocol::Type::response)
-  {
-    if (proto_msg.status() == c3log_protocol::Status::status_success)
+    log_msg msg(data, size);
+    char type = msg.get_type();
+    if (type == 'i')
     {
-      std::vector<std::string> apps = proto_msg.apps();
-      for (const auto &app : apps)
-      {
-        THROW_C3LOG_DEBUG("app done %s, action!", app.c_str());
-      }
-    }
-  }
-  THROW_C3LOG_DEBUG("type(%d) status(%d)", proto_msg.type(), proto_msg.status());
+        std::string info = msg.get_online_info();
+        session->set_remote_name(info);
+        THROW_C3LOG_DEBUG("on online: %s", session->session_info().c_str());
 
-  return 1;
+        log_msg msg_reply;
+        msg_reply.set_online_info();
+        session->async_write(msg_reply.to_string());
+    }
+    else if (type == 's')
+    {
+        uint32_t seq = msg.get_sequence();
+        THROW_C3LOG_DEBUG("on heartbeat: %d", seq);
+    }
+    else
+    {
+        THROW_C3LOG_DEBUG("unknown type: %c", type);
+    }
+
+    return 1;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-  try
-  {
-    LogServer svr("127.0.0.1", "66666");
-    svr.set_callback(action);
-    svr.start();
-
-    char line[log_message::max_body_length + 1];
-    while (std::cin.getline(line, log_message::max_body_length + 1))
+    try
     {
-      std::string app(line, std::strlen(line));
-    
-      c3log_protocol proto_msg;
-      proto_msg.type(c3log_protocol::Type::request_part);
-      proto_msg.status(c3log_protocol::Status::status_success);
-      proto_msg.add_app(app);
-      proto_msg.add_app("client1");
-      proto_msg.add_app("client2");
-      proto_msg.add_app("client3");
-      proto_msg.encode();
+        LogServer svr("127.0.0.1", "66666");
+        svr.set_callback(action);
+        svr.start();
 
-      log_message msg;
-      msg.body_length(proto_msg.size());
-      std::memcpy(msg.body(), proto_msg.data(), proto_msg.size());
-      msg.encode_header();
-      svr.broadcast(msg);
+        char line[1024];
+        while (std::cin.getline(line, 1024))
+        {
+            std::cout << line << std::endl;
+        }
     }
-  }
-  catch (std::exception& e)
-  {
-    std::cerr << "Exception: " << e.what() << "\n";
-  }
+    catch (std::exception &e)
+    {
+        std::cerr << "Exception: " << e.what() << "\n";
+    }
 
-  return 0;
+    return 0;
 }
