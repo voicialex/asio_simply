@@ -17,7 +17,7 @@ extern char *__progname;
 
 #define THROW_C3LOG_DEBUG(fmt, ...) THROW_LOG_OUTPUT(c3log, d, fmt, ##__VA_ARGS__)
 
-#define THROW_C3LOG_VERBOSE(fmt, ...) THROW_LOG_OUTPUT(c3log, v, fmt, ##__VA_ARGS__)
+#define THROW_C3LOG_VERBOSE(fmt, ...) // THROW_LOG_OUTPUT(c3log, v, fmt, ##__VA_ARGS__)
 
 #define DEFAULT_RECONNECT_TIME 3000
 
