@@ -1,0 +1,16 @@
+
+set(TARGET_NAME chat_client)
+add_executable(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/chat_client.cpp)
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+set(TARGET_NAME chat_server)
+add_executable(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/chat_server.cpp)
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+set(TARGET_NAME log_client)
+add_executable(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/log_client.cpp)
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+set(TARGET_NAME log_server)
+add_executable(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/log_server.cpp)
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})

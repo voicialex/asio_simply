@@ -19,6 +19,9 @@ execution_context::execution_context()
 
 execution_context::~execution_context()
 {
+#ifdef ASIO_ENABLE_STUDY
+  std::cout << "~execution_context" << std::endl;
+#endif
   shutdown();
   destroy();
   delete service_registry_;

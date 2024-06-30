@@ -1,0 +1,8 @@
+
+set(TARGET_NAME server)
+add_executable(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/server.cpp)
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+set(TARGET_NAME async_tcp_client)
+add_executable(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/async_tcp_client.cpp)
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})

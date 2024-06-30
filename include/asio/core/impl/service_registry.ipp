@@ -22,6 +22,9 @@ service_registry::service_registry(execution_context& owner)
 
 service_registry::~service_registry()
 {
+#ifdef ASIO_ENABLE_STUDY
+  std::cout << "~service_registry" << std::endl;
+#endif
 }
 
 void service_registry::shutdown_services()

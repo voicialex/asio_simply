@@ -1,0 +1,4 @@
+
+set(TARGET_NAME allocation)
+add_executable(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/server.cpp)
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
