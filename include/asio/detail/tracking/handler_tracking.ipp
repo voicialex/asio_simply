@@ -13,9 +13,9 @@
 #include <cstdarg>
 #include <cstdio>
 
-#include "asio/timer/chrono_time_traits.hpp"
+#include "asio/service/timer/helper/chrono_time_traits.hpp"
 #include "asio/detail/base/stdcpp/chrono.hpp"
-#include "asio/timer/wait_traits.hpp"
+#include "asio/service/timer/helper/wait_traits.hpp"
 
 #include <unistd.h>
 

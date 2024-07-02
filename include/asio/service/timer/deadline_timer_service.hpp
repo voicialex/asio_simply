@@ -13,8 +13,8 @@
 #include "asio/network/socket_types.hpp"
 #include "asio/detail/reactor/timeQueue/timer_queue.hpp"
 #include "asio/detail/reactor/timeQueue/timer_queue_ptime.hpp"
-#include "asio/service/timer_scheduler.hpp"
-#include "asio/service/wait_handler.hpp"
+#include "asio/service/timer/helper/timer_scheduler.hpp"
+#include "asio/service/timer/helper/wait_handler.hpp"
 #include "asio/detail/reactor/wait_op.hpp"
 
 #include "asio/detail/push_options.hpp"

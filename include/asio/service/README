@@ -1,0 +1,14 @@
+
+template <typename service_type>
+class basic_io_object
+    - service_type* service_
+    -implementation_type implementation_
+    get_service()
+    get_implementation()
+    get_executor()
+
+template <typename deadline_timer_service<> >
+class basic_waitable_timer : public basic_io_object<>
+
+
+class deadline_timer_service : public service_base<>

@@ -21,7 +21,7 @@
 #include <asio/ip/tcp.hpp>
 #include <asio/read_until.hpp>
 #include <asio/signal_set.hpp>
-#include <asio/steady_timer.hpp>
+#include <asio/timer/steady_timer.hpp>
 #include <asio/write.hpp>
 
 using asio::ip::tcp;

@@ -1,5 +1,5 @@
 //
-// steady_timer.hpp
+// timer/steady_timer.hpp
 // ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -19,7 +19,7 @@
 
 #if defined(ASIO_HAS_CHRONO)
 
-#include "asio/timer/basic_waitable_timer.hpp"
+#include "asio/service/timer/basic_waitable_timer.hpp"
 #include "asio/detail/base/stdcpp/chrono.hpp"
 
 namespace asio {

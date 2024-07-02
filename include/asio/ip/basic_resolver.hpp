@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <string>
 #include "asio/core/executor/helper/async_result.hpp"
-#include "asio/core/basic_io_object.hpp"
+#include "asio/service/basic_io_object.hpp"
 #include "asio/core/handler/handler_type_requirements.hpp"
 #include "asio/detail/base/stdcpp/string_view.hpp"
 #include "asio/error/throw_error.hpp"
