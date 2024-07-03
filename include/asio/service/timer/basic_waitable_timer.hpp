@@ -25,15 +25,13 @@ namespace asio {
 #define ASIO_BASIC_WAITABLE_TIMER_FWD_DECL
 
 // Forward declaration with defaulted arguments.
-template <typename Clock,
-    typename WaitTraits = asio::wait_traits<Clock>
-    ASIO_SVC_TPARAM_DEF2(= waitable_timer_service<Clock, WaitTraits>)>
+template <typename Clock, typename WaitTraits = asio::wait_traits<Clock>>
 class basic_waitable_timer;
 
 #endif // !defined(ASIO_BASIC_WAITABLE_TIMER_FWD_DECL)
 
 /// Provides waitable timer functionality.
-template <typename Clock, typename WaitTraits ASIO_SVC_TPARAM>
+template <typename Clock, typename WaitTraits>
 class basic_waitable_timer
   : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>
 {

@@ -36,10 +36,9 @@ namespace asio {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Protocol
-    ASIO_SVC_TPARAM_DEF1(= datagram_socket_service<Protocol>)>
+template <typename Protocol>
 class basic_datagram_socket
-  : public basic_socket<Protocol ASIO_SVC_TARG>
+  : public basic_socket<Protocol>
 {
 public:
   /// The native representation of a socket.
@@ -47,7 +46,7 @@ public:
   typedef implementation_defined native_handle_type;
 #else
   typedef typename basic_socket<
-    Protocol ASIO_SVC_TARG>::native_handle_type native_handle_type;
+    Protocol>::native_handle_type native_handle_type;
 #endif
 
   /// The protocol type.
@@ -66,7 +65,7 @@ public:
    * socket.
    */
   explicit basic_datagram_socket(asio::io_context& io_context)
-    : basic_socket<Protocol ASIO_SVC_TARG>(io_context)
+    : basic_socket<Protocol>(io_context)
   {
   }
 
@@ -84,7 +83,7 @@ public:
    */
   basic_datagram_socket(asio::io_context& io_context,
       const protocol_type& protocol)
-    : basic_socket<Protocol ASIO_SVC_TARG>(io_context, protocol)
+    : basic_socket<Protocol>(io_context, protocol)
   {
   }
 
@@ -106,7 +105,7 @@ public:
    */
   basic_datagram_socket(asio::io_context& io_context,
       const endpoint_type& endpoint)
-    : basic_socket<Protocol ASIO_SVC_TARG>(io_context, endpoint)
+    : basic_socket<Protocol>(io_context, endpoint)
   {
   }
 
@@ -127,7 +126,7 @@ public:
    */
   basic_datagram_socket(asio::io_context& io_context,
       const protocol_type& protocol, const native_handle_type& native_socket)
-    : basic_socket<Protocol ASIO_SVC_TARG>(
+    : basic_socket<Protocol>(
         io_context, protocol, native_socket)
   {
   }
@@ -144,7 +143,7 @@ public:
    * constructed using the @c basic_datagram_socket(io_context&) constructor.
    */
   basic_datagram_socket(basic_datagram_socket&& other)
-    : basic_socket<Protocol ASIO_SVC_TARG>(std::move(other))
+    : basic_socket<Protocol>(std::move(other))
   {
   }
 
@@ -161,7 +160,7 @@ public:
    */
   basic_datagram_socket& operator=(basic_datagram_socket&& other)
   {
-    basic_socket<Protocol ASIO_SVC_TARG>::operator=(std::move(other));
+    basic_socket<Protocol>::operator=(std::move(other));
     return *this;
   }
 
@@ -176,11 +175,11 @@ public:
    * @note Following the move, the moved-from object is in the same state as if
    * constructed using the @c basic_datagram_socket(io_context&) constructor.
    */
-  template <typename Protocol1 ASIO_SVC_TPARAM1>
+  template <typename Protocol1>
   basic_datagram_socket(
-      basic_datagram_socket<Protocol1 ASIO_SVC_TARG1>&& other,
+      basic_datagram_socket<Protocol1>&& other,
       typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
-    : basic_socket<Protocol ASIO_SVC_TARG>(std::move(other))
+    : basic_socket<Protocol>(std::move(other))
   {
   }
 
@@ -196,12 +195,12 @@ public:
    * @note Following the move, the moved-from object is in the same state as if
    * constructed using the @c basic_datagram_socket(io_context&) constructor.
    */
-  template <typename Protocol1 ASIO_SVC_TPARAM1>
+  template <typename Protocol1>
   typename enable_if<is_convertible<Protocol1, Protocol>::value,
       basic_datagram_socket>::type& operator=(
-        basic_datagram_socket<Protocol1 ASIO_SVC_TARG1>&& other)
+        basic_datagram_socket<Protocol1>&& other)
   {
-    basic_socket<Protocol ASIO_SVC_TARG>::operator=(std::move(other));
+    basic_socket<Protocol>::operator=(std::move(other));
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)

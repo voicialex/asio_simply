@@ -55,8 +55,7 @@ namespace asio {
  * acceptor.listen();
  * @endcode
  */
-template <typename Protocol
-    ASIO_SVC_TPARAM_DEF1(= socket_acceptor_service<Protocol>)>
+template <typename Protocol>
 class basic_socket_acceptor
   : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>,
     public socket_base
@@ -220,7 +219,7 @@ public:
   }
 
   // All socket acceptors have access to each other's implementations.
-  template <typename Protocol1 ASIO_SVC_TPARAM1>
+  template <typename Protocol1>
   friend class basic_socket_acceptor;
 
   /// Move-construct a basic_socket_acceptor from an acceptor of another
@@ -234,9 +233,9 @@ public:
    * @note Following the move, the moved-from object is in the same state as if
    * constructed using the @c basic_socket(io_context&) constructor.
    */
-  template <typename Protocol1 ASIO_SVC_TPARAM1>
+  template <typename Protocol1>
   basic_socket_acceptor(
-      basic_socket_acceptor<Protocol1 ASIO_SVC_TARG1>&& other,
+      basic_socket_acceptor<Protocol1>&& other,
       typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
     : basic_io_object<ASIO_SVC_T>(
         other.get_service(), other.get_implementation())
@@ -254,10 +253,10 @@ public:
    * @note Following the move, the moved-from object is in the same state as if
    * constructed using the @c basic_socket(io_context&) constructor.
    */
-  template <typename Protocol1 ASIO_SVC_TPARAM1>
+  template <typename Protocol1>
   typename enable_if<is_convertible<Protocol1, Protocol>::value,
       basic_socket_acceptor>::type& operator=(
-        basic_socket_acceptor<Protocol1 ASIO_SVC_TARG1>&& other)
+        basic_socket_acceptor<Protocol1>&& other)
   {
     basic_socket_acceptor tmp(std::move(other));
     basic_io_object<ASIO_SVC_T>::operator=(std::move(tmp));
@@ -275,45 +274,11 @@ public:
   {
   }
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-  // These functions are provided by basic_io_object<>.
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use get_executor().) Get the io_context associated with the
-  /// object.
-  /**
-   * This function may be used to obtain the io_context object that the I/O
-   * object uses to dispatch handlers for asynchronous operations.
-   *
-   * @return A reference to the io_context object that the I/O object will use
-   * to dispatch handlers. Ownership is not transferred to the caller.
-   */
-  asio::io_context& get_io_context()
-  {
-    return basic_io_object<ASIO_SVC_T>::get_io_context();
-  }
-
-  /// (Deprecated: Use get_executor().) Get the io_context associated with the
-  /// object.
-  /**
-   * This function may be used to obtain the io_context object that the I/O
-   * object uses to dispatch handlers for asynchronous operations.
-   *
-   * @return A reference to the io_context object that the I/O object will use
-   * to dispatch handlers. Ownership is not transferred to the caller.
-   */
-  asio::io_context& get_io_service()
-  {
-    return basic_io_object<ASIO_SVC_T>::get_io_service();
-  }
-#endif // !defined(ASIO_NO_DEPRECATED)
-
   /// Get the executor associated with the object.
   executor_type get_executor() ASIO_NOEXCEPT
   {
     return basic_io_object<ASIO_SVC_T>::get_executor();
   }
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
   /// Open the acceptor using the specified protocol.
   /**
@@ -357,11 +322,11 @@ public:
    * }
    * @endcode
    */
-  ASIO_SYNC_OP_VOID open(const protocol_type& protocol,
+  void open(const protocol_type& protocol,
       asio::error_code& ec)
   {
     this->get_service().open(this->get_implementation(), protocol, ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Assigns an existing native acceptor to the acceptor.
@@ -393,12 +358,12 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    */
-  ASIO_SYNC_OP_VOID assign(const protocol_type& protocol,
+  void assign(const protocol_type& protocol,
       const native_handle_type& native_acceptor, asio::error_code& ec)
   {
     this->get_service().assign(this->get_implementation(),
         protocol, native_acceptor, ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Determine whether the acceptor is open.
@@ -455,11 +420,11 @@ public:
    * }
    * @endcode
    */
-  ASIO_SYNC_OP_VOID bind(const endpoint_type& endpoint,
+  void bind(const endpoint_type& endpoint,
       asio::error_code& ec)
   {
     this->get_service().bind(this->get_implementation(), endpoint, ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Place the acceptor into the state where it will listen for new
@@ -501,10 +466,10 @@ public:
    * }
    * @endcode
    */
-  ASIO_SYNC_OP_VOID listen(int backlog, asio::error_code& ec)
+  void listen(int backlog, asio::error_code& ec)
   {
     this->get_service().listen(this->get_implementation(), backlog, ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Close the acceptor.
@@ -546,10 +511,10 @@ public:
    * }
    * @endcode
    */
-  ASIO_SYNC_OP_VOID close(asio::error_code& ec)
+  void close(asio::error_code& ec)
   {
     this->get_service().close(this->get_implementation(), ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Release ownership of the underlying native acceptor.
@@ -638,10 +603,10 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    */
-  ASIO_SYNC_OP_VOID cancel(asio::error_code& ec)
+  void cancel(asio::error_code& ec)
   {
     this->get_service().cancel(this->get_implementation(), ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Set an option on the acceptor.
@@ -700,11 +665,11 @@ public:
    * @endcode
    */
   template <typename SettableSocketOption>
-  ASIO_SYNC_OP_VOID set_option(const SettableSocketOption& option,
+  void set_option(const SettableSocketOption& option,
       asio::error_code& ec)
   {
     this->get_service().set_option(this->get_implementation(), option, ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Get an option from the acceptor.
@@ -765,11 +730,11 @@ public:
    * @endcode
    */
   template <typename GettableSocketOption>
-  ASIO_SYNC_OP_VOID get_option(GettableSocketOption& option,
+  void get_option(GettableSocketOption& option,
       asio::error_code& ec) const
   {
     this->get_service().get_option(this->get_implementation(), option, ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Perform an IO control command on the acceptor.
@@ -826,11 +791,11 @@ public:
    * @endcode
    */
   template <typename IoControlCommand>
-  ASIO_SYNC_OP_VOID io_control(IoControlCommand& command,
+  void io_control(IoControlCommand& command,
       asio::error_code& ec)
   {
     this->get_service().io_control(this->get_implementation(), command, ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Gets the non-blocking mode of the acceptor.
@@ -882,11 +847,11 @@ public:
    * operations. Asynchronous operations will never fail with the error
    * asio::error::would_block.
    */
-  ASIO_SYNC_OP_VOID non_blocking(
+  void non_blocking(
       bool mode, asio::error_code& ec)
   {
     this->get_service().non_blocking(this->get_implementation(), mode, ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Gets the non-blocking mode of the native acceptor implementation.
@@ -946,12 +911,12 @@ public:
    * function fails with asio::error::invalid_argument, as the
    * combination does not make sense.
    */
-  ASIO_SYNC_OP_VOID native_non_blocking(
+  void native_non_blocking(
       bool mode, asio::error_code& ec)
   {
     this->get_service().native_non_blocking(
         this->get_implementation(), mode, ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Get the local endpoint of the acceptor.
@@ -1047,10 +1012,10 @@ public:
    * acceptor.wait(asio::ip::tcp::acceptor::wait_read, ec);
    * @endcode
    */
-  ASIO_SYNC_OP_VOID wait(wait_type w, asio::error_code& ec)
+  void wait(wait_type w, asio::error_code& ec)
   {
     this->get_service().wait(this->get_implementation(), w, ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Asynchronously wait for the acceptor to become ready to read, ready to
@@ -1162,13 +1127,13 @@ public:
    * @endcode
    */
   template <typename Protocol1>
-  ASIO_SYNC_OP_VOID accept(
+  void accept(
       basic_socket<Protocol1>& peer, asio::error_code& ec,
       typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
   {
     this->get_service().accept(this->get_implementation(),
         peer, static_cast<endpoint_type*>(0), ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Start an asynchronous accept.
@@ -1288,12 +1253,12 @@ public:
    * }
    * @endcode
    */
-  ASIO_SYNC_OP_VOID accept(basic_socket<protocol_type>& peer,
+  void accept(basic_socket<protocol_type>& peer,
       endpoint_type& peer_endpoint, asio::error_code& ec)
   {
     this->get_service().accept(
         this->get_implementation(), peer, &peer_endpoint, ec);
-    ASIO_SYNC_OP_VOID_RETURN(ec);
+    return;
   }
 
   /// Start an asynchronous accept.

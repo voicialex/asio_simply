@@ -109,18 +109,17 @@ protected:
 #define ASIO_BASIC_SOCKET_STREAMBUF_FWD_DECL
 
 // Forward declaration with defaulted arguments.
-template <typename Protocol
-    ASIO_SVC_TPARAM_DEF1(= stream_socket_service<Protocol>),
+template <typename Protocol,
 #if defined(ASIO_HAS_BOOST_DATE_TIME) \
   && defined(ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
     typename Clock = boost::posix_time::ptime,
     typename WaitTraits = time_traits<Clock>
-    ASIO_SVC_TPARAM1_DEF2(= deadline_timer_service<Clock, WaitTraits>)>
+    >
 #else // defined(ASIO_HAS_BOOST_DATE_TIME)
       // && defined(ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
     typename Clock = chrono::steady_clock,
     typename WaitTraits = wait_traits<Clock>
-    ASIO_SVC_TPARAM1_DEF1(= steady_timer::service_type)>
+    >
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
        // && defined(ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
 class basic_socket_streambuf;
@@ -133,18 +132,14 @@ template <typename Protocol,
     typename Clock = chrono::steady_clock,
     typename WaitTraits = wait_traits<Clock> >
 #else // defined(GENERATING_DOCUMENTATION)
-template <typename Protocol ASIO_SVC_TPARAM,
-    typename Clock, typename WaitTraits ASIO_SVC_TPARAM1>
+template <typename Protocol,
+    typename Clock, typename WaitTraits>
 #endif // defined(GENERATING_DOCUMENTATION)
 class basic_socket_streambuf
   : public std::streambuf,
     private detail::socket_streambuf_io_context,
     private detail::socket_streambuf_buffers,
-#if defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
-    private basic_socket<Protocol ASIO_SVC_TARG>
-#else // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
-    public basic_socket<Protocol ASIO_SVC_TARG>
-#endif // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
+    private basic_socket<Protocol>
 {
 private:
   // These typedefs are intended keep this class's implementation independent
@@ -168,31 +163,13 @@ public:
   /// The clock type.
   typedef Clock clock_type;
 
-#if defined(GENERATING_DOCUMENTATION)
-  /// (Deprecated: Use time_point.) The time type.
-  typedef typename WaitTraits::time_type time_type;
-
-  /// The time type.
-  typedef typename WaitTraits::time_point time_point;
-
-  /// (Deprecated: Use duration.) The duration type.
-  typedef typename WaitTraits::duration_type duration_type;
-
-  /// The duration type.
-  typedef typename WaitTraits::duration duration;
-#else
-# if !defined(ASIO_NO_DEPRECATED)
-  typedef typename traits_helper::time_type time_type;
-  typedef typename traits_helper::duration_type duration_type;
-# endif // !defined(ASIO_NO_DEPRECATED)
   typedef typename traits_helper::time_type time_point;
   typedef typename traits_helper::duration_type duration;
-#endif
 
   /// Construct a basic_socket_streambuf without establishing a connection.
   basic_socket_streambuf()
     : detail::socket_streambuf_io_context(new io_context),
-      basic_socket<Protocol ASIO_SVC_TARG>(*default_io_context_),
+      basic_socket<Protocol>(*default_io_context_),
       expiry_time_(max_expiry_time())
   {
     init_buffers();
@@ -202,7 +179,7 @@ public:
   /// Construct a basic_socket_streambuf from the supplied socket.
   explicit basic_socket_streambuf(basic_stream_socket<protocol_type> s)
     : detail::socket_streambuf_io_context(0),
-      basic_socket<Protocol ASIO_SVC_TARG>(std::move(s)),
+      basic_socket<Protocol>(std::move(s)),
       expiry_time_(max_expiry_time())
   {
     init_buffers();
@@ -211,7 +188,7 @@ public:
   /// Move-construct a basic_socket_streambuf from another.
   basic_socket_streambuf(basic_socket_streambuf&& other)
     : detail::socket_streambuf_io_context(other),
-      basic_socket<Protocol ASIO_SVC_TARG>(std::move(other.socket())),
+      basic_socket<Protocol>(std::move(other.socket())),
       ec_(other.ec_),
       expiry_time_(other.expiry_time_)
   {
@@ -307,7 +284,7 @@ public:
   }
 
   /// Get a reference to the underlying socket.
-  basic_socket<Protocol ASIO_SVC_TARG>& socket()
+  basic_socket<Protocol>& socket()
   {
     return *this;
   }
@@ -321,30 +298,6 @@ public:
   {
     return ec_;
   }
-
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use error().) Get the last error associated with the stream
-  /// buffer.
-  /**
-   * @return An \c error_code corresponding to the last error from the stream
-   * buffer.
-   */
-  const asio::error_code& puberror() const
-  {
-    return error();
-  }
-
-  /// (Deprecated: Use expiry().) Get the stream buffer's expiry time as an
-  /// absolute time.
-  /**
-   * @return An absolute time value representing the stream buffer's expiry
-   * time.
-   */
-  time_point expires_at() const
-  {
-    return expiry_time_;
-  }
-#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Get the stream buffer's expiry time as an absolute time.
   /**
@@ -383,33 +336,6 @@ public:
   {
     expiry_time_ = traits_helper::add(traits_helper::now(), expiry_time);
   }
-
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use expiry().) Get the stream buffer's expiry time relative
-  /// to now.
-  /**
-   * @return A relative time value representing the stream buffer's expiry time.
-   */
-  duration expires_from_now() const
-  {
-    return traits_helper::subtract(expires_at(), traits_helper::now());
-  }
-
-  /// (Deprecated: Use expires_after().) Set the stream buffer's expiry time
-  /// relative to now.
-  /**
-   * This function sets the expiry time associated with the stream. Stream
-   * operations performed after this time (where the operations cannot be
-   * completed using the internal buffers) will fail with the error
-   * asio::error::operation_aborted.
-   *
-   * @param expiry_time The expiry time to be used for the timer.
-   */
-  void expires_from_now(const duration& expiry_time)
-  {
-    expiry_time_ = traits_helper::add(traits_helper::now(), expiry_time);
-  }
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 protected:
   int_type underflow()

@@ -106,33 +106,6 @@ public:
   /// Get the address as a string.
   ASIO_DECL std::string to_string() const;
 
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use other overload.) Get the address as a string.
-  ASIO_DECL std::string to_string(asio::error_code& ec) const;
-
-  /// (Deprecated: Use make_address_v6().) Create an IPv6 address from an IP
-  /// address string.
-  static address_v6 from_string(const char* str);
-
-  /// (Deprecated: Use make_address_v6().) Create an IPv6 address from an IP
-  /// address string.
-  static address_v6 from_string(
-      const char* str, asio::error_code& ec);
-
-  /// (Deprecated: Use make_address_v6().) Create an IPv6 address from an IP
-  /// address string.
-  static address_v6 from_string(const std::string& str);
-
-  /// (Deprecated: Use make_address_v6().) Create an IPv6 address from an IP
-  /// address string.
-  static address_v6 from_string(
-      const std::string& str, asio::error_code& ec);
-
-  /// (Deprecated: Use make_address_v4().) Converts an IPv4-mapped or
-  /// IPv4-compatible address to an IPv4 address.
-  ASIO_DECL address_v4 to_v4() const;
-#endif // !defined(ASIO_NO_DEPRECATED)
-
   /// Determine whether the address is a loopback address.
   ASIO_DECL bool is_loopback() const ASIO_NOEXCEPT;
 
@@ -147,12 +120,6 @@ public:
 
   /// Determine whether the address is a mapped IPv4 address.
   ASIO_DECL bool is_v4_mapped() const ASIO_NOEXCEPT;
-
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: No replacement.) Determine whether the address is an
-  /// IPv4-compatible address.
-  ASIO_DECL bool is_v4_compatible() const;
-#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Determine whether the address is a multicast address.
   ASIO_DECL bool is_multicast() const ASIO_NOEXCEPT;
@@ -216,14 +183,6 @@ public:
 
   /// Obtain an address object that represents the loopback address.
   ASIO_DECL static address_v6 loopback() ASIO_NOEXCEPT;
-
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use make_address_v6().) Create an IPv4-mapped IPv6 address.
-  ASIO_DECL static address_v6 v4_mapped(const address_v4& addr);
-
-  /// (Deprecated: No replacement.) Create an IPv4-compatible IPv6 address.
-  ASIO_DECL static address_v6 v4_compatible(const address_v4& addr);
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 private:
   friend class basic_address_iterator<address_v6>;

@@ -87,9 +87,9 @@ struct is_endpoint_sequence
  * tcp::socket s(io_context);
  * asio::connect(s, r.resolve(q)); @endcode
  */
-template <typename Protocol ASIO_SVC_TPARAM, typename EndpointSequence>
+template <typename Protocol, typename EndpointSequence>
 typename Protocol::endpoint connect(
-    basic_socket<Protocol ASIO_SVC_TARG>& s,
+    basic_socket<Protocol>& s,
     const EndpointSequence& endpoints,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
@@ -124,71 +124,12 @@ typename Protocol::endpoint connect(
  *   // An error occurred.
  * } @endcode
  */
-template <typename Protocol ASIO_SVC_TPARAM, typename EndpointSequence>
+template <typename Protocol, typename EndpointSequence>
 typename Protocol::endpoint connect(
-    basic_socket<Protocol ASIO_SVC_TARG>& s,
+    basic_socket<Protocol>& s,
     const EndpointSequence& endpoints, asio::error_code& ec,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
-
-#if !defined(ASIO_NO_DEPRECATED)
-/// (Deprecated: Use range overload.) Establishes a socket connection by trying
-/// each endpoint in a sequence.
-/**
- * This function attempts to connect a socket to one of a sequence of
- * endpoints. It does this by repeated calls to the socket's @c connect member
- * function, once for each endpoint in the sequence, until a connection is
- * successfully established.
- *
- * @param s The socket to be connected. If the socket is already open, it will
- * be closed.
- *
- * @param begin An iterator pointing to the start of a sequence of endpoints.
- *
- * @returns On success, an iterator denoting the successfully connected
- * endpoint. Otherwise, the end iterator.
- *
- * @throws asio::system_error Thrown on failure. If the sequence is
- * empty, the associated @c error_code is asio::error::not_found.
- * Otherwise, contains the error from the last connection attempt.
- *
- * @note This overload assumes that a default constructed object of type @c
- * Iterator represents the end of the sequence. This is a valid assumption for
- * iterator types such as @c asio::ip::tcp::resolver::iterator.
- */
-template <typename Protocol ASIO_SVC_TPARAM, typename Iterator>
-Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s, Iterator begin,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
-
-/// (Deprecated: Use range overload.) Establishes a socket connection by trying
-/// each endpoint in a sequence.
-/**
- * This function attempts to connect a socket to one of a sequence of
- * endpoints. It does this by repeated calls to the socket's @c connect member
- * function, once for each endpoint in the sequence, until a connection is
- * successfully established.
- *
- * @param s The socket to be connected. If the socket is already open, it will
- * be closed.
- *
- * @param begin An iterator pointing to the start of a sequence of endpoints.
- *
- * @param ec Set to indicate what error occurred, if any. If the sequence is
- * empty, set to asio::error::not_found. Otherwise, contains the error
- * from the last connection attempt.
- *
- * @returns On success, an iterator denoting the successfully connected
- * endpoint. Otherwise, the end iterator.
- *
- * @note This overload assumes that a default constructed object of type @c
- * Iterator represents the end of the sequence. This is a valid assumption for
- * iterator types such as @c asio::ip::tcp::resolver::iterator.
- */
-template <typename Protocol ASIO_SVC_TPARAM, typename Iterator>
-Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
-    Iterator begin, asio::error_code& ec,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
 /**
@@ -217,8 +158,8 @@ Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
  * tcp::socket s(io_context);
  * asio::connect(s, e.begin(), e.end()); @endcode
  */
-template <typename Protocol ASIO_SVC_TPARAM, typename Iterator>
-Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
+template <typename Protocol, typename Iterator>
+Iterator connect(basic_socket<Protocol>& s,
     Iterator begin, Iterator end);
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
@@ -254,8 +195,8 @@ Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
  *   // An error occurred.
  * } @endcode
  */
-template <typename Protocol ASIO_SVC_TPARAM, typename Iterator>
-Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
+template <typename Protocol, typename Iterator>
+Iterator connect(basic_socket<Protocol>& s,
     Iterator begin, Iterator end, asio::error_code& ec);
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
@@ -309,10 +250,10 @@ Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
  *     r.resolve(q), my_connect_condition());
  * std::cout << "Connected to: " << e << std::endl; @endcode
  */
-template <typename Protocol ASIO_SVC_TPARAM,
+template <typename Protocol,
     typename EndpointSequence, typename ConnectCondition>
 typename Protocol::endpoint connect(
-    basic_socket<Protocol ASIO_SVC_TARG>& s,
+    basic_socket<Protocol>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
@@ -377,98 +318,14 @@ typename Protocol::endpoint connect(
  *   std::cout << "Connected to: " << e << std::endl;
  * } @endcode
  */
-template <typename Protocol ASIO_SVC_TPARAM,
+template <typename Protocol,
     typename EndpointSequence, typename ConnectCondition>
 typename Protocol::endpoint connect(
-    basic_socket<Protocol ASIO_SVC_TARG>& s,
+    basic_socket<Protocol>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
     asio::error_code& ec,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
-
-#if !defined(ASIO_NO_DEPRECATED)
-/// (Deprecated: Use range overload.) Establishes a socket connection by trying
-/// each endpoint in a sequence.
-/**
- * This function attempts to connect a socket to one of a sequence of
- * endpoints. It does this by repeated calls to the socket's @c connect member
- * function, once for each endpoint in the sequence, until a connection is
- * successfully established.
- *
- * @param s The socket to be connected. If the socket is already open, it will
- * be closed.
- *
- * @param begin An iterator pointing to the start of a sequence of endpoints.
- *
- * @param connect_condition A function object that is called prior to each
- * connection attempt. The signature of the function object must be:
- * @code bool connect_condition(
- *     const asio::error_code& ec,
- *     const typename Protocol::endpoint& next); @endcode
- * The @c ec parameter contains the result from the most recent connect
- * operation. Before the first connection attempt, @c ec is always set to
- * indicate success. The @c next parameter is the next endpoint to be tried.
- * The function object should return true if the next endpoint should be tried,
- * and false if it should be skipped.
- *
- * @returns On success, an iterator denoting the successfully connected
- * endpoint. Otherwise, the end iterator.
- *
- * @throws asio::system_error Thrown on failure. If the sequence is
- * empty, the associated @c error_code is asio::error::not_found.
- * Otherwise, contains the error from the last connection attempt.
- *
- * @note This overload assumes that a default constructed object of type @c
- * Iterator represents the end of the sequence. This is a valid assumption for
- * iterator types such as @c asio::ip::tcp::resolver::iterator.
- */
-template <typename Protocol ASIO_SVC_TPARAM,
-    typename Iterator, typename ConnectCondition>
-Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
-    Iterator begin, ConnectCondition connect_condition,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
-
-/// (Deprecated: Use range overload.) Establishes a socket connection by trying
-/// each endpoint in a sequence.
-/**
- * This function attempts to connect a socket to one of a sequence of
- * endpoints. It does this by repeated calls to the socket's @c connect member
- * function, once for each endpoint in the sequence, until a connection is
- * successfully established.
- *
- * @param s The socket to be connected. If the socket is already open, it will
- * be closed.
- *
- * @param begin An iterator pointing to the start of a sequence of endpoints.
- *
- * @param connect_condition A function object that is called prior to each
- * connection attempt. The signature of the function object must be:
- * @code bool connect_condition(
- *     const asio::error_code& ec,
- *     const typename Protocol::endpoint& next); @endcode
- * The @c ec parameter contains the result from the most recent connect
- * operation. Before the first connection attempt, @c ec is always set to
- * indicate success. The @c next parameter is the next endpoint to be tried.
- * The function object should return true if the next endpoint should be tried,
- * and false if it should be skipped.
- *
- * @param ec Set to indicate what error occurred, if any. If the sequence is
- * empty, set to asio::error::not_found. Otherwise, contains the error
- * from the last connection attempt.
- *
- * @returns On success, an iterator denoting the successfully connected
- * endpoint. Otherwise, the end iterator.
- *
- * @note This overload assumes that a default constructed object of type @c
- * Iterator represents the end of the sequence. This is a valid assumption for
- * iterator types such as @c asio::ip::tcp::resolver::iterator.
- */
-template <typename Protocol ASIO_SVC_TPARAM,
-    typename Iterator, typename ConnectCondition>
-Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s, Iterator begin,
-    ConnectCondition connect_condition, asio::error_code& ec,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
 /**
@@ -524,9 +381,9 @@ Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s, Iterator begin,
  *     s, e.begin(), e.end(), my_connect_condition());
  * std::cout << "Connected to: " << i->endpoint() << std::endl; @endcode
  */
-template <typename Protocol ASIO_SVC_TPARAM,
+template <typename Protocol,
     typename Iterator, typename ConnectCondition>
-Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s, Iterator begin,
+Iterator connect(basic_socket<Protocol>& s, Iterator begin,
     Iterator end, ConnectCondition connect_condition);
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
@@ -592,9 +449,9 @@ Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s, Iterator begin,
  *   std::cout << "Connected to: " << i->endpoint() << std::endl;
  * } @endcode
  */
-template <typename Protocol ASIO_SVC_TPARAM,
+template <typename Protocol,
     typename Iterator, typename ConnectCondition>
-Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
+Iterator connect(basic_socket<Protocol>& s,
     Iterator begin, Iterator end, ConnectCondition connect_condition,
     asio::error_code& ec);
 
@@ -669,60 +526,15 @@ Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
  *   // ...
  * } @endcode
  */
-template <typename Protocol ASIO_SVC_TPARAM,
+template <typename Protocol,
     typename EndpointSequence, typename RangeConnectHandler>
 ASIO_INITFN_RESULT_TYPE(RangeConnectHandler,
     void (asio::error_code, typename Protocol::endpoint))
-async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
+async_connect(basic_socket<Protocol>& s,
     const EndpointSequence& endpoints,
     RangeConnectHandler&& handler,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
-
-#if !defined(ASIO_NO_DEPRECATED)
-/// (Deprecated: Use range overload.) Asynchronously establishes a socket
-/// connection by trying each endpoint in a sequence.
-/**
- * This function attempts to connect a socket to one of a sequence of
- * endpoints. It does this by repeated calls to the socket's @c async_connect
- * member function, once for each endpoint in the sequence, until a connection
- * is successfully established.
- *
- * @param s The socket to be connected. If the socket is already open, it will
- * be closed.
- *
- * @param begin An iterator pointing to the start of a sequence of endpoints.
- *
- * @param handler The handler to be called when the connect operation
- * completes. Copies will be made of the handler as required. The function
- * signature of the handler must be:
- * @code void handler(
- *   // Result of operation. if the sequence is empty, set to
- *   // asio::error::not_found. Otherwise, contains the
- *   // error from the last connection attempt.
- *   const asio::error_code& error,
- *
- *   // On success, an iterator denoting the successfully
- *   // connected endpoint. Otherwise, the end iterator.
- *   Iterator iterator
- * ); @endcode
- * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. Invocation
- * of the handler will be performed in a manner equivalent to using
- * asio::io_context::post().
- *
- * @note This overload assumes that a default constructed object of type @c
- * Iterator represents the end of the sequence. This is a valid assumption for
- * iterator types such as @c asio::ip::tcp::resolver::iterator.
- */
-template <typename Protocol ASIO_SVC_TPARAM,
-    typename Iterator, typename IteratorConnectHandler>
-ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
-    void (asio::error_code, Iterator))
-async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
-    Iterator begin, IteratorConnectHandler&& handler,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Asynchronously establishes a socket connection by trying each endpoint in a
 /// sequence.
@@ -773,11 +585,11 @@ async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
  *   // ...
  * } @endcode
  */
-template <typename Protocol ASIO_SVC_TPARAM,
+template <typename Protocol,
     typename Iterator, typename IteratorConnectHandler>
 ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
-async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
+async_connect(basic_socket<Protocol>& s,
     Iterator begin, Iterator end,
     IteratorConnectHandler&& handler);
 
@@ -876,72 +688,15 @@ async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
  *   }
  * } @endcode
  */
-template <typename Protocol ASIO_SVC_TPARAM, typename EndpointSequence,
+template <typename Protocol, typename EndpointSequence,
     typename ConnectCondition, typename RangeConnectHandler>
 ASIO_INITFN_RESULT_TYPE(RangeConnectHandler,
     void (asio::error_code, typename Protocol::endpoint))
-async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
+async_connect(basic_socket<Protocol>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
     RangeConnectHandler&& handler,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
-
-#if !defined(ASIO_NO_DEPRECATED)
-/// (Deprecated: Use range overload.) Asynchronously establishes a socket
-/// connection by trying each endpoint in a sequence.
-/**
- * This function attempts to connect a socket to one of a sequence of
- * endpoints. It does this by repeated calls to the socket's @c async_connect
- * member function, once for each endpoint in the sequence, until a connection
- * is successfully established.
- *
- * @param s The socket to be connected. If the socket is already open, it will
- * be closed.
- *
- * @param begin An iterator pointing to the start of a sequence of endpoints.
- *
- * @param connect_condition A function object that is called prior to each
- * connection attempt. The signature of the function object must be:
- * @code bool connect_condition(
- *     const asio::error_code& ec,
- *     const typename Protocol::endpoint& next); @endcode
- * The @c ec parameter contains the result from the most recent connect
- * operation. Before the first connection attempt, @c ec is always set to
- * indicate success. The @c next parameter is the next endpoint to be tried.
- * The function object should return true if the next endpoint should be tried,
- * and false if it should be skipped.
- *
- * @param handler The handler to be called when the connect operation
- * completes. Copies will be made of the handler as required. The function
- * signature of the handler must be:
- * @code void handler(
- *   // Result of operation. if the sequence is empty, set to
- *   // asio::error::not_found. Otherwise, contains the
- *   // error from the last connection attempt.
- *   const asio::error_code& error,
- *
- *   // On success, an iterator denoting the successfully
- *   // connected endpoint. Otherwise, the end iterator.
- *   Iterator iterator
- * ); @endcode
- * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. Invocation
- * of the handler will be performed in a manner equivalent to using
- * asio::io_context::post().
- *
- * @note This overload assumes that a default constructed object of type @c
- * Iterator represents the end of the sequence. This is a valid assumption for
- * iterator types such as @c asio::ip::tcp::resolver::iterator.
- */
-template <typename Protocol ASIO_SVC_TPARAM, typename Iterator,
-    typename ConnectCondition, typename IteratorConnectHandler>
-ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
-    void (asio::error_code, Iterator))
-async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s, Iterator begin,
-    ConnectCondition connect_condition,
-    IteratorConnectHandler&& handler,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Asynchronously establishes a socket connection by trying each endpoint in a
 /// sequence.
@@ -1041,11 +796,11 @@ async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s, Iterator begin,
  *   }
  * } @endcode
  */
-template <typename Protocol ASIO_SVC_TPARAM, typename Iterator,
+template <typename Protocol, typename Iterator,
     typename ConnectCondition, typename IteratorConnectHandler>
 ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
-async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
+async_connect(basic_socket<Protocol>& s,
     Iterator begin, Iterator end, ConnectCondition connect_condition,
     IteratorConnectHandler&& handler);
 
