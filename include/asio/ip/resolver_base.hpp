@@ -1,19 +1,5 @@
-//
-// ip/resolver_base.hpp
-// ~~~~~~~~~~~~~~~~~~~~
-//
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #ifndef ASIO_IP_RESOLVER_BASE_HPP
 #define ASIO_IP_RESOLVER_BASE_HPP
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
 #include "asio/network/socket_types.hpp"
@@ -28,37 +14,6 @@ namespace ip {
 class resolver_base
 {
 public:
-#if defined(GENERATING_DOCUMENTATION)
-  /// A bitmask type (C++ Std [lib.bitmask.types]).
-  typedef unspecified flags;
-
-  /// Determine the canonical name of the host specified in the query.
-  static const flags canonical_name = implementation_defined;
-
-  /// Indicate that returned endpoint is intended for use as a locally bound
-  /// socket endpoint.
-  static const flags passive = implementation_defined;
-
-  /// Host name should be treated as a numeric string defining an IPv4 or IPv6
-  /// address and no name resolution should be attempted.
-  static const flags numeric_host = implementation_defined;
-
-  /// Service name should be treated as a numeric string defining a port number
-  /// and no name resolution should be attempted.
-  static const flags numeric_service = implementation_defined;
-
-  /// If the query protocol family is specified as IPv6, return IPv4-mapped
-  /// IPv6 addresses on finding no IPv6 addresses.
-  static const flags v4_mapped = implementation_defined;
-
-  /// If used with v4_mapped, return all matching IPv6 and IPv4 addresses.
-  static const flags all_matching = implementation_defined;
-
-  /// Only return IPv4 addresses if a non-loopback IPv4 address is configured
-  /// for the system. Only return IPv6 addresses if a non-loopback IPv6 address
-  /// is configured for the system.
-  static const flags address_configured = implementation_defined;
-#else
   enum flags
   {
     canonical_name = ASIO_OS_DEF(AI_CANONNAME),
@@ -112,7 +67,6 @@ public:
     x = x ^ y;
     return x;
   }
-#endif
 
 protected:
   /// Protected destructor to prevent deletion through this type.

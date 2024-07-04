@@ -11,10 +11,6 @@
 #ifndef ASIO_DETAIL_IS_BUFFER_SEQUENCE_HPP
 #define ASIO_DETAIL_IS_BUFFER_SEQUENCE_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
-
 #include "asio/detail/config.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"
 

@@ -1,19 +1,5 @@
-//
-// read_until.hpp
-// ~~~~~~~~~~~~~~
-//
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #ifndef ASIO_READ_UNTIL_HPP
 #define ASIO_READ_UNTIL_HPP
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
@@ -51,17 +37,12 @@ namespace detail
 template <typename T>
 struct is_match_condition
 {
-#if defined(GENERATING_DOCUMENTATION)
-  /// The value member is true if the type may be used as a match condition.
-  static const bool value;
-#else
   enum
   {
     value = asio::is_function<
         typename asio::remove_pointer<T>::type>::value
       || detail::has_result_type<T>::value
   };
-#endif
 };
 
 /**

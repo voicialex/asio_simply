@@ -1,19 +1,5 @@
-//
-// ip/tcp.hpp
-// ~~~~~~~~~~
-//
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #ifndef ASIO_IP_TCP_HPP
 #define ASIO_IP_TCP_HPP
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
 #include "asio/network/basic_socket_acceptor.hpp"
@@ -118,12 +104,8 @@ public:
    * @par Concepts:
    * Socket_Option, Boolean_Socket_Option.
    */
-#if defined(GENERATING_DOCUMENTATION)
-  typedef implementation_defined no_delay;
-#else
   typedef asio::detail::socket_option::boolean<
     ASIO_OS_DEF(IPPROTO_TCP), ASIO_OS_DEF(TCP_NODELAY)> no_delay;
-#endif
 
   /// Compare two protocols for equality.
   friend bool operator==(const tcp& p1, const tcp& p2)

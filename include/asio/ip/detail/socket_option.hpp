@@ -1,19 +1,5 @@
-//
-// detail/socket_option.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #ifndef ASIO_IP_DETAIL_SOCKET_OPTION_HPP
 #define ASIO_IP_DETAIL_SOCKET_OPTION_HPP
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
@@ -239,10 +225,6 @@ public:
       std::length_error ex("unicast hops socket option resize");
       asio::detail::throw_exception(ex);
     }
-#if defined(__hpux)
-    if (value_ < 0)
-      value_ = value_ & 0xFF;
-#endif
   }
 
 private:
@@ -254,11 +236,8 @@ template <int IPv4_Level, int IPv4_Name, int IPv6_Level, int IPv6_Name>
 class multicast_hops
 {
 public:
-#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
-  typedef int ipv4_value_type;
-#else
   typedef unsigned char ipv4_value_type;
-#endif
+
   typedef int ipv6_value_type;
 
   // Default constructor.

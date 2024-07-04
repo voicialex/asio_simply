@@ -1,19 +1,5 @@
-//
-// basic_socket.hpp
-// ~~~~~~~~~~~~~~~~
-//
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #ifndef ASIO_BASIC_SOCKET_HPP
 #define ASIO_BASIC_SOCKET_HPP
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
 #include "asio/core/executor/helper/async_result.hpp"
@@ -55,11 +41,7 @@ public:
   typedef io_context::executor_type executor_type;
 
   /// The native representation of a socket.
-#if defined(GENERATING_DOCUMENTATION)
-  typedef implementation_defined native_handle_type;
-#else
   typedef typename ASIO_SVC_T::native_handle_type native_handle_type;
-#endif
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -417,12 +399,6 @@ public:
    * 8.1, and will fail with asio::error::operation_not_supported on
    * these platforms.
    */
-#if defined(ASIO_MSVC) && (ASIO_MSVC >= 1400) \
-  && (!defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0603)
-  __declspec(deprecated("This function always fails with "
-        "operation_not_supported when used on Windows versions "
-        "prior to Windows 8.1."))
-#endif
   native_handle_type release()
   {
     asio::error_code ec;
@@ -445,12 +421,6 @@ public:
    * 8.1, and will fail with asio::error::operation_not_supported on
    * these platforms.
    */
-#if defined(ASIO_MSVC) && (ASIO_MSVC >= 1400) \
-  && (!defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0603)
-  __declspec(deprecated("This function always fails with "
-        "operation_not_supported when used on Windows versions "
-        "prior to Windows 8.1."))
-#endif
   native_handle_type release(asio::error_code& ec)
   {
     return this->get_service().release(this->get_implementation(), ec);
@@ -501,13 +471,6 @@ public:
    * CancelIoEx function is always used. This function does not have the
    * problems described above.
    */
-#if defined(ASIO_MSVC) && (ASIO_MSVC >= 1400) \
-  && (!defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0600) \
-  && !defined(ASIO_ENABLE_CANCELIO)
-  __declspec(deprecated("By default, this function always fails with "
-        "operation_not_supported when used on Windows XP, Windows Server 2003, "
-        "or earlier. Consult documentation for details."))
-#endif
   void cancel()
   {
     asio::error_code ec;
@@ -549,13 +512,6 @@ public:
    * CancelIoEx function is always used. This function does not have the
    * problems described above.
    */
-#if defined(ASIO_MSVC) && (ASIO_MSVC >= 1400) \
-  && (!defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0600) \
-  && !defined(ASIO_ENABLE_CANCELIO)
-  __declspec(deprecated("By default, this function always fails with "
-        "operation_not_supported when used on Windows XP, Windows Server 2003, "
-        "or earlier. Consult documentation for details."))
-#endif
   void cancel(asio::error_code& ec)
   {
     this->get_service().cancel(this->get_implementation(), ec);

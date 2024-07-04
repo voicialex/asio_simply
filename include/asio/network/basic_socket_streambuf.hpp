@@ -1,19 +1,5 @@
-//
-// basic_socket_streambuf.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #ifndef ASIO_BASIC_SOCKET_STREAMBUF_HPP
 #define ASIO_BASIC_SOCKET_STREAMBUF_HPP
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
 
@@ -127,14 +113,8 @@ class basic_socket_streambuf;
 #endif // !defined(ASIO_BASIC_SOCKET_STREAMBUF_FWD_DECL)
 
 /// Iostream streambuf for a socket.
-#if defined(GENERATING_DOCUMENTATION)
-template <typename Protocol,
-    typename Clock = chrono::steady_clock,
-    typename WaitTraits = wait_traits<Clock> >
-#else // defined(GENERATING_DOCUMENTATION)
 template <typename Protocol,
     typename Clock, typename WaitTraits>
-#endif // defined(GENERATING_DOCUMENTATION)
 class basic_socket_streambuf
   : public std::streambuf,
     private detail::socket_streambuf_io_context,
@@ -340,10 +320,6 @@ public:
 protected:
   int_type underflow()
   {
-#if defined(ASIO_WINDOWS_RUNTIME)
-    ec_ = asio::error::operation_not_supported;
-    return traits_type::eof();
-#else // defined(ASIO_WINDOWS_RUNTIME)
     if (gptr() != egptr())
       return traits_type::eof();
 
@@ -389,15 +365,10 @@ protected:
             socket().native_handle(), 0, timeout(), ec_) < 0)
         return traits_type::eof();
     }
-#endif // defined(ASIO_WINDOWS_RUNTIME)
   }
 
   int_type overflow(int_type c)
   {
-#if defined(ASIO_WINDOWS_RUNTIME)
-    ec_ = asio::error::operation_not_supported;
-    return traits_type::eof();
-#else // defined(ASIO_WINDOWS_RUNTIME)
     char_type ch = traits_type::to_char_type(c);
 
     // Determine what needs to be sent.
@@ -463,7 +434,6 @@ protected:
     }
 
     return c;
-#endif // defined(ASIO_WINDOWS_RUNTIME)
   }
 
   int sync()
@@ -523,9 +493,6 @@ private:
   template <typename EndpointIterator>
   void connect_to_endpoints(EndpointIterator begin, EndpointIterator end)
   {
-#if defined(ASIO_WINDOWS_RUNTIME)
-    ec_ = asio::error::operation_not_supported;
-#else // defined(ASIO_WINDOWS_RUNTIME)
     if (ec_)
       return;
 
@@ -580,7 +547,6 @@ private:
       if (!ec_)
         return;
     }
-#endif // defined(ASIO_WINDOWS_RUNTIME)
   }
 
   // Helper function to get the maximum expiry time.

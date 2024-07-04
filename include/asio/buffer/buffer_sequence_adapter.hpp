@@ -1,19 +1,5 @@
-//
-// detail/buffer_sequence_adapter.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #ifndef ASIO_DETAIL_BUFFER_SEQUENCE_ADAPTER_HPP
 #define ASIO_DETAIL_BUFFER_SEQUENCE_ADAPTER_HPP
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
 #include "asio/buffer/buffer.hpp"
@@ -27,43 +13,6 @@ namespace detail {
 
 class buffer_sequence_adapter_base
 {
-#if defined(ASIO_WINDOWS_RUNTIME)
-public:
-  // The maximum number of buffers to support in a single operation.
-  enum { max_buffers = 1 };
-
-protected:
-  typedef Windows::Storage::Streams::IBuffer^ native_buffer_type;
-
-  ASIO_DECL static void init_native_buffer(
-      native_buffer_type& buf,
-      const asio::mutable_buffer& buffer);
-
-  ASIO_DECL static void init_native_buffer(
-      native_buffer_type& buf,
-      const asio::const_buffer& buffer);
-#elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
-public:
-  // The maximum number of buffers to support in a single operation.
-  enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
-
-protected:
-  typedef WSABUF native_buffer_type;
-
-  static void init_native_buffer(WSABUF& buf,
-      const asio::mutable_buffer& buffer)
-  {
-    buf.buf = static_cast<char*>(buffer.data());
-    buf.len = static_cast<ULONG>(buffer.size());
-  }
-
-  static void init_native_buffer(WSABUF& buf,
-      const asio::const_buffer& buffer)
-  {
-    buf.buf = const_cast<char*>(static_cast<const char*>(buffer.data()));
-    buf.len = static_cast<ULONG>(buffer.size());
-  }
-#else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 public:
   // The maximum number of buffers to support in a single operation.
   enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
@@ -95,7 +44,6 @@ protected:
     init_iov_base(iov.iov_base, const_cast<void*>(buffer.data()));
     iov.iov_len = buffer.size();
   }
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 };
 
 // Helper class to translate buffers into the native buffer representation.

@@ -11,14 +11,6 @@
 #ifndef ASIO_DETAIL_IMPL_BUFFER_SEQUENCE_ADAPTER_IPP
 #define ASIO_DETAIL_IMPL_BUFFER_SEQUENCE_ADAPTER_IPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
-
 #include "asio/detail/config.hpp"
-
-#if defined(ASIO_WINDOWS_RUNTIME)
-
-#endif // defined(ASIO_WINDOWS_RUNTIME)
 
 #endif // ASIO_DETAIL_IMPL_BUFFER_SEQUENCE_ADAPTER_IPP

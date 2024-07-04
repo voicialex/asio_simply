@@ -11,10 +11,6 @@
 #ifndef ASIO_DETAIL_CONSUMING_BUFFERS_HPP
 #define ASIO_DETAIL_CONSUMING_BUFFERS_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
-
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include "asio/buffer/buffer.hpp"

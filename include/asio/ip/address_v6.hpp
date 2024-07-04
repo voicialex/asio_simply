@@ -1,19 +1,5 @@
-//
-// ip/address_v6.hpp
-// ~~~~~~~~~~~~~~~~~
-//
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #ifndef ASIO_IP_ADDRESS_V6_HPP
 #define ASIO_IP_ADDRESS_V6_HPP
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
 #include <string>
@@ -52,11 +38,7 @@ public:
    * @note This type is defined in terms of the C++0x template @c std::array
    * when it is available. Otherwise, it uses @c boost:array.
    */
-#if defined(GENERATING_DOCUMENTATION)
-  typedef array<unsigned char, 16> bytes_type;
-#else
   typedef asio::detail::array<unsigned char, 16> bytes_type;
-#endif
 
   /// Default constructor.
   ASIO_DECL address_v6() ASIO_NOEXCEPT;

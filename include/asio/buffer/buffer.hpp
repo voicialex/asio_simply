@@ -1,19 +1,5 @@
-//
-// buffer.hpp
-// ~~~~~~~~~~
-//
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #ifndef ASIO_BUFFER_HPP
 #define ASIO_BUFFER_HPP
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
 #include <cstddef>
@@ -26,14 +12,6 @@
 #include "asio/detail/base/stdcpp/string_view.hpp"
 #include "asio/error/throw_exception.hpp"
 #include "asio/detail/base/stdcpp/type_traits.hpp"
-
-#if defined(ASIO_MSVC) && (ASIO_MSVC >= 1700)
-# if defined(_HAS_ITERATOR_DEBUGGING) && (_HAS_ITERATOR_DEBUGGING != 0)
-#  if !defined(ASIO_DISABLE_BUFFER_DEBUGGING)
-#   define ASIO_ENABLE_BUFFER_DEBUGGING
-#  endif // !defined(ASIO_DISABLE_BUFFER_DEBUGGING)
-# endif // defined(_HAS_ITERATOR_DEBUGGING)
-#endif // defined(ASIO_MSVC) && (ASIO_MSVC >= 1700)
 
 #if defined(__GNUC__)
 # if defined(_GLIBCXX_DEBUG)
@@ -1976,11 +1954,7 @@ namespace asio {
 /// requirements.
 template <typename T>
 struct is_mutable_buffer_sequence
-#if defined(GENERATING_DOCUMENTATION)
-  : integral_constant<bool, automatically_determined>
-#else // defined(GENERATING_DOCUMENTATION)
   : asio::detail::is_buffer_sequence<T, mutable_buffer>
-#endif // defined(GENERATING_DOCUMENTATION)
 {
 };
 
@@ -1988,22 +1962,14 @@ struct is_mutable_buffer_sequence
 /// requirements.
 template <typename T>
 struct is_const_buffer_sequence
-#if defined(GENERATING_DOCUMENTATION)
-  : integral_constant<bool, automatically_determined>
-#else // defined(GENERATING_DOCUMENTATION)
   : asio::detail::is_buffer_sequence<T, const_buffer>
-#endif // defined(GENERATING_DOCUMENTATION)
 {
 };
 
 /// Trait to determine whether a type satisfies the DynamicBuffer requirements.
 template <typename T>
 struct is_dynamic_buffer
-#if defined(GENERATING_DOCUMENTATION)
-  : integral_constant<bool, automatically_determined>
-#else // defined(GENERATING_DOCUMENTATION)
   : asio::detail::is_dynamic_buffer<T>
-#endif // defined(GENERATING_DOCUMENTATION)
 {
 };
 
